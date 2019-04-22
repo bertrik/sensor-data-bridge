@@ -24,4 +24,28 @@ public class TtnUplinkMessage {
 	@JsonProperty("payload_raw")
 	byte[] rawPayload;
 
+	public String getAppId() {
+		return appId;
+	}
+
+	public String getDevId() {
+		return devId;
+	}
+
+	public String getHardwareSerial() {
+		return hardwareSerial;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public byte[] getRawPayload() {
+		return rawPayload;
+	}
+
 }

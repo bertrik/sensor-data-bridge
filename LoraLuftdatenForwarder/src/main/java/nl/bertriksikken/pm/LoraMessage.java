@@ -1,8 +1,11 @@
 package nl.bertriksikken.pm;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.ParseException;
 import java.util.Optional;
+
 
 public final class LoraMessage {
 	
@@ -34,19 +37,21 @@ public final class LoraMessage {
 		return humidity;
 	}
 
-	public static LoraMessage decode(byte[] data) {
+	public static LoraMessage decode(byte[] data) throws ParseException {
 		ByteBuffer bb = ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
-		int rawPm10 = bb.getShort() & 0xFFFF;
-		int rawPm2_5 = bb.getShort() & 0xFFFF;
-		int rawTemp = bb.getShort();
-		int rawHumi = bb.getShort();
-		
-		double pm10 = rawPm10 / 10.0;
-		double pm2_5 = rawPm2_5 / 10.0;
-		Optional<Double> temp = getOptional(rawTemp, 10.0);
-		Optional<Double> humi = getOptional(rawHumi, 10.0);
-		
-		return new LoraMessage(pm10, pm2_5, temp, humi);
+		try {
+			int rawPm10 = bb.getShort() & 0xFFFF;
+			double pm10 = rawPm10 / 10.0;
+			int rawPm2_5 = bb.getShort() & 0xFFFF;
+			double pm2_5 = rawPm2_5 / 10.0;
+			int rawTemp = bb.getShort();
+			Optional<Double> temp = getOptional(rawTemp, 10.0);
+			int rawHumi = bb.getShort();
+			Optional<Double> humi = getOptional(rawHumi, 10.0);
+			return new LoraMessage(pm10, pm2_5, temp, humi);
+		} catch (BufferUnderflowException e) {
+			throw new ParseException("underflow", bb.position());
+		}			
 	}
 	
 	private static Optional<Double> getOptional(int rawValue, double scale) {

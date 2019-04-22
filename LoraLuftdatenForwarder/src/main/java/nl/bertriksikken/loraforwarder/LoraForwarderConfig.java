@@ -6,9 +6,9 @@ package nl.bertriksikken.loraforwarder;
 public final class LoraForwarderConfig extends BaseConfig implements ILoraForwarderConfig {
     
 	private enum EConfigItem {
-        MQTT_URL("mqtt.url", "tcp://aliensdetected.com", "URL of the MQTT server"),
-        MQTT_APP_ID("mqtt.appid", "", "TTN application id"),
-        MQTT_APP_KEY("mqtt.appkey", "", "TTN application access key"),
+        MQTT_URL("mqtt.url", "tcp://eu.thethings.network", "URL of the MQTT server"),
+        MQTT_APP_ID("mqtt.appid", "particulatematter", "TTN application id"),
+        MQTT_APP_KEY("mqtt.appkey", "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk", "TTN application access key"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.luftdaten.info", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "3000", "luftdaten timeout");

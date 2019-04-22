@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = 'nl.sikken.bertrik.DustSensorBridge'
+mainClassName = 'nl.bertriksikken.loraforwarder.LoraLuftdatenForwarder'
 
 dependencies {
     compile libraries.slf4jlog4j

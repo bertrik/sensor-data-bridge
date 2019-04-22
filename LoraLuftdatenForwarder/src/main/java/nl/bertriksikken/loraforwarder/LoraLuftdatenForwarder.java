@@ -10,8 +10,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.ttn.MqttListener;
@@ -25,9 +23,7 @@ public final class LoraLuftdatenForwarder {
     private static final String CONFIG_FILE = "loraluftdatenforwarder.properties";
 	private static final String SOFTWARE_VERSION = "0.1";
 
-	private final ObjectMapper mapper = new ObjectMapper();
     private final MqttListener mqttListener;
-	private final ILoraForwarderConfig config;
 	private final LuftdatenUploader uploader;
 	
 	/**
@@ -36,12 +32,10 @@ public final class LoraLuftdatenForwarder {
 	 * @param config
 	 */
 	public LoraLuftdatenForwarder(ILoraForwarderConfig config) {
-		this.config = config;
-		
 		ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(), config.getLuftdatenTimeoutMs());
 		uploader = new LuftdatenUploader(restClient, SOFTWARE_VERSION);
 		
-		mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttTopic());
+		mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(), config.getMqttAppKey());
 	}
 
     private void messageReceived(Instant instant, String topic, String message) {

@@ -27,7 +27,8 @@ public final class MqttListener {
     private final String clientId;
     private final IMessageReceived callback;
     private final String url;
-    private final String topic;
+    private final String appId;
+    private final String appKey;
 
     private MqttClient mqttClient;
 
@@ -38,11 +39,18 @@ public final class MqttListener {
      * @param url the URL of the MQTT server
      * @param topic the topic to listen to
      */
-    public MqttListener(IMessageReceived callback, String url, String topic) {
+    public MqttListener(IMessageReceived callback, String url, String appId, String appKey) {
         this.clientId = MqttClient.generateClientId();
         this.callback = callback;
         this.url = url;
-        this.topic = topic;
+        this.appId = appId;
+        this.appKey = appKey;
+        
+        try {
+			this.mqttClient = new MqttClient(url, clientId, new MemoryPersistence());
+		} catch (MqttException e) {
+			throw new IllegalArgumentException(e);
+		}
     }
     
     /**
@@ -55,12 +63,14 @@ public final class MqttListener {
         
         // connect
         LOG.info("Connecting to MQTT server {}", url);
-        this.mqttClient = new MqttClient(url, clientId, new MemoryPersistence());
-        final MqttConnectOptions options = new MqttConnectOptions();
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setUserName(appId);
+        options.setPassword(appKey.toCharArray());
         options.setAutomaticReconnect(true);
         mqttClient.connect(options);
         
         // subscribe
+        String topic = "+/devices/+/up";
         LOG.info("Subscribing to topic '{}'", topic);
         mqttClient.subscribe(topic, this::messageArrived);
     }

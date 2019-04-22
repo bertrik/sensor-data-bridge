@@ -9,11 +9,8 @@ public interface ILoraForwarderConfig {
      * @return the URL of the MQTT server
      */
     String getMqttUrl();
-    
-    /**
-     * @return the MQTT topic to listen on
-     */
-    String getMqttTopic();
+    String getMqttAppId();
+    String getMqttAppKey();
     
 	/**
 	 * @return the URL of the luftdaten.info API

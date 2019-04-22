@@ -7,7 +7,8 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     
 	private enum EConfigItem {
         MQTT_URL("mqtt.url", "tcp://aliensdetected.com", "URL of the MQTT server"),
-        MQTT_TOPIC("mqtt.topic", "bertrik/dust/#", "The sensor MQTT topic"),
+        MQTT_APP_ID("mqtt.appid", "", "TTN application id"),
+        MQTT_APP_KEY("mqtt.appkey", "", "TTN application access key"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.luftdaten.info", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "3000", "luftdaten timeout");
@@ -36,8 +37,13 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     }
 
     @Override
-    public String getMqttTopic() {
-        return get(EConfigItem.MQTT_TOPIC.key);
+    public String getMqttAppId() {
+        return get(EConfigItem.MQTT_APP_ID.key);
+    }
+
+    @Override
+    public String getMqttAppKey() {
+        return get(EConfigItem.MQTT_APP_KEY.key);
     }
 
 	@Override

@@ -31,6 +31,11 @@ public final class SensorMessage {
         this.bme = bme;
     }
     
+    public SensorMessage(SensorSds sds) {
+        this();
+        this.sds = sds;
+    }
+    
     public SensorSds getSds() {
     	return sds;
     }

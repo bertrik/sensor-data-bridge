@@ -69,13 +69,13 @@ public final class LoraLuftdatenForwarder {
      * @throws MqttException in case of a problem starting MQTT client
      */
     private void start() throws MqttException {
-        LOG.info("Starting DustSensor bridge application");
+        LOG.info("Starting LoraLuftdatenForwarder application");
 
         // start sub-modules
         uploader.start();
         mqttListener.start();
 
-        LOG.info("Started DustSensor bridge application");
+        LOG.info("Started LoraLuftdatenForwarder application");
     }
 
     /**
@@ -84,12 +84,12 @@ public final class LoraLuftdatenForwarder {
 	 * @throws MqttException
 	 */
 	private void stop() {
-	    LOG.info("Stopping DustSensor bridge application");
+	    LOG.info("Stopping LoraLuftdatenForwarder application");
 
 	    mqttListener.stop();
 	    uploader.stop();
 
-	    LOG.info("Stopped DustSensor bridge application");
+	    LOG.info("Stopped LoraLuftdatenForwarder application");
 	}
     
     private static ILoraForwarderConfig readConfig(File file) throws IOException {

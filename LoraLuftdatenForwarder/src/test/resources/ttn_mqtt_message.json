@@ -1,0 +1,2 @@
+{"app_id":"particulatematter","dev_id":"ttgo_mac","hardware_serial":"000084B14CA4AE30","port":1,"counter":33,"payload_raw":"AMYAj/////8=","metadata":{"time":"2019-04-21T19:11:54.660942013Z","frequency":868.3,"modulation":"LORA","data_rate":"SF12BW125","airtime":1482752000,"coding_rate":"4/5","gateways":[{"gtw_id":"eui-0000024b080606ac","timestamp":1123534644,"time":"2019-04-21T19:11:54.596931Z","channel":1,"rssi":-76,"snr":6.5,"rf_chain":1,"latitude":52.0779,"longitude":4.39221,"altitude":7}]}}
+

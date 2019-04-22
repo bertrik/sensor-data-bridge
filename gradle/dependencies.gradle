@@ -1,0 +1,24 @@
+ext {
+    libraries = [:]
+}
+
+libraries.slf4j = 'org.slf4j:slf4j-api:1.7.26'
+libraries.slf4jlog4j = 'org.slf4j:slf4j-log4j12:1.7.26'
+
+libraries.jackson = [
+    'com.fasterxml.jackson.core:jackson-databind:2.9.8'
+]
+
+libraries.retrofit = [
+    'com.squareup.retrofit2:retrofit:2.5.0',
+    'com.squareup.retrofit2:converter-jackson:2.5.0',
+    'com.squareup.retrofit2:converter-scalars:2.5.0'
+]
+libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.5.0'
+
+libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.1' 
+
+// test libraries
+libraries.junit = 'junit:junit:4.12'
+libraries.mockito = 'org.mockito:mockito-core:2.27.0'
+

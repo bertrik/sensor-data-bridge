@@ -79,7 +79,7 @@ public final class LoraLuftdatenForwarder {
 		LOG.info("Dust data: PM10 = {} ug/m3, PM2.5 = {} ug/m3", loraMessage.getPm10(), loraMessage.getPm2_5());
 
 		// encode as luftdaten
-		SensorSds sds = new SensorSds("id", 0.0, 0.0);
+		SensorSds sds = new SensorSds("id", loraMessage.getPm10(), loraMessage.getPm2_5());
 		SensorMessage sensorMessage = new SensorMessage(sds);
 
 		// schedule upload

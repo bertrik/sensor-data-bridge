@@ -2,8 +2,6 @@ package nl.bertriksikken.luftdaten;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.Instant;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,15 +62,13 @@ public final class LuftdatenUploader {
 		return retrofit.create(ILuftdatenApi.class);
 	}
 	
-    public void uploadMeasurement(Instant now, int sensorId, SensorMessage message) {
+    public void uploadMeasurement(String sensorId, SensorMessage message) {
     	LuftdatenMessage luftDatenMessage = new LuftdatenMessage(softwareVersion);
     	luftDatenMessage.addItem(new LuftdatenItem("P1", message.getSds().getPm10()));
     	luftDatenMessage.addItem(new LuftdatenItem("P2", message.getSds().getPm2_5()));
-    	String sensor;
-		sensor = String.format(Locale.ROOT, "esp8266-%d", sensorId);
     	try {
-    		LOG.info("Sending for {} to pin {}: '{}'", sensor, PIN, mapper.writeValueAsString(luftDatenMessage));
-    		Response<String> response = restClient.pushSensorData(PIN, sensor, luftDatenMessage).execute();
+    		LOG.info("Sending for {} to pin {}: '{}'", sensorId, PIN, mapper.writeValueAsString(luftDatenMessage));
+    		Response<String> response = restClient.pushSensorData(PIN, sensorId, luftDatenMessage).execute();
     		if (response.isSuccessful()) {
     			LOG.info("Result success: {}", response.body());
     		} else {

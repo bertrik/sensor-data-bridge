@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,7 +44,7 @@ public final class LoraLuftdatenForwarder {
 	private LoraLuftdatenForwarder(ILoraForwarderConfig config) {
 
 		ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
-				config.getLuftdatenTimeoutMs());
+				Duration.ofMillis(config.getLuftdatenTimeoutMs()));
 		uploader = new LuftdatenUploader(restClient, SOFTWARE_VERSION);
 		executor = Executors.newSingleThreadExecutor();
 

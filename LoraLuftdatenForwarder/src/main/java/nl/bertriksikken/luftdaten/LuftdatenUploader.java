@@ -1,9 +1,9 @@
 package nl.bertriksikken.luftdaten;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +48,11 @@ public final class LuftdatenUploader {
 	 * Creates a new REST client.
 	 * 
 	 * @param url the URL of the server, e.g. "https://api.luftdaten.info"
-	 * @param timeout the timeout (ms)
+	 * @param timeout the timeout
 	 * @return a new REST client.
 	 */
-	public static ILuftdatenApi newRestClient(String url, int timeout) {
-		OkHttpClient client = new OkHttpClient().newBuilder()
-				.connectTimeout(timeout, TimeUnit.MILLISECONDS)
-				.writeTimeout(timeout, TimeUnit.MILLISECONDS)
-				.readTimeout(timeout, TimeUnit.MILLISECONDS)
+	public static ILuftdatenApi newRestClient(String url, Duration timeout) {
+		OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout)
 				.build();
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl(url)

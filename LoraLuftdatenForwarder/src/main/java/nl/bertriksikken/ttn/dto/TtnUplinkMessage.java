@@ -5,47 +5,47 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TtnUplinkMessage {
-	
-	@JsonProperty("app_id")
-	String appId;
-	
-	@JsonProperty("dev_id")
-	String devId;
-	
-	@JsonProperty("hardware_serial")
-	String hardwareSerial;
-	
-	@JsonProperty("port")
-	int port;
-	
-	@JsonProperty("counter")
-	int counter;
-	
-	@JsonProperty("payload_raw")
-	byte[] rawPayload;
 
-	public String getAppId() {
-		return appId;
-	}
+    @JsonProperty("app_id")
+    String appId;
 
-	public String getDevId() {
-		return devId;
-	}
+    @JsonProperty("dev_id")
+    String devId;
 
-	public String getHardwareSerial() {
-		return hardwareSerial;
-	}
+    @JsonProperty("hardware_serial")
+    String hardwareSerial;
 
-	public int getPort() {
-		return port;
-	}
+    @JsonProperty("port")
+    int port;
 
-	public int getCounter() {
-		return counter;
-	}
+    @JsonProperty("counter")
+    int counter;
 
-	public byte[] getRawPayload() {
-		return rawPayload;
-	}
+    @JsonProperty("payload_raw")
+    byte[] rawPayload;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public String getDevId() {
+        return devId;
+    }
+
+    public String getHardwareSerial() {
+        return hardwareSerial;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public byte[] getRawPayload() {
+        return rawPayload;
+    }
 
 }

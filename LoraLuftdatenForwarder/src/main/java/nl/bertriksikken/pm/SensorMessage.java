@@ -13,14 +13,14 @@ public final class SensorMessage {
 
     @JsonProperty("SDS011")
     private SensorSds sds;
-    
+
     @JsonProperty("bme280")
     private SensorBme bme;
-    
+
     private SensorMessage() {
         // Jackson constructor
     }
-    
+
     /**
      * Constructor.
      * 
@@ -30,16 +30,16 @@ public final class SensorMessage {
         this();
         this.bme = bme;
     }
-    
+
     public SensorMessage(SensorSds sds) {
         this();
         this.sds = sds;
     }
-    
+
     public SensorSds getSds() {
-    	return sds;
+        return sds;
     }
-    
+
     public SensorBme getBme() {
         return bme;
     }
@@ -48,5 +48,5 @@ public final class SensorMessage {
     public String toString() {
         return String.format(Locale.US, "{sds=%s,bme=%s}", sds, bme);
     }
-    
+
 }

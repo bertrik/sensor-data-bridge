@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -66,7 +67,7 @@ public final class LoraLuftdatenForwarder {
         }
 
         // decode payload
-        String sensorId = uplink.getHardwareSerial();
+        String sensorId = String.format(Locale.ROOT, "esp32-ttn-%s", uplink.getHardwareSerial());
         byte[] payload = uplink.getRawPayload();
         LoraMessage loraMessage;
         try {
@@ -79,7 +80,7 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Dust data: PM10 = {} ug/m3, PM2.5 = {} ug/m3", loraMessage.getPm10(), loraMessage.getPm2_5());
 
         // encode as luftdaten
-        SensorSds sds = new SensorSds("id", loraMessage.getPm10(), loraMessage.getPm2_5());
+        SensorSds sds = new SensorSds(sensorId, loraMessage.getPm10(), loraMessage.getPm2_5());
         SensorMessage sensorMessage = new SensorMessage(sds);
 
         // schedule upload
@@ -87,7 +88,13 @@ public final class LoraLuftdatenForwarder {
     }
 
     private void handleMessage(String sensorId, SensorMessage sensorMessage) {
-        // TODO
+        // forward to luftdaten, in an exception safe manner
+        try {
+            uploader.uploadMeasurement(sensorId, sensorMessage);
+        } catch (Exception e) {
+            LOG.trace("Caught exception", e);
+            LOG.warn("Caught exception: {}", e.getMessage());
+        }
     }
 
     /**

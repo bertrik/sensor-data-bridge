@@ -95,8 +95,14 @@ public final class MqttListener {
     	Instant now = Instant.now();
         final String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
         LOG.info("Message arrived on topic '{}': {}", topic, message);
-        // notify our listener
-        callback.messageReceived(now, topic, message);
+        
+        // notify our listener, in an exception safe manner
+        try {
+            callback.messageReceived(now, topic, message);
+        } catch (Exception e) {
+            LOG.trace("Caught exception", e);
+            LOG.error("Caught exception in MQTT listener: {}", e.getMessage());
+        }
     }
     
     /**

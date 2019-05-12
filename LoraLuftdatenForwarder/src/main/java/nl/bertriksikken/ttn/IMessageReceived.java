@@ -14,6 +14,6 @@ public interface IMessageReceived {
      * @param topic   the topic
      * @param message the message
      */
-    void messageReceived(Instant instant, String topic, String message);
+    void messageReceived(Instant instant, String topic, String message) throws Exception;
 
 }

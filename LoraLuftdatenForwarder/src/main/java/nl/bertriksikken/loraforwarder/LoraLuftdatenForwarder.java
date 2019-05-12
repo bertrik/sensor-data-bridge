@@ -53,7 +53,7 @@ public final class LoraLuftdatenForwarder {
                 config.getMqttAppKey());
     }
 
-    private void messageReceived(Instant instant, String topic, String message) {
+    void messageReceived(Instant instant, String topic, String message) {
         LOG.info("Received: '{}'", message);
 
         // decode JSON

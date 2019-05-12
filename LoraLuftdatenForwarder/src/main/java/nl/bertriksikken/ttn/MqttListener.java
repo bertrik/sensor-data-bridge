@@ -21,9 +21,7 @@ public final class MqttListener {
     private static final Logger LOG = LoggerFactory.getLogger(MqttListener.class);
     private static final long DISCONNECT_TIMEOUT_MS = 3000;
     
-    private final String clientId;
     private final IMessageReceived callback;
-    private final String url;
     private final String appId;
     private final String appKey;
 
@@ -37,14 +35,13 @@ public final class MqttListener {
      * @param topic the topic to listen to
      */
     public MqttListener(IMessageReceived callback, String url, String appId, String appKey) {
-        this.clientId = MqttClient.generateClientId();
         this.callback = callback;
-        this.url = url;
         this.appId = appId;
         this.appKey = appKey;
         
+        LOG.info("Creating client for MQTT server {}", url);
         try {
-			this.mqttClient = new MqttClient(url, clientId, new MemoryPersistence());
+			this.mqttClient = new MqttClient(url, MqttClient.generateClientId(), new MemoryPersistence());
 		} catch (MqttException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -59,7 +56,7 @@ public final class MqttListener {
         LOG.info("Starting MQTT listener");
         
         // connect
-        LOG.info("Connecting to MQTT server {}", url);
+        LOG.info("Connecting to MQTT server");
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appId);
         options.setPassword(appKey.toCharArray());

@@ -10,8 +10,8 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "pmd"
     
-    targetCompatibility = 1.11
-    sourceCompatibility = 1.11
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()

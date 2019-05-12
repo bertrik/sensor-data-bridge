@@ -1,0 +1,21 @@
+# copy this to /etc/systemd/system
+# then sudo systemctl daemon-reload
+# and enable with sudo systemctl enable --now LoraLuftdatenForwarder
+
+[Unit]
+Description=LoraLuftdatenForwarder
+After=network.target
+
+[Service]
+WorkingDirectory=/home/bertrik/LoraLuftdatenForwarder
+ExecStart=/home/bertrik/LoraLuftdatenForwarder/bin/LoraLuftdatenForwarder
+Type=simple
+KillMode=process
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=15s
+User=bertrik
+Environment="LORALUFTDATENFORWARDER_OPTS=-Xmx64M"
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,7 @@
 package nl.bertriksikken.loraforwarder;
 
+import java.time.Duration;
+
 /**
  * Configuration interface for the application.
  */
@@ -22,6 +24,6 @@ public interface ILoraForwarderConfig {
     /**
      * @return timeout (ms) for accessing the luftdaten.info API
      */
-    int getLuftdatenTimeoutMs();
+    Duration getLuftdatenTimeout();
 
 }

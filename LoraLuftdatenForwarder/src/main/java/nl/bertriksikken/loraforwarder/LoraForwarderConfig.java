@@ -1,5 +1,7 @@
 package nl.bertriksikken.loraforwarder;
 
+import java.time.Duration;
+
 /**
  * Configuration class.
  */
@@ -12,7 +14,7 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
                 "TTN application access key"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.luftdaten.info", "luftdaten server URL (empty to disable)"),
-        LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "3000", "luftdaten timeout");
+        LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)");
 
         private final String key, value, comment;
 
@@ -53,8 +55,8 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     }
 
     @Override
-    public int getLuftdatenTimeoutMs() {
-        return Integer.parseInt(get(EConfigItem.LUFTDATEN_TIMEOUT_MS.key));
+    public Duration getLuftdatenTimeout() {
+        return Duration.ofMillis(Integer.parseInt(get(EConfigItem.LUFTDATEN_TIMEOUT_MS.key)));
     }
 
 }

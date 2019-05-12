@@ -45,7 +45,7 @@ public final class LoraLuftdatenForwarder {
     private LoraLuftdatenForwarder(ILoraForwarderConfig config) {
 
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
-                Duration.ofMillis(config.getLuftdatenTimeoutMs()));
+                config.getLuftdatenTimeout());
         uploader = new LuftdatenUploader(restClient, SOFTWARE_VERSION);
         executor = Executors.newSingleThreadExecutor();
 

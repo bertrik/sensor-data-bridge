@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +66,7 @@ public final class LoraLuftdatenForwarder {
         }
 
         // decode payload
-        String sensorId = String.format(Locale.ROOT, "esp32-ttn-%s", uplink.getHardwareSerial());
+        String sensorId = String.format(Locale.ROOT, "TTN-%s", uplink.getHardwareSerial());
         byte[] payload = uplink.getRawPayload();
         LoraMessage loraMessage;
         try {

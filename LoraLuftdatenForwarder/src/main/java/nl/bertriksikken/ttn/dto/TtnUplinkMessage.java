@@ -45,7 +45,7 @@ public class TtnUplinkMessage {
     }
 
     public byte[] getRawPayload() {
-        return rawPayload;
+        return rawPayload.clone();
     }
 
 }

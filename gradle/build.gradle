@@ -1,3 +1,7 @@
+plugins {
+  id  'com.github.spotbugs' version '2.0.0'
+}
+
 version = '0.1'
 
 allprojects { group = 'nl.bertriksikken' }
@@ -9,6 +13,7 @@ subprojects {
     apply plugin: "java"
     apply plugin: "eclipse"
     apply plugin: "pmd"
+     apply plugin: "com.github.spotbugs"
     
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -21,6 +26,11 @@ subprojects {
         toolVersion = "5.8.1"
     }
     
+     tasks.withType(com.github.spotbugs.SpotBugsTask) {
+        reports.xml.enabled = false
+        reports.html.enabled = true
+    }
+
     // Standard libraries added to all projects
     dependencies {
         testCompile libraries.junit

@@ -21,16 +21,17 @@ public final class TtnUplinkMessageTest {
     @Test
     public void testDecode() throws IOException {
         // decode JSON
-        InputStream is = this.getClass().getResourceAsStream("/ttn_mqtt_message.json");
-        ObjectMapper mapper = new ObjectMapper();
-        TtnUplinkMessage message = mapper.readValue(is, TtnUplinkMessage.class);
-        Assert.assertNotNull(message);
-        Assert.assertNotNull(message.appId);
-        Assert.assertNotNull(message.devId);
-        Assert.assertNotNull(message.hardwareSerial);
-        Assert.assertNotNull(message.port);
-        Assert.assertNotNull(message.counter);
-        Assert.assertNotNull(message.rawPayload);
-    }
+        try (InputStream is = this.getClass().getResourceAsStream("/ttn_mqtt_message.json")) {
+	        ObjectMapper mapper = new ObjectMapper();
+	        TtnUplinkMessage message = mapper.readValue(is, TtnUplinkMessage.class);
+	        Assert.assertNotNull(message);
+	        Assert.assertNotNull(message.appId);
+	        Assert.assertNotNull(message.devId);
+	        Assert.assertNotNull(message.hardwareSerial);
+	        Assert.assertNotNull(message.port);
+	        Assert.assertNotNull(message.counter);
+	        Assert.assertNotNull(message.rawPayload);
+        }
+	}
 
 }

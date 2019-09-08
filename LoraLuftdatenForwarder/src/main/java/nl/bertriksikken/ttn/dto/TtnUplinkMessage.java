@@ -1,10 +1,13 @@
 package nl.bertriksikken.ttn.dto;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TtnUplinkMessage {
+public final class TtnUplinkMessage {
 
     @JsonProperty("app_id")
     String appId;
@@ -24,6 +27,9 @@ public class TtnUplinkMessage {
     @JsonProperty("payload_raw")
     byte[] rawPayload;
 
+    @JsonProperty("payload_fields")
+    Map<String, Object> payloadFields;
+    
     public String getAppId() {
         return appId;
     }
@@ -48,4 +54,8 @@ public class TtnUplinkMessage {
         return rawPayload.clone();
     }
 
+    public ImmutableMap<String, Object> getPayloadFields() {
+    	return ImmutableMap.copyOf(payloadFields);
+    }
+    
 }

@@ -15,6 +15,11 @@ public interface ILoraForwarderConfig {
     String getMqttAppId();
 
     String getMqttAppKey();
+    
+    /**
+     * @return the payload encoding, e.g. "rudzl"
+     */
+    String getEncoding();
 
     /**
      * @return the URL of the luftdaten.info API

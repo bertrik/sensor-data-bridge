@@ -12,6 +12,8 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
         MQTT_APP_ID("mqtt.appid", "particulatematter", "TTN application id"),
         MQTT_APP_KEY("mqtt.appkey", "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk",
                 "TTN application access key"),
+        
+        ENCODING("encoding", "rudzl", "The payload encoding"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.luftdaten.info", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)");
@@ -52,6 +54,11 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     @Override
     public String getLuftdatenUrl() {
         return get(EConfigItem.LUFTDATEN_URL.key).trim();
+    }
+    
+    @Override
+    public String getEncoding() {
+    	return get(EConfigItem.ENCODING.key).trim();
     }
 
     @Override

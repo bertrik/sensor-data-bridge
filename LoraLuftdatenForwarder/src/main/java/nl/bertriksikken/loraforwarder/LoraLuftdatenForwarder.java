@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -16,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
-import nl.bertriksikken.pm.LoraMessage;
 import nl.bertriksikken.pm.SensorMessage;
 import nl.bertriksikken.pm.SensorSds;
 import nl.bertriksikken.ttn.MqttListener;
@@ -33,6 +32,7 @@ public final class LoraLuftdatenForwarder {
     private final MqttListener mqttListener;
     private final LuftdatenUploader uploader;
     private final ExecutorService executor;
+	private final EPayloadEncoding encoding;
 
     public static void main(String[] args) throws IOException, MqttException {
         ILoraForwarderConfig config = readConfig(new File(CONFIG_FILE));
@@ -47,6 +47,7 @@ public final class LoraLuftdatenForwarder {
                 config.getLuftdatenTimeout());
         uploader = new LuftdatenUploader(restClient, SOFTWARE_VERSION);
         executor = Executors.newSingleThreadExecutor();
+        encoding = EPayloadEncoding.fromId(config.getEncoding());
 
         mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(),
                 config.getMqttAppKey());
@@ -64,26 +65,26 @@ public final class LoraLuftdatenForwarder {
             LOG.warn("Could not parse JSON: '{}'", message);
             return;
         }
-
-        // decode payload
         String sensorId = String.format(Locale.ROOT, "TTN-%s", uplink.getHardwareSerial());
-        byte[] payload = uplink.getRawPayload();
-        LoraMessage loraMessage;
-        try {
-            loraMessage = LoraMessage.decode(payload);
-        } catch (ParseException e) {
-            LOG.warn("Could not parse payload");
-            return;
-        }
 
-        LOG.info("Dust data: PM10 = {} ug/m3, PM2.5 = {} ug/m3", loraMessage.getPm10(), loraMessage.getPm2_5());
-
-        // encode as luftdaten
-        SensorSds sds = new SensorSds(sensorId, loraMessage.getPm10(), loraMessage.getPm2_5());
-        SensorMessage sensorMessage = new SensorMessage(sds);
+        SensorMessage sensorMessage = decodeTtnMessage(instant, sensorId, uplink);
 
         // schedule upload
-        executor.execute(() -> handleMessage(sensorId, sensorMessage));
+        if (sensorMessage != null) {
+        	executor.execute(() -> handleMessage(sensorId, sensorMessage));
+        }
+    }
+    
+    private SensorMessage decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
+    	switch (encoding) {
+    	case RUDZL:
+    		RudzlMessage message = new RudzlMessage(uplinkMessage.getPayloadFields());
+            SensorSds sds = new SensorSds(sensorId, message.getPM10(), message.getPM2_5());
+            SensorMessage sensorMessage = new SensorMessage(sds);    	
+    		return sensorMessage;
+    	default:
+    		return null;
+    	}
     }
 
     private void handleMessage(String sensorId, SensorMessage sensorMessage) {

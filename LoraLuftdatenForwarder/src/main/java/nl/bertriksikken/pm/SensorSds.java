@@ -29,6 +29,7 @@ public final class SensorSds {
      */
     public SensorSds(String id, double pm10, double pm2_5) {
         this();
+        this.id = id;
         this.pm10 = pm10;
         this.pm2_5 = pm2_5;
     }

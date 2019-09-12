@@ -1,20 +1,15 @@
 package nl.bertriksikken.pm;
 
 import java.util.Locale;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Optional;
 
 /**
  * Representation of a message received from the MQTT stream.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public final class SensorMessage {
 
-    @JsonProperty("SDS011")
     private SensorSds sds;
 
-    @JsonProperty("bme280")
     private SensorBme bme;
 
     private SensorMessage() {
@@ -23,14 +18,7 @@ public final class SensorMessage {
 
     /**
      * Constructor.
-     * 
-     * @param bme meteo sensor value
      */
-    public SensorMessage(SensorBme bme) {
-        this();
-        this.bme = bme;
-    }
-
     public SensorMessage(SensorSds sds) {
         this();
         this.sds = sds;
@@ -40,8 +28,12 @@ public final class SensorMessage {
         return sds;
     }
 
-    public SensorBme getBme() {
-        return bme;
+    public void setBme(SensorBme bme) {
+    	this.bme = bme;
+    }
+    
+    public Optional<SensorBme> getBme() {
+        return Optional.ofNullable(bme);
     }
 
     @Override

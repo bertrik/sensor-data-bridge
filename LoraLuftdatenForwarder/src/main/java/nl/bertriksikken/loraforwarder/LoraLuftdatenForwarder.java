@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
+import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
+import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.SensorMessage;
 import nl.bertriksikken.pm.SensorSds;
 import nl.bertriksikken.ttn.MqttListener;
@@ -27,7 +29,7 @@ public final class LoraLuftdatenForwarder {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
     private static final String CONFIG_FILE = "loraluftdatenforwarder.properties";
-    private static final String SOFTWARE_VERSION = "0.1";
+    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
 
     private final MqttListener mqttListener;
     private final LuftdatenUploader uploader;
@@ -45,7 +47,7 @@ public final class LoraLuftdatenForwarder {
 
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
                 config.getLuftdatenTimeout());
-        uploader = new LuftdatenUploader(restClient, SOFTWARE_VERSION);
+        uploader = new LuftdatenUploader(restClient);
         executor = Executors.newSingleThreadExecutor();
         encoding = EPayloadEncoding.fromId(config.getEncoding());
 
@@ -53,6 +55,7 @@ public final class LoraLuftdatenForwarder {
                 config.getMqttAppKey());
     }
 
+    // package-private to allow testing
     void messageReceived(Instant instant, String topic, String message) {
         LOG.info("Received: '{}'", message);
 
@@ -71,7 +74,7 @@ public final class LoraLuftdatenForwarder {
 
         // schedule upload
         if (sensorMessage != null) {
-        	executor.execute(() -> handleMessage(sensorId, sensorMessage));
+        	executor.execute(() -> handleMessageTask(sensorId, sensorMessage));
         }
     }
     
@@ -87,10 +90,13 @@ public final class LoraLuftdatenForwarder {
     	}
     }
 
-    private void handleMessage(String sensorId, SensorMessage sensorMessage) {
+    private void handleMessageTask(String sensorId, SensorMessage sensorMessage) {
         // forward to luftdaten, in an exception safe manner
         try {
-            uploader.uploadMeasurement(sensorId, sensorMessage);
+        	LuftdatenMessage sdsMessage = new LuftdatenMessage(SOFTWARE_VERSION);
+        	sdsMessage.addItem(new LuftdatenItem("P1", sensorMessage.getSds().getPm10()));
+        	sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
+            uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_SDS, sdsMessage);
         } catch (Exception e) {
             LOG.trace("Caught exception", e);
             LOG.warn("Caught exception: {}", e.getMessage());

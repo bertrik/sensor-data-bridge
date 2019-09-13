@@ -13,11 +13,13 @@ public final class RudzlMessage {
 	}
 	
 	public double getPM10() {
-		return (double)fields.getOrDefault("PM10_Avg", Double.NaN);
+		Number number = (Number) fields.getOrDefault("PM10_Avg", Double.NaN);
+		return number.doubleValue();
 	}
 	
 	public double getPM2_5() {
-		return (double)fields.getOrDefault("PM25_Avg", Double.NaN);
+		Number number = (Number) fields.getOrDefault("PM25_Avg", Double.NaN);
+		return number.doubleValue();
 	}
 
 }

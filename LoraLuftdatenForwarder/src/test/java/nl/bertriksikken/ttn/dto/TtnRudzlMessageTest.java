@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
+
 public final class TtnRudzlMessageTest {
 	
 	@Test
@@ -20,6 +22,19 @@ public final class TtnRudzlMessageTest {
 	        Map<String, Object> fields = message.getPayloadFields();
 	        Assert.assertEquals(18789, fields.get("SDS_ID"));
 	        Assert.assertEquals(0.4, (double) fields.get("PM10_Avg"), 0.01);
+        }
+	}
+
+	@Test
+	public void testDeserialize2() throws IOException {
+        try (InputStream is = this.getClass().getResourceAsStream("/ttn_rudzl_message_2.json")) {
+	        ObjectMapper mapper = new ObjectMapper();
+	        TtnUplinkMessage message = mapper.readValue(is, TtnUplinkMessage.class);
+	        Assert.assertEquals(1439, message.getCounter());
+	        Map<String, Object> fields = message.getPayloadFields();
+	        Assert.assertEquals(18789, fields.get("SDS_ID"));
+	        RudzlMessage rudzlMessage = new RudzlMessage(fields);
+	        Assert.assertEquals(2.0, rudzlMessage.getPM10(), 0.01);
         }
 	}
 

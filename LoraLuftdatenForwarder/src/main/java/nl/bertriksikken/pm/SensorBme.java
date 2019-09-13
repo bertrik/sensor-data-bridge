@@ -9,16 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class SensorBme {
 
-    @JsonProperty("t")
     private Double temp;
-    @JsonProperty("rh")
     private Double rh;
-    @JsonProperty("p")
     private Double pressure;
-
-    private SensorBme() {
-        // jackson constructor
-    }
 
     /**
      * @param temp     temperature (celcius)
@@ -26,7 +19,6 @@ public final class SensorBme {
      * @param pressure (mbar or hectopascal)
      */
     public SensorBme(double temp, double rh, double pressure) {
-        this();
         this.temp = temp;
         this.rh = rh;
         this.pressure = pressure;

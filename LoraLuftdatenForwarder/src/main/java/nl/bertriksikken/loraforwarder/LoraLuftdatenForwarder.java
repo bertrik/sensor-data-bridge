@@ -20,6 +20,7 @@ import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
+import nl.bertriksikken.pm.SensorBme;
 import nl.bertriksikken.pm.SensorMessage;
 import nl.bertriksikken.pm.SensorSds;
 import nl.bertriksikken.ttn.MqttListener;
@@ -84,6 +85,8 @@ public final class LoraLuftdatenForwarder {
     		RudzlMessage message = new RudzlMessage(uplinkMessage.getPayloadFields());
             SensorSds sds = new SensorSds(sensorId, message.getPM10(), message.getPM2_5());
             SensorMessage sensorMessage = new SensorMessage(sds);    	
+            SensorBme bme = new SensorBme(message.getT(), message.getRH(), message.getP());
+            sensorMessage.setBme(bme);
     		return sensorMessage;
     	default:
     		return null;
@@ -97,6 +100,15 @@ public final class LoraLuftdatenForwarder {
         	sdsMessage.addItem(new LuftdatenItem("P1", sensorMessage.getSds().getPm10()));
         	sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
             uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_SDS, sdsMessage);
+
+            if (sensorMessage.getBme().isPresent()) {
+            	SensorBme bme = sensorMessage.getBme().get();
+	        	LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);
+	        	bmeMessage.addItem(new LuftdatenItem("temperature", bme.getTemp()));
+	        	bmeMessage.addItem(new LuftdatenItem("humidity", bme.getRh()));
+	        	bmeMessage.addItem(new LuftdatenItem("pressure", bme.getPressure()));
+	            uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_BME, bmeMessage);
+            }
         } catch (Exception e) {
             LOG.trace("Caught exception", e);
             LOG.warn("Caught exception: {}", e.getMessage());

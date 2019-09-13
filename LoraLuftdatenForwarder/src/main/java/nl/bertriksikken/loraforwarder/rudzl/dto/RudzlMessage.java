@@ -22,4 +22,19 @@ public final class RudzlMessage {
 		return number.doubleValue();
 	}
 
+	public double getT() {
+		Number number = (Number) fields.getOrDefault("T", Double.NaN);
+		return number.doubleValue();
+	}
+
+	public double getRH() {
+		Number number = (Number) fields.getOrDefault("RH", Double.NaN);
+		return number.doubleValue();
+	}
+
+	public double getP() {
+		Number number = (Number) fields.getOrDefault("P", Double.NaN);
+		return number.doubleValue();
+	}
+
 }

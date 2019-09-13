@@ -35,6 +35,9 @@ public final class TtnRudzlMessageTest {
 	        Assert.assertEquals(18789, fields.get("SDS_ID"));
 	        RudzlMessage rudzlMessage = new RudzlMessage(fields);
 	        Assert.assertEquals(2.0, rudzlMessage.getPM10(), 0.01);
+	        Assert.assertEquals(25.36, rudzlMessage.getT(), 0.01);
+	        Assert.assertEquals(52.83, rudzlMessage.getRH(), 0.01);
+	        Assert.assertEquals(1027.0, rudzlMessage.getP(), 0.1);
         }
 	}
 

@@ -15,7 +15,7 @@ Restart=on-failure
 RestartSec=10s
 TimeoutStopSec=15s
 User=bertrik
-Environment="LORALUFTDATENFORWARDER_OPTS=-Xmx64M"
+Environment="LORA_LUFTDATEN_FORWARDER_OPTS=-Xmx64M"
 
 [Install]
 WantedBy=multi-user.target

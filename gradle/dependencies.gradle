@@ -10,13 +10,13 @@ libraries.jackson = [
 ]
 
 libraries.retrofit = [
-    'com.squareup.retrofit2:retrofit:2.6.1',
-    'com.squareup.retrofit2:converter-jackson:2.6.1',
-    'com.squareup.retrofit2:converter-scalars:2.6.1'
+    'com.squareup.retrofit2:retrofit:2.6.2',
+    'com.squareup.retrofit2:converter-jackson:2.6.2',
+    'com.squareup.retrofit2:converter-scalars:2.6.2'
 ]
-libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.6.1'
+libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.6.2'
 
-libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.1' 
+libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2' 
 
 libraries.guava = 'com.google.guava:guava:28.1-jre'
 

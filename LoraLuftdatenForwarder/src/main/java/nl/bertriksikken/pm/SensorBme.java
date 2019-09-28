@@ -2,8 +2,6 @@ package nl.bertriksikken.pm;
 
 import java.util.Locale;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Set of meteo sensor values from a BME280.
  */

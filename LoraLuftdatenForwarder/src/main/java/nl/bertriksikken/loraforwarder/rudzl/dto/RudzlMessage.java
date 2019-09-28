@@ -37,4 +37,9 @@ public final class RudzlMessage {
 		return number.doubleValue();
 	}
 
+	public int getSdsId() {
+        Number number = (Number) fields.getOrDefault("SDS_ID", 0);
+        return number.intValue() & 0xFFFF;
+	}
+	
 }

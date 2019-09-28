@@ -1,10 +1,10 @@
 package nl.bertriksikken.ttn.dto;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class TtnUplinkMessage {
@@ -54,8 +54,8 @@ public final class TtnUplinkMessage {
         return rawPayload.clone();
     }
 
-    public ImmutableMap<String, Object> getPayloadFields() {
-    	return ImmutableMap.copyOf(payloadFields);
+    public Map<String, Object> getPayloadFields() {
+    	return new HashMap<>(payloadFields);
     }
     
 }

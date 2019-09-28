@@ -1,15 +1,14 @@
 package nl.bertriksikken.loraforwarder.rudzl.dto;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 
 public final class RudzlMessage {
 
-	private final ImmutableMap<String, Object> fields;
+	private final Map<String, Object> fields;
 
 	public RudzlMessage(Map<String, Object> fields) {
-		this.fields = ImmutableMap.copyOf(fields);
+		this.fields = new HashMap<>(fields);
 	}
 	
 	public double getPM10() {

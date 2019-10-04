@@ -6,7 +6,7 @@ libraries.slf4j = 'org.slf4j:slf4j-api:1.7.28'
 libraries.slf4jlog4j = 'org.slf4j:slf4j-log4j12:1.7.28'
 
 libraries.jackson = [
-    'com.fasterxml.jackson.core:jackson-databind:2.9.9.3'
+    'com.fasterxml.jackson.core:jackson-databind:2.10.0'
 ]
 
 libraries.retrofit = [
@@ -17,8 +17,6 @@ libraries.retrofit = [
 libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.6.2'
 
 libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2' 
-
-libraries.guava = 'com.google.guava:guava:28.1-jre'
 
 // test libraries
 libraries.junit = 'junit:junit:4.12'

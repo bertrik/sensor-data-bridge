@@ -106,7 +106,7 @@ public final class LoraLuftdatenForwarder {
 	        	LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);
 	        	bmeMessage.addItem(new LuftdatenItem("temperature", bme.getTemp()));
 	        	bmeMessage.addItem(new LuftdatenItem("humidity", bme.getRh()));
-	        	bmeMessage.addItem(new LuftdatenItem("pressure", bme.getPressure()));
+                bmeMessage.addItem(new LuftdatenItem("pressure", 100.0 * bme.getPressure()));
 	            uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_BME, bmeMessage);
             }
         } catch (Exception e) {

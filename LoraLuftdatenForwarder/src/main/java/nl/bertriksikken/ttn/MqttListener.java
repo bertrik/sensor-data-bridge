@@ -56,7 +56,7 @@ public final class MqttListener {
         LOG.info("Starting MQTT listener");
         
         // connect
-        LOG.info("Connecting to MQTT server");
+        LOG.info("Connecting to MQTT server as user {}", appId);
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appId);
         options.setPassword(appKey.toCharArray());

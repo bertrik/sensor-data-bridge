@@ -45,7 +45,6 @@ public final class LoraLuftdatenForwarder {
     }
 
     private LoraLuftdatenForwarder(ILoraForwarderConfig config) {
-
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
                 config.getLuftdatenTimeout());
         uploader = new LuftdatenUploader(restClient);
@@ -54,6 +53,8 @@ public final class LoraLuftdatenForwarder {
 
         mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(),
                 config.getMqttAppKey());
+
+        LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
     }
 
     // package-private to allow testing

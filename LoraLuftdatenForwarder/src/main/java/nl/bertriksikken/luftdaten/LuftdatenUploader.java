@@ -46,7 +46,9 @@ public final class LuftdatenUploader {
 	 * @return a new REST client.
 	 */
 	public static ILuftdatenApi newRestClient(String url, Duration timeout) {
-		OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout)
+	    LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
+
+	    OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout)
 				.build();
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl(url)

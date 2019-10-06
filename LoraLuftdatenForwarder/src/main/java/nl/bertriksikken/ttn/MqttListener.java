@@ -91,7 +91,7 @@ public final class MqttListener {
     private void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
     	Instant now = Instant.now();
         final String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
-        LOG.info("Message arrived on topic '{}': {}", topic, message);
+        LOG.info("Message arrived on topic '{}'", topic);
         
         // notify our listener, in an exception safe manner
         try {

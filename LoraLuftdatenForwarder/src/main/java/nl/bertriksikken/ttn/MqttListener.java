@@ -63,16 +63,6 @@ public final class MqttListener {
         // automatic reconnect does not work in practice, I prefer a hard exception over a silent hang
         options.setAutomaticReconnect(false);
         options.setKeepAliveInterval(10);
-        mqttClient.setCallback(new MqttCallbackAdapter() {
-            public void connectionLost(Throwable cause) {
-                LOG.warn("Connection lost, reconnecting ...");
-                try {
-                    mqttClient.connect(options);
-                } catch (MqttException e) {
-                    LOG.warn("Caught exception", e);
-                }
-            }
-        });
         mqttClient.connect(options);
         
         // subscribe

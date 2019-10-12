@@ -20,5 +20,5 @@ libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
 
 // test libraries
 libraries.junit = 'junit:junit:4.12'
-libraries.mockito = 'org.mockito:mockito-core:2.28.2'
+libraries.mockito = 'org.mockito:mockito-core:3.1.0'
 

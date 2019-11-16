@@ -14,8 +14,8 @@ subprojects {
     apply plugin: "java"
     apply plugin: "eclipse"
     apply plugin: "pmd"
-     apply plugin: "com.github.spotbugs"
-     apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: "com.github.spotbugs"
+    apply plugin: 'com.github.ben-manes.versions'
     
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -35,11 +35,11 @@ subprojects {
 
     // Standard libraries added to all projects
     dependencies {
-        testCompile libraries.junit
-	    testCompile libraries.mockito
-	    testCompile libraries.slf4jlog4j
+        testImplementation libraries.junit
+	    testImplementation libraries.mockito
+	    testImplementation libraries.slf4jlog4j
 
-        compile libraries.slf4j
+        implementation libraries.slf4j
     }
 
 }

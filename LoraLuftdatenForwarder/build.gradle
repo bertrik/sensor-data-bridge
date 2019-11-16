@@ -3,13 +3,13 @@ apply plugin: "application"
 mainClassName = 'nl.bertriksikken.loraforwarder.LoraLuftdatenForwarder'
 
 dependencies {
-    compile libraries.slf4jlog4j
+    implementation libraries.slf4jlog4j
     
-    compile libraries.mqtt_client
-    compile libraries.jackson
+    implementation libraries.mqtt_client
+    implementation libraries.jackson
     
-    compile libraries.retrofit
-    testCompile libraries.retrofit_mock
+    implementation libraries.retrofit
+    testImplementation libraries.retrofit_mock
 }
 
 //Add configuration folder to classpath:

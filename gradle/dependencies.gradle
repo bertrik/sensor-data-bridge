@@ -10,15 +10,15 @@ libraries.jackson = [
 ]
 
 libraries.retrofit = [
-    'com.squareup.retrofit2:retrofit:2.7.1',
-    'com.squareup.retrofit2:converter-jackson:2.7.1',
-    'com.squareup.retrofit2:converter-scalars:2.7.1'
+    'com.squareup.retrofit2:retrofit:2.8.1',
+    'com.squareup.retrofit2:converter-jackson:2.8.1',
+    'com.squareup.retrofit2:converter-scalars:2.8.1'
 ]
-libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.7.1'
+libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.8.1'
 
 libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2' 
 
 // test libraries
 libraries.junit = 'junit:junit:4.13'
-libraries.mockito = 'org.mockito:mockito-core:3.2.4'
+libraries.mockito = 'org.mockito:mockito-core:3.3.3'
 

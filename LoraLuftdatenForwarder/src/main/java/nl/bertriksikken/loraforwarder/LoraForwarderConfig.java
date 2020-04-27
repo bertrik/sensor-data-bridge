@@ -15,7 +15,7 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
         
         ENCODING("encoding", "rudzl", "The payload encoding"),
 
-        LUFTDATEN_URL("luftdaten.url", "https://api.luftdaten.info", "luftdaten server URL (empty to disable)"),
+        LUFTDATEN_URL("luftdaten.url", "https://api.sensor.community", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)");
 
         private final String key, value, comment;

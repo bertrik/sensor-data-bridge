@@ -12,18 +12,6 @@ dependencies {
     testImplementation libraries.retrofit_mock
 }
 
-//Add configuration folder to classpath:
-startScripts {
-    classpath += files('../cfg')
-    doLast {
-        def windowsScriptFile = file getWindowsScript()
-        def unixScriptFile    = file getUnixScript()
-             
-        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\cfg', '%APP_HOME%\\cfg')
-        unixScriptFile.text    = unixScriptFile.text.replace('$APP_HOME/lib/cfg', '$APP_HOME/cfg')
-    }
-}
-
 // fix scripts executable bit and line endings
 import org.apache.tools.ant.filters.FixCrLfFilter
 

@@ -10,7 +10,7 @@ import java.util.Locale;
  * Representation of one measurement item in a cayenne message.
  */
 public final class CayenneItem {
-    
+
     private final int channel;
     private final ECayenneItem type;
     private final Number[] values;
@@ -19,8 +19,8 @@ public final class CayenneItem {
      * Constructor.
      * 
      * @param channel the unique channel
-     * @param type the type
-     * @param values the values
+     * @param type    the type
+     * @param values  the values
      */
     public CayenneItem(int channel, ECayenneItem type, Number[] values) {
         this.channel = channel;
@@ -32,11 +32,11 @@ public final class CayenneItem {
      * Constructor for a single value
      * 
      * @param channel the unique channel
-     * @param type the type
-     * @param value the value
+     * @param type    the type
+     * @param value   the value
      */
     public CayenneItem(int channel, ECayenneItem type, Number value) {
-        this(channel, type, new Number[] {value});
+        this(channel, type, new Number[] { value });
     }
 
     public int getChannel() {
@@ -50,7 +50,7 @@ public final class CayenneItem {
     public Number[] getValues() {
         return values.clone();
     }
-    
+
     public Number getValue() {
         return values[0];
     }
@@ -58,7 +58,7 @@ public final class CayenneItem {
     public String[] format() {
         return type.format(values);
     }
-    
+
     /**
      * Parses one item from the byte buffer and returns it.
      * 
@@ -69,6 +69,21 @@ public final class CayenneItem {
     public static CayenneItem parse(ByteBuffer bb) throws CayenneException {
         try {
             int channel = bb.get();
+            return parsePacked(bb, channel);
+        } catch (BufferUnderflowException e) {
+            throw new CayenneException(e);
+        }
+    }
+
+    /**
+     * Parses one item from the byte buffer and returns it.
+     * 
+     * @param bb the byte buffer
+     * @return a new cayenne item
+     * @throws CayenneException if an error occurs during parsing
+     */
+    public static CayenneItem parsePacked(ByteBuffer bb, int channel) throws CayenneException {
+        try {
             int type = bb.get() & 0xFF;
             ECayenneItem ct = ECayenneItem.parse(type);
             Number[] values = ct.parse(bb);
@@ -77,21 +92,21 @@ public final class CayenneItem {
             throw new CayenneException(e);
         }
     }
-    
+
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "{chan=%d,type=%s,value=%s}", channel, type, Arrays.toString(format()));  
+        return String.format(Locale.ROOT, "{chan=%d,type=%s,value=%s}", channel, type, Arrays.toString(format()));
     }
 
     public void encode(ByteBuffer bb) throws CayenneException {
         try {
-            bb.put((byte)channel);
-            bb.put((byte)type.getType());
+            bb.put((byte) channel);
+            bb.put((byte) type.getType());
             type.encode(bb, values);
         } catch (BufferOverflowException e) {
             throw new CayenneException(e);
         }
-        
+
     }
-    
+
 }

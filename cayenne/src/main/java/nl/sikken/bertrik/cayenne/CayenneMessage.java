@@ -12,7 +12,28 @@ import java.util.List;
  */
 public final class CayenneMessage {
     
+    private final ECayennePayloadFormat format;
     private final List<CayenneItem> items = new ArrayList<>();
+    
+    public CayenneMessage() {
+        this(ECayennePayloadFormat.DYNAMIC_SENSOR_PAYLOAD);
+    }
+
+    /**
+     * @param format the payload format (e.g. parsed from the LoRaWAN port),
+     *               currently only DYNAMIC_SENSOR_PAYLOAD and PACKED_SENSOR_PAYLOAD
+     *               are supported.
+     */
+    public CayenneMessage(ECayennePayloadFormat format) {
+        switch (format) {
+        case DYNAMIC_SENSOR_PAYLOAD:
+        case PACKED_SENSOR_PAYLOAD:
+            break;
+        default:
+            throw new IllegalArgumentException("Payload format not supported: " + format);
+        }
+        this.format = format;
+    }
     
     /**
      * Parses the byte array into a cayenne message.
@@ -21,14 +42,24 @@ public final class CayenneMessage {
      * @return the cayenne message
      * @throws CayenneException in case of a parsing problem
      */
-    public static CayenneMessage parse(byte[] data) throws CayenneException {
-        CayenneMessage message = new CayenneMessage();
+    public void parse(byte[] data) throws CayenneException {
         ByteBuffer bb = ByteBuffer.wrap(data);
+        int channel = 0;
         while (bb.hasRemaining()) {
-            CayenneItem item = CayenneItem.parse(bb);
-            message.add(item);
+            CayenneItem item;
+            switch (format) {
+            case DYNAMIC_SENSOR_PAYLOAD:
+                item = CayenneItem.parse(bb);
+                break;
+            case PACKED_SENSOR_PAYLOAD:
+                item = CayenneItem.parsePacked(bb, channel);
+                channel++;
+                break;
+            default:
+                throw new IllegalStateException("Unsupported cayenne payload: " + format);
+            }
+            add(item);
         }
-        return message;
     }
     
     /**

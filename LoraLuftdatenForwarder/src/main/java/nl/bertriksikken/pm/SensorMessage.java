@@ -9,18 +9,12 @@ import java.util.Optional;
 public final class SensorMessage {
 
     private SensorSds sds;
-
     private SensorBme bme;
-
-    private SensorMessage() {
-        // Jackson constructor
-    }
 
     /**
      * Constructor.
      */
     public SensorMessage(SensorSds sds) {
-        this();
         this.sds = sds;
     }
 

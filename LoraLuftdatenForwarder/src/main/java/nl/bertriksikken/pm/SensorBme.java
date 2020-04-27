@@ -1,6 +1,7 @@
 package nl.bertriksikken.pm;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Set of meteo sensor values from a BME280.
@@ -9,7 +10,7 @@ public final class SensorBme {
 
     private Double temp;
     private Double rh;
-    private Double pressure;
+    private Optional<Double> pressure;
 
     /**
      * @param temp     temperature (celcius)
@@ -19,7 +20,13 @@ public final class SensorBme {
     public SensorBme(double temp, double rh, double pressure) {
         this.temp = temp;
         this.rh = rh;
-        this.pressure = pressure;
+        this.pressure = Optional.of(pressure);
+    }
+
+    public SensorBme(double temp, double rh) {
+        this.temp = temp;
+        this.rh = rh;
+        this.pressure = Optional.empty();
     }
 
     public Double getTemp() {
@@ -31,7 +38,7 @@ public final class SensorBme {
     }
 
     public Double getPressure() {
-        return pressure;
+        return pressure.get();
     }
 
     public boolean hasValidTemp() {
@@ -43,7 +50,7 @@ public final class SensorBme {
     }
 
     public boolean hasValidPressure() {
-        return (pressure != null) && (pressure > 800.0) && (pressure < 1200.0);
+        return pressure.isPresent() && (pressure.get() > 800.0) && (pressure.get() < 1200.0);
     }
 
     @Override

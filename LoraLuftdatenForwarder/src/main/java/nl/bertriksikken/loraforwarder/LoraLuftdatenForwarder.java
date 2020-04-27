@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
+import nl.bertriksikken.loraforwarder.ttnulm.PayloadParseException;
+import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
@@ -35,9 +38,11 @@ public final class LoraLuftdatenForwarder {
     private final MqttListener mqttListener;
     private final LuftdatenUploader uploader;
     private final ExecutorService executor;
-	private final EPayloadEncoding encoding;
+    private final EPayloadEncoding encoding;
 
     public static void main(String[] args) throws IOException, MqttException {
+        PropertyConfigurator.configure("log4j.properties");
+
         ILoraForwarderConfig config = readConfig(new File(CONFIG_FILE));
         LoraLuftdatenForwarder app = new LoraLuftdatenForwarder(config);
         app.start();
@@ -57,8 +62,7 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
     }
 
-    // package-private to allow testing
-    void messageReceived(Instant instant, String topic, String message) {
+    private void messageReceived(Instant instant, String topic, String message) {
         LOG.info("Received: '{}'", message);
 
         // decode JSON
@@ -76,39 +80,58 @@ public final class LoraLuftdatenForwarder {
 
         // schedule upload
         if (sensorMessage != null) {
-        	executor.execute(() -> handleMessageTask(sensorId, sensorMessage));
+            executor.execute(() -> handleMessageTask(sensorId, sensorMessage));
         }
     }
-    
-    private SensorMessage decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
-    	switch (encoding) {
-    	case RUDZL:
-    		RudzlMessage message = new RudzlMessage(uplinkMessage.getPayloadFields());
-            SensorSds sds = new SensorSds(sensorId, message.getPM10(), message.getPM2_5());
-            SensorMessage sensorMessage = new SensorMessage(sds);    	
-            SensorBme bme = new SensorBme(message.getT(), message.getRH(), message.getP());
+
+    // package-private to allow testing
+    SensorMessage decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
+        SensorMessage sensorMessage = null;
+        SensorSds sds;
+        SensorBme bme;
+
+        switch (encoding) {
+        case RUDZL:
+            RudzlMessage rudzlMessage = new RudzlMessage(uplinkMessage.getPayloadFields());
+            sds = new SensorSds(sensorId, rudzlMessage.getPM10(), rudzlMessage.getPM2_5());
+            sensorMessage = new SensorMessage(sds);
+            bme = new SensorBme(rudzlMessage.getT(), rudzlMessage.getRH(), rudzlMessage.getP());
             sensorMessage.setBme(bme);
-    		return sensorMessage;
-    	default:
-    		return null;
-    	}
+            return sensorMessage;
+        case TTN_ULM:
+            TtnUlmMessage ulmMessage = new TtnUlmMessage();
+            try {
+                ulmMessage.parse(uplinkMessage.getRawPayload());
+            } catch (PayloadParseException e) {
+                return null;
+            }
+            sds = new SensorSds(sensorId, ulmMessage.getPm10(), ulmMessage.getPm2_5());
+            sensorMessage = new SensorMessage(sds);
+            bme = new SensorBme(ulmMessage.getTempC(), ulmMessage.getRhPerc());
+            sensorMessage.setBme(bme);
+            return sensorMessage;
+        default:
+            throw new IllegalStateException("Unhandled encoding: " + encoding);
+        }
     }
 
     private void handleMessageTask(String sensorId, SensorMessage sensorMessage) {
         // forward to luftdaten, in an exception safe manner
         try {
-        	LuftdatenMessage sdsMessage = new LuftdatenMessage(SOFTWARE_VERSION);
-        	sdsMessage.addItem(new LuftdatenItem("P1", sensorMessage.getSds().getPm10()));
-        	sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
+            LuftdatenMessage sdsMessage = new LuftdatenMessage(SOFTWARE_VERSION);
+            sdsMessage.addItem(new LuftdatenItem("P1", sensorMessage.getSds().getPm10()));
+            sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
             uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_SDS, sdsMessage);
 
             if (sensorMessage.getBme().isPresent()) {
-            	SensorBme bme = sensorMessage.getBme().get();
-	        	LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);
-	        	bmeMessage.addItem(new LuftdatenItem("temperature", bme.getTemp()));
-	        	bmeMessage.addItem(new LuftdatenItem("humidity", bme.getRh()));
-                bmeMessage.addItem(new LuftdatenItem("pressure", 100.0 * bme.getPressure()));
-	            uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_BME, bmeMessage);
+                SensorBme bme = sensorMessage.getBme().get();
+                LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);
+                bmeMessage.addItem(new LuftdatenItem("temperature", bme.getTemp()));
+                bmeMessage.addItem(new LuftdatenItem("humidity", bme.getRh()));
+                if (bme.hasValidPressure()) {
+                    bmeMessage.addItem(new LuftdatenItem("pressure", 100.0 * bme.getPressure()));
+                }
+                uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_BME, bmeMessage);
             }
         } catch (Exception e) {
             LOG.trace("Caught exception", e);

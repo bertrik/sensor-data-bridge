@@ -10,6 +10,7 @@ public final class SensorMessage {
 
     private SensorSds sds;
     private SensorBme bme;
+    private SensorDht dht;
 
     /**
      * Constructor.
@@ -22,8 +23,16 @@ public final class SensorMessage {
         return sds;
     }
 
+    public void setDht(SensorDht dht) {
+        this.dht= dht;
+    }
+    
+    public Optional<SensorDht> getDht() {
+        return Optional.ofNullable(dht);
+    }
+
     public void setBme(SensorBme bme) {
-    	this.bme = bme;
+        this.bme = bme;
     }
     
     public Optional<SensorBme> getBme() {
@@ -34,5 +43,6 @@ public final class SensorMessage {
     public String toString() {
         return String.format(Locale.US, "{sds=%s,bme=%s}", sds, bme);
     }
+
 
 }

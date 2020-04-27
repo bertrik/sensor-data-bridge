@@ -24,6 +24,7 @@ import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.SensorBme;
+import nl.bertriksikken.pm.SensorDht;
 import nl.bertriksikken.pm.SensorMessage;
 import nl.bertriksikken.pm.SensorSds;
 import nl.bertriksikken.ttn.MqttListener;
@@ -88,14 +89,13 @@ public final class LoraLuftdatenForwarder {
     SensorMessage decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
         SensorMessage sensorMessage = null;
         SensorSds sds;
-        SensorBme bme;
 
         switch (encoding) {
         case RUDZL:
             RudzlMessage rudzlMessage = new RudzlMessage(uplinkMessage.getPayloadFields());
             sds = new SensorSds(sensorId, rudzlMessage.getPM10(), rudzlMessage.getPM2_5());
             sensorMessage = new SensorMessage(sds);
-            bme = new SensorBme(rudzlMessage.getT(), rudzlMessage.getRH(), rudzlMessage.getP());
+            SensorBme bme = new SensorBme(rudzlMessage.getT(), rudzlMessage.getRH(), rudzlMessage.getP());
             sensorMessage.setBme(bme);
             return sensorMessage;
         case TTN_ULM:
@@ -103,12 +103,13 @@ public final class LoraLuftdatenForwarder {
             try {
                 ulmMessage.parse(uplinkMessage.getRawPayload());
             } catch (PayloadParseException e) {
+                LOG.warn("Could not parse raw payload");
                 return null;
             }
             sds = new SensorSds(sensorId, ulmMessage.getPm10(), ulmMessage.getPm2_5());
             sensorMessage = new SensorMessage(sds);
-            bme = new SensorBme(ulmMessage.getTempC(), ulmMessage.getRhPerc());
-            sensorMessage.setBme(bme);
+            SensorDht dht = new SensorDht(ulmMessage.getTempC(), ulmMessage.getRhPerc());
+            sensorMessage.setDht(dht);
             return sensorMessage;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);
@@ -123,6 +124,14 @@ public final class LoraLuftdatenForwarder {
             sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
             uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_SDS, sdsMessage);
 
+            if (sensorMessage.getDht().isPresent()) {
+                SensorDht dht = sensorMessage.getDht().get();
+                LuftdatenMessage dhtMessage = new LuftdatenMessage(SOFTWARE_VERSION);
+                dhtMessage.addItem(new LuftdatenItem("temperature", dht.getTemp()));
+                dhtMessage.addItem(new LuftdatenItem("humidity", dht.getRh()));
+                uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_DHT, dhtMessage);
+            }
+            
             if (sensorMessage.getBme().isPresent()) {
                 SensorBme bme = sensorMessage.getBme().get();
                 LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);

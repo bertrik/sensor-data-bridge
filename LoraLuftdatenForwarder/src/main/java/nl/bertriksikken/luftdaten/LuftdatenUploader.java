@@ -24,6 +24,7 @@ public final class LuftdatenUploader {
 	
 	// the "PIN" we upload dust data to
 	public static final String PIN_SDS = "1";
+	public static final String PIN_DHT = "7";
 	public static final String PIN_BME = "11";
 
 	private final ObjectMapper mapper = new ObjectMapper();

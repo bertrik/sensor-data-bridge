@@ -10,8 +10,8 @@ public abstract class BaseFormatter implements IFormatter {
     /**
      * Gets an integer value from the byte buffer.
      * 
-     * @param bb the byte buffer
-     * @param n the number of bytes to get
+     * @param bb     the byte buffer
+     * @param n      the number of bytes to get
      * @param signed whether it should be interpreted as signed value or not
      * @return the value
      */
@@ -24,12 +24,12 @@ public abstract class BaseFormatter implements IFormatter {
         }
         return val;
     }
-    
+
     /**
      * Puts an integer value into a byte buffer
      * 
-     * @param bb the byte buffer
-     * @param n the number of bytes to put
+     * @param bb    the byte buffer
+     * @param n     the number of bytes to put
      * @param value the value to encode
      */
     protected void putValue(ByteBuffer bb, int n, int value) {
@@ -40,5 +40,5 @@ public abstract class BaseFormatter implements IFormatter {
             shift -= 8;
         }
     }
-    
+
 }

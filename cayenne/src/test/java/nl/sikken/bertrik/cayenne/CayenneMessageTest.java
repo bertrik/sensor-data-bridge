@@ -39,8 +39,8 @@ public final class CayenneMessageTest {
      */
     @Test
     public void testTemperaturePlusAccel() throws CayenneException {
-        byte[] data = { 0x01, 0x67, (byte) 0xFF, (byte) 0xD7, 0x06, 0x71, 0x04, (byte) 0xD2, (byte) 0xFB, 0x2E,
-                0x00, 0x00 };
+        byte[] data = { 0x01, 0x67, (byte) 0xFF, (byte) 0xD7, 0x06, 0x71, 0x04, (byte) 0xD2, (byte) 0xFB, 0x2E, 0x00,
+                0x00 };
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
@@ -55,8 +55,7 @@ public final class CayenneMessageTest {
      */
     @Test
     public void testGps() throws CayenneException {
-        byte[] data = { 0x01, (byte) 0x88, 0x06, 0x076, 0x5f, (byte) 0xf2, (byte) 0x96, 0x0a, 0x00, 0x03,
-                (byte) 0xe8 };
+        byte[] data = { 0x01, (byte) 0x88, 0x06, 0x076, 0x5f, (byte) 0xf2, (byte) 0x96, 0x0a, 0x00, 0x03, (byte) 0xe8 };
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
@@ -104,7 +103,7 @@ public final class CayenneMessageTest {
     public void testActualData2() throws CayenneException {
         String base64 = "AYgH8CEAt03/+VwCAgGfA2cA8A==";
         byte[] data = Base64.getDecoder().decode(base64);
-        CayenneMessage payload = new CayenneMessage(); 
+        CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
         // verify we can get at the data by channel
@@ -245,7 +244,7 @@ public final class CayenneMessageTest {
     }
 
     /**
-     * Verifies decoding of packed Cayenne format 
+     * Verifies decoding of packed Cayenne format
      */
     @Test
     public void testPackedFormat() throws CayenneException {

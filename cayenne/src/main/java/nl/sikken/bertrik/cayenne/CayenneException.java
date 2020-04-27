@@ -4,7 +4,7 @@ package nl.sikken.bertrik.cayenne;
  * Cayenne parsing exception.
  */
 public class CayenneException extends Exception {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -24,5 +24,5 @@ public class CayenneException extends Exception {
     public CayenneException(Throwable e) {
         super(e);
     }
-    
+
 }

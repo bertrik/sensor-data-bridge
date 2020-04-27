@@ -95,5 +95,5 @@ public enum ECayenneItem {
     public void encode(ByteBuffer bb, Number[] values) {
         formatter.encode(bb, values);
     }
-    
+
 }

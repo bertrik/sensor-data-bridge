@@ -11,10 +11,10 @@ import java.util.List;
  * A cayenne message containing cayenne data items.
  */
 public final class CayenneMessage {
-    
+
     private final ECayennePayloadFormat format;
     private final List<CayenneItem> items = new ArrayList<>();
-    
+
     public CayenneMessage() {
         this(ECayennePayloadFormat.DYNAMIC_SENSOR_PAYLOAD);
     }
@@ -34,7 +34,7 @@ public final class CayenneMessage {
         }
         this.format = format;
     }
-    
+
     /**
      * Parses the byte array into a cayenne message.
      * 
@@ -61,7 +61,7 @@ public final class CayenneMessage {
             add(item);
         }
     }
-    
+
     /**
      * Adds a cayenne measurement item to the message.
      * 
@@ -70,29 +70,31 @@ public final class CayenneMessage {
     public void add(CayenneItem item) {
         items.add(item);
     }
-    
+
     /**
      * Encodes the cayenne message into a byte array.
      * 
      * @param maxSize the maximum size of the cayenne message
      * @return the byte array.
-     * @throws CayenneException in case something went wrong during encoding (e.g. message too big)
+     * @throws CayenneException in case something went wrong during encoding (e.g.
+     *                          message too big)
      */
     public byte[] encode(int maxSize) throws CayenneException {
         ByteBuffer bb = ByteBuffer.allocate(maxSize).order(ByteOrder.LITTLE_ENDIAN);
         for (CayenneItem item : items) {
-        	item.encode(bb);
+            item.encode(bb);
         }
         return Arrays.copyOfRange(bb.array(), 0, bb.position());
     }
-    
+
     /**
-     * @return an immutable list of measurement items in the order it appears in the raw data
+     * @return an immutable list of measurement items in the order it appears in the
+     *         raw data
      */
     public List<CayenneItem> getItems() {
         return Collections.unmodifiableList(items);
     }
-    
+
     /**
      * Finds an item by type.
      * 
@@ -102,7 +104,7 @@ public final class CayenneMessage {
     public CayenneItem ofType(ECayenneItem type) {
         return items.stream().filter(i -> (i.getType() == type)).findFirst().orElse(null);
     }
-    
+
     /**
      * Finds an item by channel.
      * 
@@ -117,5 +119,5 @@ public final class CayenneMessage {
     public String toString() {
         return Arrays.toString(items.toArray());
     }
-    
+
 }

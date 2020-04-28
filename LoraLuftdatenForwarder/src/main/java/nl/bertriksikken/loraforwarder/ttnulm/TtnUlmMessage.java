@@ -1,5 +1,6 @@
 package nl.bertriksikken.loraforwarder.ttnulm;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -14,11 +15,15 @@ public final class TtnUlmMessage {
     }
     
     public void parse(byte[] raw)  throws PayloadParseException {
-        ByteBuffer bb = ByteBuffer.wrap(raw).order(ByteOrder.BIG_ENDIAN);
-        this.pm10 = bb.getShort() / 100.0;
-        this.pm2_5 = bb.getShort() / 100.0;
-        this.rhPerc = bb.getShort() / 100.0;
-        this.tempC = bb.getShort() / 100.0;
+        try {
+            ByteBuffer bb = ByteBuffer.wrap(raw).order(ByteOrder.BIG_ENDIAN);
+            this.pm10 = bb.getShort() / 100.0;
+            this.pm2_5 = bb.getShort() / 100.0;
+            this.rhPerc = bb.getShort() / 100.0;
+            this.tempC = bb.getShort() / 100.0;
+        } catch (BufferUnderflowException e) {
+            throw new PayloadParseException(e);
+        }
     }
 
     public double getPm10() {

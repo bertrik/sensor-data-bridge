@@ -8,4 +8,8 @@ public final class PayloadParseException extends Exception {
         super(message);
     }
     
+    public PayloadParseException(Throwable cause) {
+        super(cause);
+    }
+    
 }

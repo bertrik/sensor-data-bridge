@@ -3,6 +3,8 @@ apply plugin: "application"
 mainClassName = 'nl.bertriksikken.loraforwarder.LoraLuftdatenForwarder'
 
 dependencies {
+    implementation project(":cayenne")
+
     implementation libraries.slf4jlog4j
     
     implementation libraries.mqtt_client

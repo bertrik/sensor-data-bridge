@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.PayloadParseException;
+import nl.bertriksikken.loraforwarder.ttnulm.SdsDhtCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
@@ -97,23 +98,40 @@ public final class LoraLuftdatenForwarder {
             sensorMessage = new SensorMessage(sds);
             SensorBme bme = new SensorBme(rudzlMessage.getT(), rudzlMessage.getRH(), rudzlMessage.getP());
             sensorMessage.setBme(bme);
-            return sensorMessage;
+            break;
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();
             try {
                 ulmMessage.parse(uplinkMessage.getRawPayload());
             } catch (PayloadParseException e) {
                 LOG.warn("Could not parse raw payload");
-                return null;
+                break;
             }
             sds = new SensorSds(sensorId, ulmMessage.getPm10(), ulmMessage.getPm2_5());
             sensorMessage = new SensorMessage(sds);
             SensorDht dht = new SensorDht(ulmMessage.getTempC(), ulmMessage.getRhPerc());
             sensorMessage.setDht(dht);
-            return sensorMessage;
+            break;
+        case CAYENNE_SDS_DHT:
+            SdsDhtCayenneMessage cayenne = new SdsDhtCayenneMessage();
+            try {
+                cayenne.parse(uplinkMessage.getRawPayload());
+            } catch (PayloadParseException e) {
+                LOG.warn("Could not parse raw payload");
+                break;
+            }
+            if (cayenne.hasPm10() && cayenne.hasPm2_5()) {
+                sds = new SensorSds(sensorId, cayenne.getPm10(), cayenne.getPm2_5());
+                sensorMessage = new SensorMessage(sds);
+                if (cayenne.hasRhPerc() && cayenne.hasTempC()) {
+                    sensorMessage.setDht(new SensorDht(cayenne.getTempC(), cayenne.getRhPerc()));
+                }
+            }
+            break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);
         }
+        return sensorMessage;
     }
 
     private void handleMessageTask(String sensorId, SensorMessage sensorMessage) {

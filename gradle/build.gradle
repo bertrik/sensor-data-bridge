@@ -13,7 +13,6 @@ apply from:'dependencies.gradle'
 subprojects {
     apply plugin: "java"
     apply plugin: "eclipse"
-    apply plugin: "pmd"
     apply plugin: "com.github.spotbugs"
     apply plugin: 'com.github.ben-manes.versions'
     
@@ -22,10 +21,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    pmd {
-        toolVersion = "5.8.1"
     }
 
     spotbugsMain {

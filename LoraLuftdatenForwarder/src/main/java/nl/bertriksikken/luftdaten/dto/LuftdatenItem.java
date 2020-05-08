@@ -27,7 +27,7 @@ public final class LuftdatenItem {
     public LuftdatenItem(String name, Double value) {
         this();
         this.name = name;
-        this.value = String.valueOf(value);
+        this.value = String.format(Locale.ROOT, "%.1f", value);
     }
 
     public String getName() {

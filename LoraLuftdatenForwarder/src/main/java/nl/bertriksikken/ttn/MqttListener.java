@@ -60,9 +60,7 @@ public final class MqttListener {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appId);
         options.setPassword(appKey.toCharArray());
-        // automatic reconnect does not work in practice, I prefer a hard exception over a silent hang
-        options.setAutomaticReconnect(false);
-        options.setKeepAliveInterval(10);
+        options.setAutomaticReconnect(true);
         mqttClient.connect(options);
         
         // subscribe

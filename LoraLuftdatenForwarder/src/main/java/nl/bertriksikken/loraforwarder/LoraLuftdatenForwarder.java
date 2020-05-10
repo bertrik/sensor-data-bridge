@@ -169,7 +169,7 @@ public final class LoraLuftdatenForwarder {
             if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
                     && !data.hasValue(ESensorItem.PRESSURE)) {
                 LuftdatenMessage p7Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                p7Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.TEMP)));
+                p7Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
                 p7Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
                 uploader.uploadMeasurement(sensorId, "7", p7Message);
             }

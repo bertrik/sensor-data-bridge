@@ -4,7 +4,7 @@ public enum EPayloadEncoding {
 
 	RUDZL("rudzl"),
     TTN_ULM("ttnulm"),
-    CAYENNE_SDS_DHT("cayenne_sds_dht");
+    CAYENNE("cayenne");
   
 	
 	private final String id;

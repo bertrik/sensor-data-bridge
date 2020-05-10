@@ -13,7 +13,7 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
         MQTT_APP_KEY("mqtt.appkey", "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk",
                 "TTN application access key"),
         
-        ENCODING("encoding", "rudzl", "The payload encoding"),
+        ENCODING("encoding", "cayenne", "The payload encoding"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.sensor.community", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)");

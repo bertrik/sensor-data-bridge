@@ -3,13 +3,13 @@ package nl.bertriksikken.loraforwarder.ttnulm;
 import org.junit.Assert;
 import org.junit.Test;
 
-public final class SdsDhtCayenneMessageTest {
+public final class TtnCayenneMessageTest {
 
     @Test
     public void testHappyFlow() throws PayloadParseException {
         byte[] raw = new byte[] { 0x01, 0x02, 0x00, 0x64, 0x02, 0x02, 0x00, 0x19, 0x03, 0x67, (byte) 0xFF, (byte) 0xF0,
                 0x04, 0x68, 0x77 };
-        SdsDhtCayenneMessage msg = new SdsDhtCayenneMessage();
+        TtnCayenneMessage msg = new TtnCayenneMessage();
         msg.parse(raw);
         
         Assert.assertEquals(1.0, msg.getPm10(), 0.01);

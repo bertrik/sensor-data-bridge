@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.PayloadParseException;
-import nl.bertriksikken.loraforwarder.ttnulm.SdsDhtCayenneMessage;
+import nl.bertriksikken.loraforwarder.ttnulm.TtnCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
@@ -110,8 +110,8 @@ public final class LoraLuftdatenForwarder {
             sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
             sensorData.addValue(ESensorItem.TEMP, ulmMessage.getTempC());
             break;
-        case CAYENNE_SDS_DHT:
-            SdsDhtCayenneMessage cayenne = new SdsDhtCayenneMessage();
+        case CAYENNE:
+            TtnCayenneMessage cayenne = new TtnCayenneMessage();
             try {
                 cayenne.parse(uplinkMessage.getRawPayload());
             } catch (PayloadParseException e) {

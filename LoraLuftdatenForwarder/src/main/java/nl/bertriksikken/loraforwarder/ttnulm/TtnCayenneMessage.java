@@ -10,14 +10,14 @@ import nl.sikken.bertrik.cayenne.ECayenneItem;
 /**
  * Cayenne message containing SDS data (as analog values on channels 100 and 25) and DHT data.
  */
-public final class SdsDhtCayenneMessage {
+public final class TtnCayenneMessage {
 
     private Optional<Double> pm10 = Optional.empty();
     private Optional<Double> pm2_5 = Optional.empty();;
     private Optional<Double> rhPerc = Optional.empty();;
     private Optional<Double> tempC = Optional.empty();;
 
-    public SdsDhtCayenneMessage() {
+    public TtnCayenneMessage() {
     }
 
     public void parse(byte[] raw) throws PayloadParseException {

@@ -24,10 +24,8 @@ import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
-import nl.bertriksikken.pm.SensorBme;
-import nl.bertriksikken.pm.SensorDht;
-import nl.bertriksikken.pm.SensorMessage;
-import nl.bertriksikken.pm.SensorSds;
+import nl.bertriksikken.pm.ESensorItem;
+import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
 
@@ -78,26 +76,26 @@ public final class LoraLuftdatenForwarder {
         }
         String sensorId = String.format(Locale.ROOT, "TTN-%s", uplink.getHardwareSerial());
 
-        SensorMessage sensorMessage = decodeTtnMessage(instant, sensorId, uplink);
+        SensorData sensorData = decodeTtnMessage(instant, sensorId, uplink);
 
         // schedule upload
-        if (sensorMessage != null) {
-            executor.execute(() -> handleMessageTask(sensorId, sensorMessage));
+        if (sensorData != null) {
+            executor.execute(() -> handleMessageTask(sensorId, sensorData));
         }
     }
 
     // package-private to allow testing
-    SensorMessage decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
-        SensorMessage sensorMessage = null;
-        SensorSds sds;
+    SensorData decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
+        SensorData sensorData = new SensorData();
 
         switch (encoding) {
         case RUDZL:
             RudzlMessage rudzlMessage = new RudzlMessage(uplinkMessage.getPayloadFields());
-            sds = new SensorSds(sensorId, rudzlMessage.getPM10(), rudzlMessage.getPM2_5());
-            sensorMessage = new SensorMessage(sds);
-            SensorBme bme = new SensorBme(rudzlMessage.getT(), rudzlMessage.getRH(), rudzlMessage.getP());
-            sensorMessage.setBme(bme);
+            sensorData.addValue(ESensorItem.PM10, rudzlMessage.getPM10());
+            sensorData.addValue(ESensorItem.PM2_5, rudzlMessage.getPM2_5());
+            sensorData.addValue(ESensorItem.HUMI, rudzlMessage.getRH());
+            sensorData.addValue(ESensorItem.TEMP, rudzlMessage.getT());
+            sensorData.addValue(ESensorItem.PRESSURE, rudzlMessage.getP() * 100.0); // mBar to Pa
             break;
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();
@@ -107,10 +105,10 @@ public final class LoraLuftdatenForwarder {
                 LOG.warn("Could not parse raw payload");
                 break;
             }
-            sds = new SensorSds(sensorId, ulmMessage.getPm10(), ulmMessage.getPm2_5());
-            sensorMessage = new SensorMessage(sds);
-            SensorDht dht = new SensorDht(ulmMessage.getTempC(), ulmMessage.getRhPerc());
-            sensorMessage.setDht(dht);
+            sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
+            sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
+            sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
+            sensorData.addValue(ESensorItem.TEMP, ulmMessage.getTempC());
             break;
         case CAYENNE_SDS_DHT:
             SdsDhtCayenneMessage cayenne = new SdsDhtCayenneMessage();
@@ -120,46 +118,86 @@ public final class LoraLuftdatenForwarder {
                 LOG.warn("Could not parse raw payload");
                 break;
             }
-            if (cayenne.hasPm10() && cayenne.hasPm2_5()) {
-                sds = new SensorSds(sensorId, cayenne.getPm10(), cayenne.getPm2_5());
-                sensorMessage = new SensorMessage(sds);
-                if (cayenne.hasRhPerc() && cayenne.hasTempC()) {
-                    sensorMessage.setDht(new SensorDht(cayenne.getTempC(), cayenne.getRhPerc()));
-                }
+            if (cayenne.hasPm10()) {
+                sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
+            }
+            if (cayenne.hasPm2_5()) {
+                sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
+            }
+            if (cayenne.hasRhPerc()) {
+                sensorData.addValue(ESensorItem.HUMI, cayenne.getRhPerc());
+            }
+            if (cayenne.hasTempC()) {
+                sensorData.addValue(ESensorItem.TEMP, cayenne.getTempC());
             }
             break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);
         }
-        return sensorMessage;
+        return sensorData;
     }
 
-    private void handleMessageTask(String sensorId, SensorMessage sensorMessage) {
+    private void handleMessageTask(String sensorId, SensorData data) {
         // forward to luftdaten, in an exception safe manner
         try {
-            LuftdatenMessage sdsMessage = new LuftdatenMessage(SOFTWARE_VERSION);
-            sdsMessage.addItem(new LuftdatenItem("P1", sensorMessage.getSds().getPm10()));
-            sdsMessage.addItem(new LuftdatenItem("P2", sensorMessage.getSds().getPm2_5()));
-            uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_SDS, sdsMessage);
+            // pin 1 (dust sensors)
+            if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5)
+                    || data.hasValue(ESensorItem.PM1_0)) {
+                LuftdatenMessage p1Message = new LuftdatenMessage(SOFTWARE_VERSION);
+                if (data.hasValue(ESensorItem.PM10)) {
+                    p1Message.addItem(new LuftdatenItem("P1", data.getValue(ESensorItem.PM10)));
+                }
+                if (data.hasValue(ESensorItem.PM2_5)) {
+                    p1Message.addItem(new LuftdatenItem("P2", data.getValue(ESensorItem.PM2_5)));
+                }
+                if (data.hasValue(ESensorItem.PM1_0)) {
+                    p1Message.addItem(new LuftdatenItem("P0", data.getValue(ESensorItem.PM1_0)));
+                }
+                uploader.uploadMeasurement(sensorId, "1", p1Message);
+            }
 
-            if (sensorMessage.getDht().isPresent()) {
-                SensorDht dht = sensorMessage.getDht().get();
-                LuftdatenMessage dhtMessage = new LuftdatenMessage(SOFTWARE_VERSION);
-                dhtMessage.addItem(new LuftdatenItem("temperature", dht.getTemp()));
-                dhtMessage.addItem(new LuftdatenItem("humidity", dht.getRh()));
-                uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_DHT, dhtMessage);
+            // pin 3: temperature & pressure, but no humidity
+            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
+                    && !data.hasValue(ESensorItem.HUMI)) {
+                LuftdatenMessage p3Message = new LuftdatenMessage(SOFTWARE_VERSION);
+                p3Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
+                p3Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
+                uploader.uploadMeasurement(sensorId, "3", p3Message);
+            }
+
+            // pin 7: temperature & humidity, but no pressure
+            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
+                    && !data.hasValue(ESensorItem.PRESSURE)) {
+                LuftdatenMessage p7Message = new LuftdatenMessage(SOFTWARE_VERSION);
+                p7Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.TEMP)));
+                p7Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
+                uploader.uploadMeasurement(sensorId, "7", p7Message);
+            }
+
+            // pin 9: position
+            // not implemented yet
+            
+            // pin 11: temperature & humidity & pressure
+            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
+                    && data.hasValue(ESensorItem.PRESSURE)) {
+                LuftdatenMessage p11Message = new LuftdatenMessage(SOFTWARE_VERSION);
+                p11Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
+                p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.TEMP)));
+                p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.HUMI)));
+                uploader.uploadMeasurement(sensorId, "11", p11Message);
+            }
+
+            // pin 13: only temperature
+            if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
+                    && !data.hasValue(ESensorItem.PRESSURE)) {
+                LuftdatenMessage p13Message = new LuftdatenMessage(SOFTWARE_VERSION);
+                p13Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
+                uploader.uploadMeasurement(sensorId, "13", p13Message);
             }
             
-            if (sensorMessage.getBme().isPresent()) {
-                SensorBme bme = sensorMessage.getBme().get();
-                LuftdatenMessage bmeMessage = new LuftdatenMessage(SOFTWARE_VERSION);
-                bmeMessage.addItem(new LuftdatenItem("temperature", bme.getTemp()));
-                bmeMessage.addItem(new LuftdatenItem("humidity", bme.getRh()));
-                if (bme.hasValidPressure()) {
-                    bmeMessage.addItem(new LuftdatenItem("pressure", 100.0 * bme.getPressure()));
-                }
-                uploader.uploadMeasurement(sensorId, LuftdatenUploader.PIN_BME, bmeMessage);
-            }
+            // pin 15: sound not implemented
+            // pin 17: NO2 not implemented
+            // pin 19: radiation not implemented
         } catch (Exception e) {
             LOG.trace("Caught exception", e);
             LOG.warn("Caught exception: {}", e.getMessage());

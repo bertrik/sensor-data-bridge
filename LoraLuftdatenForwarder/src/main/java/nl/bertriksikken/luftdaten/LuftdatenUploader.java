@@ -22,11 +22,6 @@ public final class LuftdatenUploader {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(LuftdatenUploader.class);
 	
-	// the "PIN" we upload dust data to
-	public static final String PIN_SDS = "1";
-	public static final String PIN_DHT = "7";
-	public static final String PIN_BME = "11";
-
 	private final ObjectMapper mapper = new ObjectMapper();
 	private final ILuftdatenApi restClient;
 

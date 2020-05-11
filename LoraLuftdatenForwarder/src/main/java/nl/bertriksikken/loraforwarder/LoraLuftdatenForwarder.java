@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -22,8 +20,6 @@ import nl.bertriksikken.loraforwarder.ttnulm.TtnCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
-import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
-import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
@@ -33,11 +29,9 @@ public final class LoraLuftdatenForwarder {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
     private static final String CONFIG_FILE = "loraluftdatenforwarder.properties";
-    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
 
     private final MqttListener mqttListener;
     private final LuftdatenUploader uploader;
-    private final ExecutorService executor;
     private final EPayloadEncoding encoding;
 
     public static void main(String[] args) throws IOException, MqttException {
@@ -53,7 +47,6 @@ public final class LoraLuftdatenForwarder {
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
                 config.getLuftdatenTimeout());
         uploader = new LuftdatenUploader(restClient);
-        executor = Executors.newSingleThreadExecutor();
         encoding = EPayloadEncoding.fromId(config.getEncoding());
 
         mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(),
@@ -80,7 +73,7 @@ public final class LoraLuftdatenForwarder {
 
         // schedule upload
         if (sensorData != null) {
-            executor.execute(() -> handleMessageTask(sensorId, sensorData));
+            uploader.scheduleUpload(sensorId, sensorData);
         }
     }
 
@@ -137,73 +130,6 @@ public final class LoraLuftdatenForwarder {
         return sensorData;
     }
 
-    private void handleMessageTask(String sensorId, SensorData data) {
-        // forward to luftdaten, in an exception safe manner
-        try {
-            // pin 1 (dust sensors)
-            if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5)
-                    || data.hasValue(ESensorItem.PM1_0)) {
-                LuftdatenMessage p1Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                if (data.hasValue(ESensorItem.PM10)) {
-                    p1Message.addItem(new LuftdatenItem("P1", data.getValue(ESensorItem.PM10)));
-                }
-                if (data.hasValue(ESensorItem.PM2_5)) {
-                    p1Message.addItem(new LuftdatenItem("P2", data.getValue(ESensorItem.PM2_5)));
-                }
-                if (data.hasValue(ESensorItem.PM1_0)) {
-                    p1Message.addItem(new LuftdatenItem("P0", data.getValue(ESensorItem.PM1_0)));
-                }
-                uploader.uploadMeasurement(sensorId, "1", p1Message);
-            }
-
-            // pin 3: temperature & pressure, but no humidity
-            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
-                    && !data.hasValue(ESensorItem.HUMI)) {
-                LuftdatenMessage p3Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                p3Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-                p3Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
-                uploader.uploadMeasurement(sensorId, "3", p3Message);
-            }
-
-            // pin 7: temperature & humidity, but no pressure
-            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
-                    && !data.hasValue(ESensorItem.PRESSURE)) {
-                LuftdatenMessage p7Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                p7Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-                p7Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
-                uploader.uploadMeasurement(sensorId, "7", p7Message);
-            }
-
-            // pin 9: position
-            // not implemented yet
-            
-            // pin 11: temperature & humidity & pressure
-            if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
-                    && data.hasValue(ESensorItem.PRESSURE)) {
-                LuftdatenMessage p11Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                p11Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-                p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.TEMP)));
-                p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.HUMI)));
-                uploader.uploadMeasurement(sensorId, "11", p11Message);
-            }
-
-            // pin 13: only temperature
-            if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
-                    && !data.hasValue(ESensorItem.PRESSURE)) {
-                LuftdatenMessage p13Message = new LuftdatenMessage(SOFTWARE_VERSION);
-                p13Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-                uploader.uploadMeasurement(sensorId, "13", p13Message);
-            }
-            
-            // pin 15: sound not implemented
-            // pin 17: NO2 not implemented
-            // pin 19: radiation not implemented
-        } catch (Exception e) {
-            LOG.trace("Caught exception", e);
-            LOG.warn("Caught exception: {}", e.getMessage());
-        }
-    }
-
     /**
      * Starts the application.
      * 
@@ -228,7 +154,6 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Stopping LoraLuftdatenForwarder application");
 
         mqttListener.stop();
-        executor.shutdown();
         uploader.stop();
 
         LOG.info("Stopped LoraLuftdatenForwarder application");

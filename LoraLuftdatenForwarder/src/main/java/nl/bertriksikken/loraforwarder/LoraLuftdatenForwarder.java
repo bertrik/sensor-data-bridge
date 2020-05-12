@@ -69,16 +69,18 @@ public final class LoraLuftdatenForwarder {
         }
         String sensorId = String.format(Locale.ROOT, "TTN-%s", uplink.getHardwareSerial());
 
-        SensorData sensorData = decodeTtnMessage(instant, sensorId, uplink);
-
-        // schedule upload
-        if (sensorData != null) {
+        // decode and upload
+        try {
+            SensorData sensorData = decodeTtnMessage(instant, sensorId, uplink);
             uploader.scheduleUpload(sensorId, sensorData);
+        } catch (PayloadParseException e) {
+            LOG.warn("Could not parse payload from: '{}", uplink);
         }
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage) {
+    SensorData decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage)
+            throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
         switch (encoding) {
@@ -92,12 +94,7 @@ public final class LoraLuftdatenForwarder {
             break;
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();
-            try {
-                ulmMessage.parse(uplinkMessage.getRawPayload());
-            } catch (PayloadParseException e) {
-                LOG.warn("Could not parse raw payload");
-                break;
-            }
+            ulmMessage.parse(uplinkMessage.getRawPayload());
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
             sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
             sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
@@ -105,12 +102,7 @@ public final class LoraLuftdatenForwarder {
             break;
         case CAYENNE:
             TtnCayenneMessage cayenne = new TtnCayenneMessage();
-            try {
-                cayenne.parse(uplinkMessage.getRawPayload());
-            } catch (PayloadParseException e) {
-                LOG.warn("Could not parse raw payload");
-                break;
-            }
+            cayenne.parse(uplinkMessage.getRawPayload());
             if (cayenne.hasPm10()) {
                 sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
             }

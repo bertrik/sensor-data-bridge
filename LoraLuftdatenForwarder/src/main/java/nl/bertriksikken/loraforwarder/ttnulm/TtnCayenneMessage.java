@@ -11,6 +11,9 @@ import nl.sikken.bertrik.cayenne.ECayenneItem;
  * Cayenne message containing SDS data (as analog values on channels 100 and 25) and DHT data.
  */
 public final class TtnCayenneMessage {
+    
+    private static final int CHANNEL_PM10 = 1;
+    private static final int CHANNEL_PM2_5 = 2;
 
     private Optional<Double> pm10 = Optional.empty();
     private Optional<Double> pm2_5 = Optional.empty();;
@@ -25,11 +28,11 @@ public final class TtnCayenneMessage {
         try {
             cayenneMessage.parse(raw);
             
-            CayenneItem p10 = cayenneMessage.ofChannel(1);
+            CayenneItem p10 = cayenneMessage.ofChannel(CHANNEL_PM10);
             if (p10 != null) {
                 pm10 = Optional.of(p10.getValue().doubleValue());
             }
-            CayenneItem p25 = cayenneMessage.ofChannel(2);
+            CayenneItem p25 = cayenneMessage.ofChannel(CHANNEL_PM2_5);
             if (p25 != null) {
                 pm2_5 = Optional.of(p25.getValue().doubleValue());
             }

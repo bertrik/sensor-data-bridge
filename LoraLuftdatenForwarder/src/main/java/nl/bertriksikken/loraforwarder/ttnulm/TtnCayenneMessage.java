@@ -1,5 +1,6 @@
 package nl.bertriksikken.loraforwarder.ttnulm;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import nl.sikken.bertrik.cayenne.CayenneException;
@@ -16,9 +17,10 @@ public final class TtnCayenneMessage {
     private static final int CHANNEL_PM2_5 = 2;
 
     private Optional<Double> pm10 = Optional.empty();
-    private Optional<Double> pm2_5 = Optional.empty();;
-    private Optional<Double> rhPerc = Optional.empty();;
-    private Optional<Double> tempC = Optional.empty();;
+    private Optional<Double> pm2_5 = Optional.empty();
+    private Optional<Double> rhPerc = Optional.empty();
+    private Optional<Double> tempC = Optional.empty();
+    private Optional<double[]> position = Optional.empty();
 
     public TtnCayenneMessage() {
     }
@@ -43,6 +45,11 @@ public final class TtnCayenneMessage {
             CayenneItem rh = cayenneMessage.ofType(ECayenneItem.HUMIDITY);
             if (rh != null) {
                 rhPerc = Optional.of(rh.getValue().doubleValue());
+            }
+            CayenneItem pos = cayenneMessage.ofType(ECayenneItem.GPS_LOCATION);
+            if (pos != null) {
+                position = Optional.of(Arrays.stream(pos.getValues()).mapToDouble(Number::doubleValue).toArray());
+
             }
         } catch (CayenneException e) {
             throw new PayloadParseException(e);
@@ -79,4 +86,13 @@ public final class TtnCayenneMessage {
     public double getTempC() {
         return tempC.get();
     }
+
+    public boolean hasPosition() {
+        return position.isPresent();
+    }
+
+    public double[] getPosition() {
+        return position.get();
+    }
+    
 }

@@ -115,6 +115,12 @@ public final class LoraLuftdatenForwarder {
             if (cayenne.hasTempC()) {
                 sensorData.addValue(ESensorItem.TEMP, cayenne.getTempC());
             }
+            if (cayenne.hasPosition()) {
+                double[] position = cayenne.getPosition();
+                sensorData.addValue(ESensorItem.POS_LAT, position[0]);
+                sensorData.addValue(ESensorItem.POS_LON, position[1]);
+                sensorData.addValue(ESensorItem.POS_ALT, position[2]);
+            }
             break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);

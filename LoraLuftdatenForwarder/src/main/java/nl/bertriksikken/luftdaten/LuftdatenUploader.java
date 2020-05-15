@@ -126,8 +126,8 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {
             LuftdatenMessage p11Message = new LuftdatenMessage(SOFTWARE_VERSION);
             p11Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-            p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.TEMP)));
-            p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.HUMI)));
+            p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
+            p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
             scheduleUpload(sensorId, "11", p11Message);
         }
 

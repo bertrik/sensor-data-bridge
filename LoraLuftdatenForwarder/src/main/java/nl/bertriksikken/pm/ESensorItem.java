@@ -10,7 +10,9 @@ public enum ESensorItem {
     TEMP("Temperature, in degrees Celcius"),
     PRESSURE("Atmospheric pressure, in Pa"),
 
-    POS("Position, in WGS84 (lat/lon/alt)"),
+    POS_LAT("Latitude in degrees"),
+    POS_LON("Longitude in degrees"),
+    POS_ALT("Altitude in meters"),
     
     SOUND("Sound pressure (unit?)"),
     

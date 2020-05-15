@@ -112,7 +112,15 @@ public final class LuftdatenUploader {
         }
 
         // pin 9: position
-        // not implemented yet
+        if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
+            LuftdatenMessage p9Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            p9Message.addItem(new LuftdatenItem("latitude", data.getValue(ESensorItem.POS_LAT)));
+            p9Message.addItem(new LuftdatenItem("longitude", data.getValue(ESensorItem.POS_LON)));
+            if (data.hasValue(ESensorItem.POS_ALT)) {
+                p9Message.addItem(new LuftdatenItem("altitude", data.getValue(ESensorItem.POS_ALT)));
+            }
+            scheduleUpload(sensorId, "9", p9Message);
+        }
 
         // pin 11: temperature & humidity & pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {

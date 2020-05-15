@@ -24,10 +24,20 @@ public final class LuftdatenItem {
      * @param name  the item name
      * @param value the item value
      */
-    public LuftdatenItem(String name, Double value) {
+    public LuftdatenItem(String name, String value) {
         this();
         this.name = name;
-        this.value = String.format(Locale.ROOT, "%.1f", value);
+        this.value = value;
+    }
+
+    /**
+     * Convenience constructor.
+     * 
+     * @param name the item name
+     * @param value the item value as double, it will be rounded to 1 decimal
+     */
+    public LuftdatenItem(String name, Double value) {
+        this(name, String.format(Locale.ROOT, "%.1f", value));
     }
 
     public String getName() {

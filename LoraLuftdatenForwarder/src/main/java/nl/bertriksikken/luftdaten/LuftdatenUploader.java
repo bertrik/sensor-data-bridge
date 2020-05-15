@@ -114,8 +114,8 @@ public final class LuftdatenUploader {
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
             LuftdatenMessage p9Message = new LuftdatenMessage(SOFTWARE_VERSION);
-            p9Message.addItem(new LuftdatenItem("latitude", data.getValue(ESensorItem.POS_LAT)));
-            p9Message.addItem(new LuftdatenItem("longitude", data.getValue(ESensorItem.POS_LON)));
+            p9Message.addItem(new LuftdatenItem("latitude", String.format("%.4f", data.getValue(ESensorItem.POS_LAT))));
+            p9Message.addItem(new LuftdatenItem("longitude", String.format("%.4f", data.getValue(ESensorItem.POS_LON))));
             if (data.hasValue(ESensorItem.POS_ALT)) {
                 p9Message.addItem(new LuftdatenItem("altitude", data.getValue(ESensorItem.POS_ALT)));
             }

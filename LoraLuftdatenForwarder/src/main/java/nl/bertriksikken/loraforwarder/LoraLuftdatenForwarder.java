@@ -115,6 +115,9 @@ public final class LoraLuftdatenForwarder {
             if (cayenne.hasTempC()) {
                 sensorData.addValue(ESensorItem.TEMP, cayenne.getTempC());
             }
+            if (cayenne.hasPressurePa()) {
+                sensorData.addValue(ESensorItem.PRESSURE, cayenne.getPressurePa());
+            }
             if (cayenne.hasPosition()) {
                 double[] position = cayenne.getPosition();
                 sensorData.addValue(ESensorItem.POS_LAT, position[0]);

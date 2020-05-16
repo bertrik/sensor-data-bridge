@@ -9,10 +9,11 @@ import nl.sikken.bertrik.cayenne.CayenneMessage;
 import nl.sikken.bertrik.cayenne.ECayenneItem;
 
 /**
- * Cayenne message containing SDS data (as analog values on channels 100 and 25) and DHT data.
+ * Cayenne message containing SDS data (as analog values on channels 100 and 25)
+ * and DHT data.
  */
 public final class TtnCayenneMessage {
-    
+
     private static final int CHANNEL_PM10 = 1;
     private static final int CHANNEL_PM2_5 = 2;
 
@@ -20,6 +21,7 @@ public final class TtnCayenneMessage {
     private Optional<Double> pm2_5 = Optional.empty();
     private Optional<Double> rhPerc = Optional.empty();
     private Optional<Double> tempC = Optional.empty();
+    private Optional<Double> pressurePa = Optional.empty();
     private Optional<double[]> position = Optional.empty();
 
     public TtnCayenneMessage() {
@@ -29,7 +31,7 @@ public final class TtnCayenneMessage {
         CayenneMessage cayenneMessage = new CayenneMessage();
         try {
             cayenneMessage.parse(raw);
-            
+
             CayenneItem p10 = cayenneMessage.ofChannel(CHANNEL_PM10);
             if (p10 != null) {
                 pm10 = Optional.of(p10.getValue().doubleValue());
@@ -46,6 +48,10 @@ public final class TtnCayenneMessage {
             if (rh != null) {
                 rhPerc = Optional.of(rh.getValue().doubleValue());
             }
+            CayenneItem baro = cayenneMessage.ofType(ECayenneItem.BAROMETER);
+            if (baro != null) {
+                pressurePa = Optional.of(100.0 * baro.getValue().doubleValue());
+            }
             CayenneItem pos = cayenneMessage.ofType(ECayenneItem.GPS_LOCATION);
             if (pos != null) {
                 position = Optional.of(Arrays.stream(pos.getValues()).mapToDouble(Number::doubleValue).toArray());
@@ -59,7 +65,7 @@ public final class TtnCayenneMessage {
     public boolean hasPm10() {
         return pm10.isPresent();
     }
-    
+
     public double getPm10() {
         return pm10.get();
     }
@@ -67,7 +73,7 @@ public final class TtnCayenneMessage {
     public boolean hasPm2_5() {
         return pm2_5.isPresent();
     }
-    
+
     public double getPm2_5() {
         return pm2_5.get();
     }
@@ -75,7 +81,7 @@ public final class TtnCayenneMessage {
     public boolean hasRhPerc() {
         return rhPerc.isPresent();
     }
-    
+
     public double getRhPerc() {
         return rhPerc.get();
     }
@@ -83,8 +89,17 @@ public final class TtnCayenneMessage {
     public boolean hasTempC() {
         return tempC.isPresent();
     }
+
     public double getTempC() {
         return tempC.get();
+    }
+
+    public boolean hasPressurePa() {
+        return pressurePa.isPresent();
+    }
+
+    public double getPressurePa() {
+        return pressurePa.get();
     }
 
     public boolean hasPosition() {
@@ -94,5 +109,5 @@ public final class TtnCayenneMessage {
     public double[] getPosition() {
         return position.get();
     }
-    
+
 }

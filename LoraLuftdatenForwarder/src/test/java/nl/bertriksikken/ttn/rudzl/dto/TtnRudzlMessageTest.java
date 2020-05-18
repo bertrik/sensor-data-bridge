@@ -1,8 +1,7 @@
-package nl.bertriksikken.ttn.dto;
+package nl.bertriksikken.ttn.rudzl.dto;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
+import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
 
 public final class TtnRudzlMessageTest {
 	
@@ -19,9 +19,9 @@ public final class TtnRudzlMessageTest {
 	        ObjectMapper mapper = new ObjectMapper();
 	        TtnUplinkMessage message = mapper.readValue(is, TtnUplinkMessage.class);
 	        Assert.assertEquals(4459, message.getCounter());
-	        Map<String, Object> fields = message.getPayloadFields();
-	        Assert.assertEquals(18789, fields.get("SDS_ID"));
-	        Assert.assertEquals(0.4, (double) fields.get("PM10_Avg"), 0.01);
+	        RudzlMessage rudzlMessage = new RudzlMessage(message.getPayloadFields());
+	        Assert.assertEquals(18789, rudzlMessage.getSdsId());
+	        Assert.assertEquals(0.4, rudzlMessage.getPM10(), 0.01);
         }
 	}
 
@@ -31,9 +31,8 @@ public final class TtnRudzlMessageTest {
 	        ObjectMapper mapper = new ObjectMapper();
 	        TtnUplinkMessage message = mapper.readValue(is, TtnUplinkMessage.class);
 	        Assert.assertEquals(1439, message.getCounter());
-	        Map<String, Object> fields = message.getPayloadFields();
-	        Assert.assertEquals(18789, fields.get("SDS_ID"));
-	        RudzlMessage rudzlMessage = new RudzlMessage(fields);
+	        RudzlMessage rudzlMessage = new RudzlMessage(message.getPayloadFields());
+	        Assert.assertEquals(18789, rudzlMessage.getSdsId());
 	        Assert.assertEquals(2.0, rudzlMessage.getPM10(), 0.01);
 	        Assert.assertEquals(25.36, rudzlMessage.getT(), 0.01);
 	        Assert.assertEquals(52.83, rudzlMessage.getRH(), 0.01);

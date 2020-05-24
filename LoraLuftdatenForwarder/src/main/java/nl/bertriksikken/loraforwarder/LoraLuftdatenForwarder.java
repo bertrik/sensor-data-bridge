@@ -20,6 +20,8 @@ import nl.bertriksikken.loraforwarder.ttnulm.TtnCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
+import nl.bertriksikken.opensense.IOpenSenseRestApi;
+import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
@@ -31,7 +33,8 @@ public final class LoraLuftdatenForwarder {
     private static final String CONFIG_FILE = "loraluftdatenforwarder.properties";
 
     private final MqttListener mqttListener;
-    private final LuftdatenUploader uploader;
+    private final LuftdatenUploader luftdatenUploader;
+    private final OpenSenseUploader openSenseUploader;
     private final EPayloadEncoding encoding;
 
     public static void main(String[] args) throws IOException, MqttException {
@@ -46,7 +49,12 @@ public final class LoraLuftdatenForwarder {
     private LoraLuftdatenForwarder(ILoraForwarderConfig config) {
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
                 config.getLuftdatenTimeout());
-        uploader = new LuftdatenUploader(restClient);
+        luftdatenUploader = new LuftdatenUploader(restClient);
+
+        IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(config.getOpenSenseUrl(),
+                config.getOpenSenseTimeout());
+        openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfigFile(), openSenseClient);
+
         encoding = EPayloadEncoding.fromId(config.getEncoding());
 
         mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(),
@@ -72,7 +80,8 @@ public final class LoraLuftdatenForwarder {
         // decode and upload
         try {
             SensorData sensorData = decodeTtnMessage(instant, sensorId, uplink);
-            uploader.scheduleUpload(sensorId, sensorData);
+            luftdatenUploader.scheduleUpload(sensorId, sensorData);
+            openSenseUploader.scheduleUpload(uplink.getDevId(), sensorData);
         } catch (PayloadParseException e) {
             LOG.warn("Could not parse payload from: '{}", uplink);
         }
@@ -140,7 +149,8 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Starting LoraLuftdatenForwarder application");
 
         // start sub-modules
-        uploader.start();
+        luftdatenUploader.start();
+        openSenseUploader.start();
         mqttListener.start();
 
         LOG.info("Started LoraLuftdatenForwarder application");
@@ -155,7 +165,8 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Stopping LoraLuftdatenForwarder application");
 
         mqttListener.stop();
-        uploader.stop();
+        openSenseUploader.stop();
+        luftdatenUploader.stop();
 
         LOG.info("Stopped LoraLuftdatenForwarder application");
     }

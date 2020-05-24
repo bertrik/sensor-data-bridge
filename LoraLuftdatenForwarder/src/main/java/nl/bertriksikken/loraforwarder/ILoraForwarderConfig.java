@@ -1,5 +1,6 @@
 package nl.bertriksikken.loraforwarder;
 
+import java.io.File;
 import java.time.Duration;
 
 /**
@@ -15,7 +16,7 @@ public interface ILoraForwarderConfig {
     String getMqttAppId();
 
     String getMqttAppKey();
-    
+
     /**
      * @return the payload encoding, e.g. "rudzl"
      */
@@ -30,5 +31,20 @@ public interface ILoraForwarderConfig {
      * @return timeout (ms) for accessing the luftdaten.info API
      */
     Duration getLuftdatenTimeout();
+
+    /**
+     * @return the URL of the OpenSense API
+     */
+    String getOpenSenseUrl();
+
+    /**
+     * @return timeout for accessing the OpenSense API
+     */
+    Duration getOpenSenseTimeout();
+
+    /**
+     * @return the OpenSense config file
+     */
+    File getOpenSenseConfigFile();
 
 }

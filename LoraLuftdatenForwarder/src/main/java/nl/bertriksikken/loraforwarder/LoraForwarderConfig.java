@@ -1,5 +1,6 @@
 package nl.bertriksikken.loraforwarder;
 
+import java.io.File;
 import java.time.Duration;
 
 /**
@@ -16,7 +17,11 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
         ENCODING("encoding", "cayenne", "The payload encoding"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.sensor.community", "luftdaten server URL (empty to disable)"),
-        LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)");
+        LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)"),
+
+        OPENSENSE_URL("opensense.url", "https://api.opensensemap.org", "OpenSense server URL (empty to disable)"),
+        OPENSENSE_TIMEOUT_MS("opensense.timeout", "10000", "OpenSense API timeout (milliseconds)"),
+        OPENSENSE_CONFIG_FILE("opensense.configfile", "opensense_boxids.properties", "Name of OpenSense config file");
 
         private final String key, value, comment;
 
@@ -64,6 +69,21 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     @Override
     public Duration getLuftdatenTimeout() {
         return Duration.ofMillis(Integer.parseInt(get(EConfigItem.LUFTDATEN_TIMEOUT_MS.key)));
+    }
+
+    @Override
+    public String getOpenSenseUrl() {
+        return get(EConfigItem.OPENSENSE_URL.key).trim();
+    }
+
+    @Override
+    public Duration getOpenSenseTimeout() {
+        return Duration.ofMillis(Integer.parseInt(get(EConfigItem.OPENSENSE_TIMEOUT_MS.key)));
+    }
+
+    @Override
+    public File getOpenSenseConfigFile() {
+        return new File(get(EConfigItem.OPENSENSE_CONFIG_FILE.key));
     }
 
 }

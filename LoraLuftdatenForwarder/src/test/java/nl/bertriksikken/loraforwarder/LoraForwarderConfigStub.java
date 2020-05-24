@@ -1,5 +1,6 @@
 package nl.bertriksikken.loraforwarder;
 
+import java.io.File;
 import java.time.Duration;
 
 public final class LoraForwarderConfigStub implements ILoraForwarderConfig {
@@ -37,6 +38,21 @@ public final class LoraForwarderConfigStub implements ILoraForwarderConfig {
 
     @Override
     public Duration getLuftdatenTimeout() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getOpenSenseUrl() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Duration getOpenSenseTimeout() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public File getOpenSenseConfigFile() {
         throw new UnsupportedOperationException();
     }
 

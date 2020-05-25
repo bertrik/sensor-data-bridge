@@ -2,6 +2,8 @@ package nl.bertriksikken.opensense;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
@@ -54,6 +56,13 @@ public final class OpenSenseUploader {
         Properties properties = new Properties();
         try (FileInputStream fis = new FileInputStream(configFile)) {
             properties.load(fis);
+        } catch (FileNotFoundException e) {
+            LOG.warn("File '{}' not found, creating default...", configFile);
+            try (FileOutputStream fos = new FileOutputStream(configFile)) {
+                properties.store(fos, "This file maps TTN device ids to OpenSense box ids, example: my_node=xxyyzz");
+            } catch (IOException e2) {
+                LOG.error("Could not write default config file, ", e2);
+            }
         } catch (IOException e) {
             LOG.warn("Exception accessing config file {}: {}", configFile.getAbsoluteFile(), e.getMessage());
         }
@@ -108,7 +117,7 @@ public final class OpenSenseUploader {
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());
         } catch (Exception e) {
-            LOG.warn("Caught exception: ", e);
+            LOG.error("Caught exception: ", e);
         }
     }
 

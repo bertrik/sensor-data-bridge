@@ -10,7 +10,7 @@ public final class Measurement {
 
     @JsonProperty("value")
     private String value;
-    
+
     @JsonProperty("createdAt")
     private String createdAt;
 
@@ -26,5 +26,5 @@ public final class Measurement {
     public String toString() {
         return String.format(Locale.ROOT, "%s", value);
     }
-    
+
 }

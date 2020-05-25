@@ -64,7 +64,7 @@ public final class OpenSenseUploader {
         LOG.info("Stopping OpenSenseUploader uploader");
         executor.shutdown();
     }
-    
+
     public void scheduleUpload(String nodeName, SensorData data) {
         String boxId = boxIds.getOrDefault(nodeName, "");
         if (boxId.isBlank()) {

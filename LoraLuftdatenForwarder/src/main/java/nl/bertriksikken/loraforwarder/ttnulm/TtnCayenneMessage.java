@@ -21,7 +21,7 @@ public final class TtnCayenneMessage {
     private Optional<Double> pm2_5 = Optional.empty();
     private Optional<Double> rhPerc = Optional.empty();
     private Optional<Double> tempC = Optional.empty();
-    private Optional<Double> pressurePa = Optional.empty();
+    private Optional<Double> pressureMillibar = Optional.empty();
     private Optional<double[]> position = Optional.empty();
 
     public TtnCayenneMessage() {
@@ -50,7 +50,7 @@ public final class TtnCayenneMessage {
             }
             CayenneItem baro = cayenneMessage.ofType(ECayenneItem.BAROMETER);
             if (baro != null) {
-                pressurePa = Optional.of(100.0 * baro.getValue().doubleValue());
+                pressureMillibar = Optional.of(baro.getValue().doubleValue());
             }
             CayenneItem pos = cayenneMessage.ofType(ECayenneItem.GPS_LOCATION);
             if (pos != null) {
@@ -94,12 +94,12 @@ public final class TtnCayenneMessage {
         return tempC.get();
     }
 
-    public boolean hasPressurePa() {
-        return pressurePa.isPresent();
+    public boolean hasPressureMillibar() {
+        return pressureMillibar.isPresent();
     }
 
-    public double getPressurePa() {
-        return pressurePa.get();
+    public double getPressureMillibar() {
+        return pressureMillibar.get();
     }
 
     public boolean hasPosition() {

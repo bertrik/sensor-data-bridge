@@ -16,7 +16,7 @@ public final class TtnCayenneMessageTest {
         Assert.assertEquals(0.25, msg.getPm2_5(), 0.01);
         Assert.assertEquals(-1.6, msg.getTempC(), 0.01);
         Assert.assertEquals(59.5, msg.getRhPerc(), 0.01);
-        Assert.assertEquals(101200.0, msg.getPressurePa(), 0.01);
+        Assert.assertEquals(1012.0, msg.getPressureMillibar(), 0.1);
     }
 
 }

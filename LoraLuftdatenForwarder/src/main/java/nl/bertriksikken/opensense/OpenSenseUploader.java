@@ -74,8 +74,8 @@ public final class OpenSenseUploader {
         executor.shutdown();
     }
 
-    public void scheduleUpload(String nodeName, SensorData data) {
-        String boxId = boxIds.getOrDefault(nodeName, "");
+    public void scheduleUpload(String deviceId, SensorData data) {
+        String boxId = boxIds.getOrDefault(deviceId, "");
         if (boxId.isBlank()) {
             return;
         }
@@ -102,15 +102,17 @@ public final class OpenSenseUploader {
         }
 
         // schedule upload
-        executor.execute(() -> uploadMeasurement(nodeName, boxId, message));
+        String luftdatenId = "TTN-" + deviceId;
+        executor.execute(() -> uploadMeasurement(boxId, luftdatenId, message));
     }
 
-    private void uploadMeasurement(String nodeName, String boxId, LuftdatenMessage message) {
+    private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {
+        LOG.info("Sending to opensense box {} for {}: {}", boxId, luftdatenId, message);
         try {
             Response<String> response = restClient.postNewMeasurements(boxId, true, message).execute();
             if (response.isSuccessful()) {
                 String result = response.body();
-                LOG.info("Successfully posted for {} to opensense box {}: {}", nodeName, boxId, result);
+                LOG.info("Successfully posted to opensense box {}: {}", boxId, result);
             } else {
                 LOG.warn("Failed to post to opensense box {}: {}", boxId, response.errorBody());
             }

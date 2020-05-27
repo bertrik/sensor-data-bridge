@@ -15,7 +15,7 @@ public interface IOpenSenseRestApi {
     Call<SenseBox> getBox(@Path("boxid") String boxId);
 
     @POST("/boxes/{boxid}/data")
-    Call<String> postNewMeasurements(@Path("boxid") String boxId, @Query("luftdaten") boolean isLuftDaten,
+    Call<String> postNewMeasurements(@Path("boxid") String boxId, @Query("luftdaten") boolean isLuftdaten,
             @Body LuftdatenMessage message);
 
 }

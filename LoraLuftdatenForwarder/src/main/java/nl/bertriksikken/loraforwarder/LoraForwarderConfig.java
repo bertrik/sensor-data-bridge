@@ -9,19 +9,19 @@ import java.time.Duration;
 public final class LoraForwarderConfig extends BaseConfig implements ILoraForwarderConfig {
 
     private enum EConfigItem {
-        MQTT_URL("mqtt.url", "tcp://eu.thethings.network", "URL of the MQTT server"),
-        MQTT_APP_ID("mqtt.appid", "particulatematter", "TTN application id"),
-        MQTT_APP_KEY("mqtt.appkey", "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk",
+        NODE_ENCODING("node.encoding", "cayenne", "The payload encoding"),
+
+        TTN_MQTT_URL("ttn.mqtt.url", "tcp://eu.thethings.network", "TTN MQTT server URL"),
+        TTN_APP_ID("ttn.app.id", "particulatematter", "TTN application id"),
+        TTN_APP_KEY("ttn.app.key", "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk",
                 "TTN application access key"),
-        
-        ENCODING("encoding", "cayenne", "The payload encoding"),
 
         LUFTDATEN_URL("luftdaten.url", "https://api.sensor.community", "luftdaten server URL (empty to disable)"),
         LUFTDATEN_TIMEOUT_MS("luftdaten.timeout", "10000", "luftdaten API timeout (milliseconds)"),
 
         OPENSENSE_URL("opensense.url", "https://api.opensensemap.org", "OpenSense server URL (empty to disable)"),
         OPENSENSE_TIMEOUT_MS("opensense.timeout", "10000", "OpenSense API timeout (milliseconds)"),
-        OPENSENSE_CONFIG_FILE("opensense.configfile", "opensense_boxids.properties", "Name of OpenSense config file");
+        OPENSENSE_CONFIG_FILE("opensense.configfile", "opensense_boxids.properties", "OpenSense config file name");
 
         private final String key, value, comment;
 
@@ -42,18 +42,23 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
     }
 
     @Override
-    public String getMqttUrl() {
-        return get(EConfigItem.MQTT_URL.key);
+    public String getNodeEncoding() {
+        return get(EConfigItem.NODE_ENCODING.key).trim();
+    }
+    
+    @Override
+    public String getTtnMqttUrl() {
+        return get(EConfigItem.TTN_MQTT_URL.key);
     }
 
     @Override
-    public String getMqttAppId() {
-        return get(EConfigItem.MQTT_APP_ID.key);
+    public String getTtnAppId() {
+        return get(EConfigItem.TTN_APP_ID.key);
     }
 
     @Override
-    public String getMqttAppKey() {
-        return get(EConfigItem.MQTT_APP_KEY.key);
+    public String getTtnAppKey() {
+        return get(EConfigItem.TTN_APP_KEY.key);
     }
 
     @Override
@@ -61,11 +66,6 @@ public final class LoraForwarderConfig extends BaseConfig implements ILoraForwar
         return get(EConfigItem.LUFTDATEN_URL.key).trim();
     }
     
-    @Override
-    public String getEncoding() {
-    	return get(EConfigItem.ENCODING.key).trim();
-    }
-
     @Override
     public Duration getLuftdatenTimeout() {
         return Duration.ofMillis(Integer.parseInt(get(EConfigItem.LUFTDATEN_TIMEOUT_MS.key)));

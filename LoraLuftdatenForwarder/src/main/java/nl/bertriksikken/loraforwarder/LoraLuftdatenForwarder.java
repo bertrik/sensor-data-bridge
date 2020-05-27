@@ -55,10 +55,10 @@ public final class LoraLuftdatenForwarder {
                 config.getOpenSenseTimeout());
         openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfigFile(), openSenseClient);
 
-        encoding = EPayloadEncoding.fromId(config.getEncoding());
+        encoding = EPayloadEncoding.fromId(config.getNodeEncoding());
 
-        mqttListener = new MqttListener(this::messageReceived, config.getMqttUrl(), config.getMqttAppId(),
-                config.getMqttAppKey());
+        mqttListener = new MqttListener(this::messageReceived, config.getTtnMqttUrl(), config.getTtnAppId(),
+                config.getTtnAppKey());
 
         LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
     }

@@ -12,22 +12,22 @@ public final class LoraForwarderConfigStub implements ILoraForwarderConfig {
     }
 
     @Override
-    public String getMqttUrl() {
+    public String getTtnMqttUrl() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getMqttAppId() {
+    public String getTtnAppId() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getMqttAppKey() {
+    public String getTtnAppKey() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getEncoding() {
+    public String getNodeEncoding() {
         return encoding;
     }
 

@@ -9,18 +9,18 @@ import java.time.Duration;
 public interface ILoraForwarderConfig {
 
     /**
-     * @return the URL of the MQTT server
-     */
-    String getMqttUrl();
-
-    String getMqttAppId();
-
-    String getMqttAppKey();
-
-    /**
      * @return the payload encoding, e.g. "rudzl"
      */
-    String getEncoding();
+    String getNodeEncoding();
+    
+    /**
+     * @return the URL of the MQTT server
+     */
+    String getTtnMqttUrl();
+
+    String getTtnAppId();
+
+    String getTtnAppKey();
 
     /**
      * @return the URL of the luftdaten.info API

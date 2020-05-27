@@ -70,7 +70,7 @@ public final class OpenSenseUploader {
     }
 
     public void stop() {
-        LOG.info("Stopping OpenSenseUploader uploader");
+        LOG.info("Stopping OpenSenseUploader");
         executor.shutdown();
     }
 

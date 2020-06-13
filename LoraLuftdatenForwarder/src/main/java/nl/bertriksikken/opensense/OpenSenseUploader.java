@@ -1,15 +1,10 @@
 package nl.bertriksikken.opensense;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,13 +25,12 @@ public final class OpenSenseUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenSenseUploader.class);
 
-    private final File configFile;
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, String> boxIds = new HashMap<>();
 
-    public OpenSenseUploader(File configFile, IOpenSenseRestApi restClient) {
-        this.configFile = Objects.requireNonNull(configFile);
+    public OpenSenseUploader(Map<String, String> boxIds, IOpenSenseRestApi restClient) {
+        this.boxIds.putAll(boxIds);
         this.restClient = Objects.requireNonNull(restClient);
     }
 
@@ -51,22 +45,6 @@ public final class OpenSenseUploader {
 
     public void start() {
         LOG.info("Starting OpenSenseUploader");
-
-        // read the config file
-        Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(configFile)) {
-            properties.load(fis);
-        } catch (FileNotFoundException e) {
-            LOG.warn("File '{}' not found, creating default...", configFile);
-            try (FileOutputStream fos = new FileOutputStream(configFile)) {
-                properties.store(fos, "This file maps TTN device ids to OpenSense box ids, example: my_node=xxyyzz");
-            } catch (IOException e2) {
-                LOG.error("Could not write default config file, ", e2);
-            }
-        } catch (IOException e) {
-            LOG.warn("Exception accessing config file {}: {}", configFile.getAbsoluteFile(), e.getMessage());
-        }
-        properties.forEach((k, v) -> boxIds.put((String) k, (String) v));
     }
 
     public void stop() {

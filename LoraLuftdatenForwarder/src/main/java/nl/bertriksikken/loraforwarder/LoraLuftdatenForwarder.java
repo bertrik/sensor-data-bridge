@@ -2,10 +2,9 @@ package nl.bertriksikken.loraforwarder;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
-import java.util.Locale;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -13,24 +12,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.PayloadParseException;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
+import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.opensense.IOpenSenseRestApi;
+import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
+import nl.bertriksikken.ttn.TtnAppConfig;
+import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
 
 public final class LoraLuftdatenForwarder {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
-    private static final String CONFIG_FILE = "loraluftdatenforwarder.properties";
+    private static final String CONFIG_FILE = "loraluftdatenforwarder.yaml";
 
     private final MqttListener mqttListener;
     private final LuftdatenUploader luftdatenUploader;
@@ -40,25 +44,29 @@ public final class LoraLuftdatenForwarder {
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
 
-        ILoraForwarderConfig config = readConfig(new File(CONFIG_FILE));
+        LoraForwarderConfig config = readConfig(new File(CONFIG_FILE));
         LoraLuftdatenForwarder app = new LoraLuftdatenForwarder(config);
         app.start();
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
     }
 
-    private LoraLuftdatenForwarder(ILoraForwarderConfig config) {
-        ILuftdatenApi restClient = LuftdatenUploader.newRestClient(config.getLuftdatenUrl(),
-                config.getLuftdatenTimeout());
+    private LoraLuftdatenForwarder(LoraForwarderConfig config) {
+        LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
+        ILuftdatenApi restClient = LuftdatenUploader.newRestClient(luftdatenConfig.getUrl(),
+                Duration.ofSeconds(luftdatenConfig.getTimeout()));
         luftdatenUploader = new LuftdatenUploader(restClient);
 
-        IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(config.getOpenSenseUrl(),
-                config.getOpenSenseTimeout());
-        openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfigFile(), openSenseClient);
+        OpenSenseConfig openSenseConfig = config.getOpenSenseConfig();
+        IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(openSenseConfig.getUrl(),
+                Duration.ofSeconds(openSenseConfig.getTimeoutSec()));
+        openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfig().getIds(), openSenseClient);
 
-        encoding = EPayloadEncoding.fromId(config.getNodeEncoding());
+        TtnConfig ttnConfig = config.getTtnConfig();
+        TtnAppConfig ttnAppConfig = config.getTtnConfig().getApps().get(0);
+        encoding = ttnAppConfig.getEncoding();
 
-        mqttListener = new MqttListener(this::messageReceived, config.getTtnMqttUrl(), config.getTtnAppId(),
-                config.getTtnAppKey());
+        mqttListener = new MqttListener(this::messageReceived, ttnConfig.getUrl(), ttnAppConfig.getName(),
+                ttnAppConfig.getKey());
 
         LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
     }
@@ -171,17 +179,16 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Stopped LoraLuftdatenForwarder application");
     }
 
-    private static ILoraForwarderConfig readConfig(File file) throws IOException {
-        final LoraForwarderConfig config = new LoraForwarderConfig();
+    private static LoraForwarderConfig readConfig(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try (FileInputStream fis = new FileInputStream(file)) {
-            config.load(fis);
+            return mapper.readValue(fis, LoraForwarderConfig.class);
         } catch (IOException e) {
             LOG.warn("Failed to load config {}, writing defaults", file.getAbsoluteFile());
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                config.save(fos);
-            }
+            LoraForwarderConfig config = new LoraForwarderConfig();
+            mapper.writeValue(file, config);
+            return config;
         }
-        return config;
     }
 
 }

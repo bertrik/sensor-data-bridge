@@ -54,14 +54,13 @@ public final class MqttListener {
      * @throws MqttException in case something went wrong with MQTT
      */
     public void start() throws MqttException {
-        LOG.info("Starting MQTT listener");
+        LOG.info("Starting MQTT listener '{}'", options.getUserName());
 
-        LOG.info("Connecting to MQTT server");
         mqttClient.connect(options);
     }
 
     public void stop() {
-        LOG.info("Stopping MQTT listener");
+        LOG.info("Stopping MQTT listener '{}'", options.getUserName());
         try {
             mqttClient.disconnect(DISCONNECT_TIMEOUT_MS);
         } catch (MqttException e) {

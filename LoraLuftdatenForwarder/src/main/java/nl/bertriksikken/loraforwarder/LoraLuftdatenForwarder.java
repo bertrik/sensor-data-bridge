@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -36,10 +37,9 @@ public final class LoraLuftdatenForwarder {
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
     private static final String CONFIG_FILE = "loraluftdatenforwarder.yaml";
 
-    private final MqttListener mqttListener;
+    private final List<MqttListener> mqttListeners = new ArrayList<>();
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
-    private final EPayloadEncoding encoding;
 
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
@@ -62,18 +62,16 @@ public final class LoraLuftdatenForwarder {
         openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfig().getIds(), openSenseClient);
 
         TtnConfig ttnConfig = config.getTtnConfig();
-        TtnAppConfig ttnAppConfig = config.getTtnConfig().getApps().get(0);
-        encoding = ttnAppConfig.getEncoding();
-
-        mqttListener = new MqttListener(this::messageReceived, ttnConfig.getUrl(), ttnAppConfig.getName(),
-                ttnAppConfig.getKey());
-
-        LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
+        for (TtnAppConfig ttnAppConfig : config.getTtnConfig().getApps()) {
+            EPayloadEncoding encoding = ttnAppConfig.getEncoding();
+            LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", ttnAppConfig.getName(), encoding);
+            MqttListener listener = new MqttListener((topic, message) -> messageReceived(encoding, topic, message),
+                    ttnConfig.getUrl(), ttnAppConfig.getName(), ttnAppConfig.getKey());
+            mqttListeners.add(listener);
+        }
     }
 
-    private void messageReceived(String topic, String message) {
-        Instant instant = Instant.now();
-        
+    private void messageReceived(EPayloadEncoding encoding, String topic, String message) {
         LOG.info("Received: '{}'", message);
 
         // decode JSON
@@ -89,7 +87,7 @@ public final class LoraLuftdatenForwarder {
 
         // decode and upload
         try {
-            SensorData sensorData = decodeTtnMessage(instant, sensorId, uplink);
+            SensorData sensorData = decodeTtnMessage(encoding, sensorId, uplink);
             luftdatenUploader.scheduleUpload(sensorId, sensorData);
             openSenseUploader.scheduleUpload(uplink.getHardwareSerial(), sensorData);
         } catch (PayloadParseException e) {
@@ -98,7 +96,7 @@ public final class LoraLuftdatenForwarder {
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(Instant instant, String sensorId, TtnUplinkMessage uplinkMessage)
+    SensorData decodeTtnMessage(EPayloadEncoding encoding, String sensorId, TtnUplinkMessage uplinkMessage)
             throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
@@ -161,7 +159,9 @@ public final class LoraLuftdatenForwarder {
         // start sub-modules
         luftdatenUploader.start();
         openSenseUploader.start();
-        mqttListener.start();
+        for (MqttListener listener : mqttListeners) {
+            listener.start();
+        }
 
         LOG.info("Started LoraLuftdatenForwarder application");
     }
@@ -174,7 +174,7 @@ public final class LoraLuftdatenForwarder {
     private void stop() {
         LOG.info("Stopping LoraLuftdatenForwarder application");
 
-        mqttListener.stop();
+        mqttListeners.forEach(MqttListener::stop);
         openSenseUploader.stop();
         luftdatenUploader.stop();
 

@@ -39,7 +39,6 @@ public final class CayenneMessage {
      * Parses the byte array into a cayenne message.
      * 
      * @param data the raw data
-     * @return the cayenne message
      * @throws CayenneException in case of a parsing problem
      */
     public void parse(byte[] data) throws CayenneException {

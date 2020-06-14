@@ -30,7 +30,8 @@ public final class MqttListener {
      * 
      * @param callback the interface for indicating a received message.
      * @param url      the URL of the MQTT server
-     * @param topic    the topic to listen to
+     * @param appId    the name of the TTN application
+     * @param appKey   the key of the TTN application
      */
     public MqttListener(IMessageReceived callback, String url, String appId, String appKey) {
         LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appId);

@@ -3,6 +3,8 @@ package nl.bertriksikken.ttn;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -14,85 +16,51 @@ import org.slf4j.LoggerFactory;
 /**
  * Listener process for receiving data from MQTT.
  * 
- * Decouples the MQTT callback from listener using a single thread executor. 
+ * Decouples the MQTT callback from listener using a single thread executor.
  */
 public final class MqttListener {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MqttListener.class);
     private static final long DISCONNECT_TIMEOUT_MS = 3000;
-    
-    private final IMessageReceived callback;
-    private final String appId;
-    private final String appKey;
 
-    private MqttClient mqttClient;
+    private final MqttClient mqttClient;
+    private final MqttConnectOptions options;
 
     /**
      * Constructor.
      * 
      * @param callback the interface for indicating a received message.
-     * @param url the URL of the MQTT server
-     * @param topic the topic to listen to
+     * @param url      the URL of the MQTT server
+     * @param topic    the topic to listen to
      */
     public MqttListener(IMessageReceived callback, String url, String appId, String appKey) {
-        this.callback = callback;
-        this.appId = appId;
-        this.appKey = appKey;
-        
-        LOG.info("Creating client for MQTT server {}", url);
+        LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appId);
         try {
-			this.mqttClient = new MqttClient(url, MqttClient.generateClientId(), new MemoryPersistence());
-		} catch (MqttException e) {
-			throw new IllegalArgumentException(e);
-		}
-    }
-    
-    /**
-     * Starts this module.
-     * 
-     * @throws MqttException in case something went wrong with MQTT 
-     */
-    public void start() throws MqttException {
-        LOG.info("Starting MQTT listener");
-        
-        // connect
-        LOG.info("Connecting to MQTT server as user {}", appId);
-        MqttConnectOptions options = new MqttConnectOptions();
+            this.mqttClient = new MqttClient(url, MqttClient.generateClientId(), new MemoryPersistence());
+        } catch (MqttException e) {
+            throw new IllegalArgumentException(e);
+        }
+        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, "+/devices/+/up", callback));
+
+        // create connect options
+        options = new MqttConnectOptions();
         options.setUserName(appId);
         options.setPassword(appKey.toCharArray());
         options.setAutomaticReconnect(true);
-        mqttClient.connect(options);
-        
-        // subscribe
-        String topic = "+/devices/+/up";
-        LOG.info("Subscribing to topic '{}'", topic);
-        mqttClient.subscribe(topic, this::messageArrived);
     }
-    
+
     /**
-     * Handles an incoming message.
+     * Starts this module.
      * 
-     * @param topic the topic
-     * @param mqttMessage the message
-     * @throws Exception who knows?
+     * @throws MqttException in case something went wrong with MQTT
      */
-    private void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-    	Instant now = Instant.now();
-        final String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
-        LOG.info("Message arrived on topic '{}'", topic);
-        
-        // notify our listener, in an exception safe manner
-        try {
-            callback.messageReceived(now, topic, message);
-        } catch (Exception e) {
-            LOG.trace("Caught exception", e);
-            LOG.error("Caught exception in MQTT listener: {}", e.getMessage());
-        }
+    public void start() throws MqttException {
+        LOG.info("Starting MQTT listener");
+
+        LOG.info("Connecting to MQTT server");
+        mqttClient.connect(options);
     }
-    
-    /**
-     * Stops this module.
-     */
+
     public void stop() {
         LOG.info("Stopping MQTT listener");
         try {
@@ -100,14 +68,59 @@ public final class MqttListener {
         } catch (MqttException e) {
             // don't care, just log
             LOG.warn("Caught exception on disconnect: {}", e.getMessage());
-        } finally {
+        }
+    }
+
+    /**
+     * MQTT callback handler, (re-)subscribes to the topic and forwards incoming
+     * messages.
+     */
+    private static final class MqttCallbackHandler implements MqttCallbackExtended {
+
+        private final MqttClient client;
+        private final String topic;
+        private final IMessageReceived listener;
+
+        private MqttCallbackHandler(MqttClient client, String topic, IMessageReceived listener) {
+            this.client = client;
+            this.topic = topic;
+            this.listener = listener;
+        }
+
+        @Override
+        public void connectionLost(Throwable cause) {
+            LOG.warn("Connection lost: {}", cause.getMessage());
+        }
+
+        @Override
+        public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+            LOG.info("Message arrived on topic '{}'", topic);
+
+            // notify our listener, in an exception safe manner
             try {
-                mqttClient.close();
+                Instant now = Instant.now();
+                String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
+                listener.messageReceived(now, topic, message);
+            } catch (Exception e) {
+                LOG.trace("Caught exception", e);
+                LOG.error("Caught exception in MQTT listener: {}", e.getMessage());
+            }
+        }
+
+        @Override
+        public void deliveryComplete(IMqttDeliveryToken token) {
+            // nothing to do
+        }
+
+        @Override
+        public void connectComplete(boolean reconnect, String serverURI) {
+            LOG.info("Connected to '{}', subscribing to MQTT topic '{}'", serverURI, topic);
+            try {
+                client.subscribe(topic);
             } catch (MqttException e) {
-                // don't care, just log
-                LOG.warn("Caught exception on close: {}", e.getMessage());
+                LOG.error("Caught exception while subscribing!");
             }
         }
     }
-    
+
 }

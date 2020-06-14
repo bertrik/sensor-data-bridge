@@ -1,7 +1,6 @@
 package nl.bertriksikken.ttn;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -98,9 +97,8 @@ public final class MqttListener {
 
             // notify our listener, in an exception safe manner
             try {
-                Instant now = Instant.now();
                 String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
-                listener.messageReceived(now, topic, message);
+                listener.messageReceived(topic, message);
             } catch (Exception e) {
                 LOG.trace("Caught exception", e);
                 LOG.error("Caught exception in MQTT listener: {}", e.getMessage());

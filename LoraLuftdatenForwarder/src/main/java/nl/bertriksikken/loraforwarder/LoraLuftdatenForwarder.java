@@ -71,7 +71,9 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Created new Luftdaten forwarder for encoding {}", encoding);
     }
 
-    private void messageReceived(Instant instant, String topic, String message) {
+    private void messageReceived(String topic, String message) {
+        Instant instant = Instant.now();
+        
         LOG.info("Received: '{}'", message);
 
         // decode JSON

@@ -95,7 +95,7 @@ public final class OpenSenseUploader {
                 String result = response.body();
                 LOG.info("Successfully posted to opensense box {}: {}", boxId, result);
             } else {
-                LOG.warn("Failed to post to opensense box {}: {}", boxId, response.errorBody());
+                LOG.warn("Failed to post to opensense box {}: {}", boxId, response.errorBody().string());
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());

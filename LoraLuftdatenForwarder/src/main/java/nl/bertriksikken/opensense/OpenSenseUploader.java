@@ -71,12 +71,15 @@ public final class OpenSenseUploader {
         // humidity/temperature/pressure
         if (data.hasValue(ESensorItem.HUMI)) {
             message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
+            message.addItem(new LuftdatenItem("BME280_humidity", data.getValue(ESensorItem.HUMI)));
         }
         if (data.hasValue(ESensorItem.TEMP)) {
             message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
+            message.addItem(new LuftdatenItem("BME280_temperature", data.getValue(ESensorItem.TEMP)));
         }
         if (data.hasValue(ESensorItem.PRESSURE)) {
             message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
+            message.addItem(new LuftdatenItem("BME280_pressure", data.getValue(ESensorItem.PRESSURE)));
         }
 
         // schedule upload

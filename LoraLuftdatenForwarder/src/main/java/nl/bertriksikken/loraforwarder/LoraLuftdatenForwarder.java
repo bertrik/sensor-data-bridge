@@ -83,12 +83,10 @@ public final class LoraLuftdatenForwarder {
             LOG.warn("Could not parse JSON: '{}'", message);
             return;
         }
-        String sensorId = "TTN-" + uplink.getHardwareSerial();
-
         // decode and upload
         try {
-            SensorData sensorData = decodeTtnMessage(encoding, sensorId, uplink);
-            luftdatenUploader.scheduleUpload(sensorId, sensorData);
+            SensorData sensorData = decodeTtnMessage(encoding, uplink);
+            luftdatenUploader.scheduleUpload(uplink.getHardwareSerial(), sensorData);
             openSenseUploader.scheduleUpload(uplink.getHardwareSerial(), sensorData);
         } catch (PayloadParseException e) {
             LOG.warn("Could not parse payload from: '{}", uplink);
@@ -96,7 +94,7 @@ public final class LoraLuftdatenForwarder {
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(EPayloadEncoding encoding, String sensorId, TtnUplinkMessage uplinkMessage)
+    SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplinkMessage)
             throws PayloadParseException {
         SensorData sensorData = new SensorData();
 

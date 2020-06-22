@@ -77,7 +77,9 @@ public final class LuftdatenUploader {
         executor.execute(() -> uploadMeasurement(sensorId, pin, message));
     }
 
-    public void scheduleUpload(String sensorId, SensorData data) {
+    public void scheduleUpload(String deviceId, SensorData data) {
+        String sensorId = "TTN-" + deviceId;
+
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)) {
             LuftdatenMessage p1Message = new LuftdatenMessage(SOFTWARE_VERSION);

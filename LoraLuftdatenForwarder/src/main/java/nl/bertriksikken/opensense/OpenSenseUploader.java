@@ -69,22 +69,27 @@ public final class OpenSenseUploader {
         }
 
         // humidity/temperature/pressure
+        String meteoPrefix = getMeteoPrefix(data);
         if (data.hasValue(ESensorItem.HUMI)) {
-            message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
-            message.addItem(new LuftdatenItem("BME280_humidity", data.getValue(ESensorItem.HUMI)));
+            message.addItem(new LuftdatenItem(meteoPrefix + "humidity", data.getValue(ESensorItem.HUMI)));
         }
         if (data.hasValue(ESensorItem.TEMP)) {
-            message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-            message.addItem(new LuftdatenItem("BME280_temperature", data.getValue(ESensorItem.TEMP)));
+            message.addItem(new LuftdatenItem(meteoPrefix + "temperature", data.getValue(ESensorItem.TEMP)));
         }
         if (data.hasValue(ESensorItem.PRESSURE)) {
-            message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
-            message.addItem(new LuftdatenItem("BME280_pressure", data.getValue(ESensorItem.PRESSURE)));
+            message.addItem(new LuftdatenItem(meteoPrefix + "pressure", data.getValue(ESensorItem.PRESSURE)));
         }
 
         // schedule upload
         String luftdatenId = "TTN-" + deviceId;
         executor.execute(() -> uploadMeasurement(boxId, luftdatenId, message));
+    }
+
+    private String getMeteoPrefix(SensorData data) {
+        if (data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)) {
+            return "BME280_";
+        }
+        return "";
     }
 
     private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {

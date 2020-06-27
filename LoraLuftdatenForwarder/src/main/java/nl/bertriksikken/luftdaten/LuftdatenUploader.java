@@ -1,6 +1,7 @@
 package nl.bertriksikken.luftdaten;
 
 import java.time.Duration;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,8 +114,8 @@ public final class LuftdatenUploader {
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
             LuftdatenMessage p9Message = new LuftdatenMessage();
-            p9Message.addItem("latitude", String.format("%.4f", data.getValue(ESensorItem.POS_LAT)));
-            p9Message.addItem("longitude", String.format("%.4f", data.getValue(ESensorItem.POS_LON)));
+            p9Message.addItem("latitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LAT)));
+            p9Message.addItem("longitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LON)));
             if (data.hasValue(ESensorItem.POS_ALT)) {
                 p9Message.addItem("altitude", data.getValue(ESensorItem.POS_ALT));
             }

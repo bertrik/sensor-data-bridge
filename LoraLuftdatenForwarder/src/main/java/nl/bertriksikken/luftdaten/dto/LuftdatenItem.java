@@ -24,7 +24,7 @@ public final class LuftdatenItem {
      * @param name  the item name
      * @param value the item value
      */
-    public LuftdatenItem(String name, String value) {
+    LuftdatenItem(String name, String value) {
         this();
         this.name = name;
         this.value = value;
@@ -36,7 +36,7 @@ public final class LuftdatenItem {
      * @param name the item name
      * @param value the item value as double, it will be rounded to 1 decimal
      */
-    public LuftdatenItem(String name, Double value) {
+    LuftdatenItem(String name, Double value) {
         this(name, String.format(Locale.ROOT, "%.1f", value));
     }
 

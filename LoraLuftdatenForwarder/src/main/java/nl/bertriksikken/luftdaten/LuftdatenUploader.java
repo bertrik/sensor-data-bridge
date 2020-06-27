@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -82,13 +81,13 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)) {
             LuftdatenMessage p1Message = new LuftdatenMessage();
             if (data.hasValue(ESensorItem.PM10)) {
-                p1Message.addItem(new LuftdatenItem("P1", data.getValue(ESensorItem.PM10)));
+                p1Message.addItem("P1", data.getValue(ESensorItem.PM10));
             }
             if (data.hasValue(ESensorItem.PM2_5)) {
-                p1Message.addItem(new LuftdatenItem("P2", data.getValue(ESensorItem.PM2_5)));
+                p1Message.addItem("P2", data.getValue(ESensorItem.PM2_5));
             }
             if (data.hasValue(ESensorItem.PM1_0)) {
-                p1Message.addItem(new LuftdatenItem("P0", data.getValue(ESensorItem.PM1_0)));
+                p1Message.addItem("P0", data.getValue(ESensorItem.PM1_0));
             }
             scheduleUpload(sensorId, "1", p1Message);
         }
@@ -97,8 +96,8 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
                 && !data.hasValue(ESensorItem.HUMI)) {
             LuftdatenMessage p3Message = new LuftdatenMessage();
-            p3Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-            p3Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
+            p3Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
+            p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
             scheduleUpload(sensorId, "3", p3Message);
         }
 
@@ -106,18 +105,18 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             LuftdatenMessage p7Message = new LuftdatenMessage();
-            p7Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-            p7Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
+            p7Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
+            p7Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
             scheduleUpload(sensorId, "7", p7Message);
         }
 
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
             LuftdatenMessage p9Message = new LuftdatenMessage();
-            p9Message.addItem(new LuftdatenItem("latitude", String.format("%.4f", data.getValue(ESensorItem.POS_LAT))));
-            p9Message.addItem(new LuftdatenItem("longitude", String.format("%.4f", data.getValue(ESensorItem.POS_LON))));
+            p9Message.addItem("latitude", String.format("%.4f", data.getValue(ESensorItem.POS_LAT)));
+            p9Message.addItem("longitude", String.format("%.4f", data.getValue(ESensorItem.POS_LON)));
             if (data.hasValue(ESensorItem.POS_ALT)) {
-                p9Message.addItem(new LuftdatenItem("altitude", data.getValue(ESensorItem.POS_ALT)));
+                p9Message.addItem("altitude", data.getValue(ESensorItem.POS_ALT));
             }
             scheduleUpload(sensorId, "9", p9Message);
         }
@@ -125,9 +124,9 @@ public final class LuftdatenUploader {
         // pin 11: temperature & humidity & pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {
             LuftdatenMessage p11Message = new LuftdatenMessage();
-            p11Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
-            p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
-            p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
+            p11Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
+            p11Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
+            p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
             scheduleUpload(sensorId, "11", p11Message);
         }
 
@@ -135,7 +134,7 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             LuftdatenMessage p13Message = new LuftdatenMessage();
-            p13Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
+            p13Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             scheduleUpload(sensorId, "13", p13Message);
         }
 

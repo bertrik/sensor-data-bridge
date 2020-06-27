@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.bertriksikken.luftdaten.dto.LuftdatenItem;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -62,22 +61,22 @@ public final class OpenSenseUploader {
 
         // particulate matter
         if (data.hasValue(ESensorItem.PM10)) {
-            message.addItem(new LuftdatenItem("SDS_P1", data.getValue(ESensorItem.PM10)));
+            message.addItem("SDS_P1", data.getValue(ESensorItem.PM10));
         }
         if (data.hasValue(ESensorItem.PM2_5)) {
-            message.addItem(new LuftdatenItem("SDS_P2", data.getValue(ESensorItem.PM2_5)));
+            message.addItem("SDS_P2", data.getValue(ESensorItem.PM2_5));
         }
 
         // humidity/temperature/pressure
         String meteoPrefix = getMeteoPrefix(data);
         if (data.hasValue(ESensorItem.HUMI)) {
-            message.addItem(new LuftdatenItem(meteoPrefix + "humidity", data.getValue(ESensorItem.HUMI)));
+            message.addItem(meteoPrefix + "humidity", data.getValue(ESensorItem.HUMI));
         }
         if (data.hasValue(ESensorItem.TEMP)) {
-            message.addItem(new LuftdatenItem(meteoPrefix + "temperature", data.getValue(ESensorItem.TEMP)));
+            message.addItem(meteoPrefix + "temperature", data.getValue(ESensorItem.TEMP));
         }
         if (data.hasValue(ESensorItem.PRESSURE)) {
-            message.addItem(new LuftdatenItem(meteoPrefix + "pressure", data.getValue(ESensorItem.PRESSURE)));
+            message.addItem(meteoPrefix + "pressure", data.getValue(ESensorItem.PRESSURE));
         }
 
         // schedule upload

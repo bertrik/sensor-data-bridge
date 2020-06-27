@@ -29,12 +29,12 @@ public final class LuftdatenMessage {
         this.softwareVersion = SOFTWARE_VERSION;
     }
 
-    public void addItem(LuftdatenItem item) {
-        items.add(item);
+    public void addItem(String name, String value) {
+        items.add(new LuftdatenItem(name, value));
     }
 
-    public String getSoftwareVersion() {
-        return softwareVersion;
+    public void addItem(String name, Double value) {
+        items.add(new LuftdatenItem(name, value));
     }
 
     public List<LuftdatenItem> getItems() {

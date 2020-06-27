@@ -58,7 +58,7 @@ public final class OpenSenseUploader {
             return;
         }
 
-        LuftdatenMessage message = new LuftdatenMessage("LoraLuftdatenForwarder");
+        LuftdatenMessage message = new LuftdatenMessage();
 
         // particulate matter
         if (data.hasValue(ESensorItem.PM10)) {

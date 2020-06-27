@@ -26,8 +26,6 @@ public final class LuftdatenUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(LuftdatenUploader.class);
 
-    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
-
     private final ObjectMapper mapper = new ObjectMapper();
     private final ILuftdatenApi restClient;
     private final ExecutorService executor;
@@ -82,7 +80,7 @@ public final class LuftdatenUploader {
 
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)) {
-            LuftdatenMessage p1Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p1Message = new LuftdatenMessage();
             if (data.hasValue(ESensorItem.PM10)) {
                 p1Message.addItem(new LuftdatenItem("P1", data.getValue(ESensorItem.PM10)));
             }
@@ -98,7 +96,7 @@ public final class LuftdatenUploader {
         // pin 3: temperature & pressure, but no humidity
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
                 && !data.hasValue(ESensorItem.HUMI)) {
-            LuftdatenMessage p3Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p3Message = new LuftdatenMessage();
             p3Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
             p3Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
             scheduleUpload(sensorId, "3", p3Message);
@@ -107,7 +105,7 @@ public final class LuftdatenUploader {
         // pin 7: temperature & humidity, but no pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
-            LuftdatenMessage p7Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p7Message = new LuftdatenMessage();
             p7Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
             p7Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
             scheduleUpload(sensorId, "7", p7Message);
@@ -115,7 +113,7 @@ public final class LuftdatenUploader {
 
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
-            LuftdatenMessage p9Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p9Message = new LuftdatenMessage();
             p9Message.addItem(new LuftdatenItem("latitude", String.format("%.4f", data.getValue(ESensorItem.POS_LAT))));
             p9Message.addItem(new LuftdatenItem("longitude", String.format("%.4f", data.getValue(ESensorItem.POS_LON))));
             if (data.hasValue(ESensorItem.POS_ALT)) {
@@ -126,7 +124,7 @@ public final class LuftdatenUploader {
 
         // pin 11: temperature & humidity & pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {
-            LuftdatenMessage p11Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p11Message = new LuftdatenMessage();
             p11Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
             p11Message.addItem(new LuftdatenItem("humidity", data.getValue(ESensorItem.HUMI)));
             p11Message.addItem(new LuftdatenItem("pressure", data.getValue(ESensorItem.PRESSURE)));
@@ -136,7 +134,7 @@ public final class LuftdatenUploader {
         // pin 13: only temperature
         if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
-            LuftdatenMessage p13Message = new LuftdatenMessage(SOFTWARE_VERSION);
+            LuftdatenMessage p13Message = new LuftdatenMessage();
             p13Message.addItem(new LuftdatenItem("temperature", data.getValue(ESensorItem.TEMP)));
             scheduleUpload(sensorId, "13", p13Message);
         }

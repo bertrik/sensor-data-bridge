@@ -12,24 +12,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class LuftdatenMessage {
 
+    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
+
     @JsonProperty("software_version")
     private String softwareVersion;
 
     @JsonProperty("sensordatavalues")
     private final List<LuftdatenItem> items = new ArrayList<>();
 
-    private LuftdatenMessage() {
-        // jackson constructor
-    }
-
     /**
      * Constructor.
      * 
      * @param softwareVersion the software version
      */
-    public LuftdatenMessage(String softwareVersion) {
-        this();
-        this.softwareVersion = softwareVersion;
+    public LuftdatenMessage() {
+        this.softwareVersion = SOFTWARE_VERSION;
     }
 
     public void addItem(LuftdatenItem item) {

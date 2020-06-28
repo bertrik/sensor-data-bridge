@@ -31,6 +31,8 @@ public final class OpenSenseUploader {
     public OpenSenseUploader(Map<String, String> boxIds, IOpenSenseRestApi restClient) {
         this.boxIds.putAll(boxIds);
         this.restClient = Objects.requireNonNull(restClient);
+
+        LOG.info("Created OpenSenseUploader, with a total of {} sensebox ids", boxIds.size());
     }
 
     public static IOpenSenseRestApi newRestClient(String url, Duration timeout) {
@@ -92,14 +94,15 @@ public final class OpenSenseUploader {
     }
 
     private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {
-        LOG.info("Sending to opensense box {} for {}: {}", boxId, luftdatenId, message);
+        LOG.info("Upload for {} to opensense box {}: {}", luftdatenId, boxId, message);
         try {
             Response<String> response = restClient.postNewMeasurements(boxId, true, message).execute();
             if (response.isSuccessful()) {
                 String result = response.body();
-                LOG.info("Successfully posted to opensense box {}: {}", boxId, result);
+                LOG.info("Upload for {} to opensense box {} success: {}", luftdatenId, boxId, result);
             } else {
-                LOG.warn("Failed to post to opensense box {}: {}", boxId, response.errorBody().string());
+                LOG.warn("Upload for {} to opensense box {} failure: {}", luftdatenId, boxId,
+                        response.errorBody().string());
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());

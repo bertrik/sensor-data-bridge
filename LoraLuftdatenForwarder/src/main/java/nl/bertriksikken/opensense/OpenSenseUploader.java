@@ -62,11 +62,15 @@ public final class OpenSenseUploader {
         LuftdatenMessage message = new LuftdatenMessage();
 
         // particulate matter
+        String pmPrefix = getPmPrefix(data);
         if (data.hasValue(ESensorItem.PM10)) {
-            message.addItem("SDS_P1", data.getValue(ESensorItem.PM10));
+            message.addItem(pmPrefix + "P1", data.getValue(ESensorItem.PM10));
         }
         if (data.hasValue(ESensorItem.PM2_5)) {
-            message.addItem("SDS_P2", data.getValue(ESensorItem.PM2_5));
+            message.addItem(pmPrefix + "P2", data.getValue(ESensorItem.PM2_5));
+        }
+        if (data.hasValue(ESensorItem.PM1_0)) {
+            message.addItem(pmPrefix + "P0", data.getValue(ESensorItem.PM2_5));
         }
 
         // humidity/temperature/pressure
@@ -93,6 +97,13 @@ public final class OpenSenseUploader {
         return "";
     }
 
+    private String getPmPrefix(SensorData data) {
+        if (data.hasValue(ESensorItem.PM10) && data.hasValue(ESensorItem.PM2_5) && data.hasValue(ESensorItem.PM1_0)) {
+            return "PMS_";
+        }
+        return "SDS_";
+    }
+    
     private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {
         LOG.info("Upload for {} to opensense box {}: {}", luftdatenId, boxId, message);
         try {

@@ -159,11 +159,6 @@ public final class LoraLuftdatenForwarder {
         return sensorData;
     }
 
-    private Double getRssi(TtnUplinkMessage uplinkMessage) {
-        return uplinkMessage.getMetaData().getGateways().stream().mapToDouble(TtnUplinkGateway::getRssi).max()
-                .getAsDouble();
-    }
-
     /**
      * Starts the application.
      * 

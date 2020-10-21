@@ -20,6 +20,6 @@ libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.9.0'
 libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5' 
 
 // test libraries
-libraries.junit = 'junit:junit:4.13'
-libraries.mockito = 'org.mockito:mockito-core:3.5.13'
+libraries.junit = 'junit:junit:4.13.1'
+libraries.mockito = 'org.mockito:mockito-core:3.5.15'
 

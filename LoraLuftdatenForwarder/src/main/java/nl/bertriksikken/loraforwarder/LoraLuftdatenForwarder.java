@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,6 +32,7 @@ import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
+import nl.bertriksikken.ttn.dto.TtnUplinkMetaData.TtnUplinkGateway;
 
 public final class LoraLuftdatenForwarder {
 
@@ -64,7 +66,8 @@ public final class LoraLuftdatenForwarder {
         TtnConfig ttnConfig = config.getTtnConfig();
         for (TtnAppConfig ttnAppConfig : config.getTtnConfig().getApps()) {
             EPayloadEncoding encoding = ttnAppConfig.getEncoding();
-            LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", ttnAppConfig.getName(), encoding);
+            LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", ttnAppConfig.getName(),
+                    encoding);
             MqttListener listener = new MqttListener((topic, message) -> messageReceived(encoding, topic, message),
                     ttnConfig.getUrl(), ttnAppConfig.getName(), ttnAppConfig.getKey());
             mqttListeners.add(listener);
@@ -97,6 +100,16 @@ public final class LoraLuftdatenForwarder {
     SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplinkMessage)
             throws PayloadParseException {
         SensorData sensorData = new SensorData();
+
+        // add RSSI if present
+        OptionalDouble bestRssi = uplinkMessage.getMetaData().getGateways().stream()
+                .mapToDouble(TtnUplinkGateway::getRssi).max();
+        if (bestRssi.isPresent()) {
+            double rssi = bestRssi.getAsDouble();
+            if (Double.isFinite(rssi)) {
+                sensorData.addValue(ESensorItem.RSSI, rssi);
+            }
+        }
 
         switch (encoding) {
         case RUDZL:
@@ -144,6 +157,11 @@ public final class LoraLuftdatenForwarder {
             throw new IllegalStateException("Unhandled encoding: " + encoding);
         }
         return sensorData;
+    }
+
+    private Double getRssi(TtnUplinkMessage uplinkMessage) {
+        return uplinkMessage.getMetaData().getGateways().stream().mapToDouble(TtnUplinkGateway::getRssi).max()
+                .getAsDouble();
     }
 
     /**

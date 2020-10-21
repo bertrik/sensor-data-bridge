@@ -17,7 +17,9 @@ public enum ESensorItem {
     SOUND("Sound pressure (unit?)"),
     
     NO2("NO2 concentration (unit?)"),
-    RADIATION("Radiation (unit?)");
+    RADIATION("Radiation (unit?)"), 
+    
+    RSSI("Signal strength, in dBm");
 
     private String description;
 

@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttn.dto;
+package nl.bertriksikken.ttnv2.dto;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nl.bertriksikken.ttnv2.dto.TtnUplinkMessage;
 
 /**
  * Unit tests related to TTN messages.

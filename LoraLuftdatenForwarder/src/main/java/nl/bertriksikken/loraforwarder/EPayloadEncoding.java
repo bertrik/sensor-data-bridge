@@ -2,7 +2,6 @@ package nl.bertriksikken.loraforwarder;
 
 public enum EPayloadEncoding {
 
-	RUDZL("rudzl"),
     TTN_ULM("ttnulm"),
     CAYENNE("cayenne");
   

@@ -40,6 +40,10 @@ public final class Ttnv3UplinkMessage {
 
         @JsonProperty("dev_addr")
         String deviceAddress;
+
+        public String getDeviceEui() {
+            return deviceEui;
+        }
     }
     
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -51,7 +55,11 @@ public final class Ttnv3UplinkMessage {
         int fcnt;
         
         @JsonProperty("frm_payload")
-        byte[] payload;
+        byte[] payload = new byte[0];
+
+        public byte[] getPayload() {
+            return payload.clone();
+        }
     }
     
 }

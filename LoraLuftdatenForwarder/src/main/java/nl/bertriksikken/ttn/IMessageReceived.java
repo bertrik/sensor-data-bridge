@@ -11,6 +11,6 @@ public interface IMessageReceived {
      * @param topic   the topic
      * @param message the message
      */
-    void messageReceived(String topic, String message) throws Exception;
+    void messageReceived(String deviceId, byte[] payload) throws Exception;
 
 }

@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttn.dto;
+package nl.bertriksikken.ttnv2.dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +30,6 @@ public final class TtnUplinkMessage {
     @JsonProperty("payload_fields")
     Map<String, Object> payloadFields;
     
-    @JsonProperty("metadata")
-    TtnUplinkMetaData metaData = new TtnUplinkMetaData();
-    
     public String getAppId() {
         return appId;
     }
@@ -55,10 +52,6 @@ public final class TtnUplinkMessage {
 
     public byte[] getRawPayload() {
         return rawPayload.clone();
-    }
-    
-    public TtnUplinkMetaData getMetaData() {
-        return metaData;
     }
 
     public Map<String, Object> getPayloadFields() {

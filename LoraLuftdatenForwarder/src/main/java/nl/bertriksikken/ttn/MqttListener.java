@@ -1,5 +1,6 @@
 package nl.bertriksikken.ttn;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -11,6 +12,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nl.bertriksikken.ttnv2.dto.TtnUplinkMessage;
+import nl.bertriksikken.ttnv3.dto.Ttnv3UplinkMessage;
 
 /**
  * Listener process for receiving data from MQTT.
@@ -24,6 +30,7 @@ public final class MqttListener {
 
     private final MqttClient mqttClient;
     private final MqttConnectOptions options;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Constructor.
@@ -33,19 +40,23 @@ public final class MqttListener {
      * @param appId    the name of the TTN application
      * @param appKey   the key of the TTN application
      */
-    public MqttListener(IMessageReceived callback, String url, String appId, String appKey) {
-        LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appId);
+    public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
+        String url = (appConfig.getVersion() == ETtnStackVersion.V2) ? config.getUrlV2() : config.getUrlV3();
+        String topic = (appConfig.getVersion() == ETtnStackVersion.V2) ? "+/devices/+/up" : "v3/+/devices/+/up";
+        
+        LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appConfig.getName());
         try {
             this.mqttClient = new MqttClient(url, MqttClient.generateClientId(), new MemoryPersistence());
         } catch (MqttException e) {
             throw new IllegalArgumentException(e);
         }
-        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, "+/devices/+/up", callback));
+        
+        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, topic, callback, appConfig.getVersion()));
 
         // create connect options
         options = new MqttConnectOptions();
-        options.setUserName(appId);
-        options.setPassword(appKey.toCharArray());
+        options.setUserName(appConfig.getName());
+        options.setPassword(appConfig.getKey().toCharArray());
         options.setAutomaticReconnect(true);
     }
 
@@ -74,16 +85,19 @@ public final class MqttListener {
      * MQTT callback handler, (re-)subscribes to the topic and forwards incoming
      * messages.
      */
-    private static final class MqttCallbackHandler implements MqttCallbackExtended {
+    private final class MqttCallbackHandler implements MqttCallbackExtended {
 
         private final MqttClient client;
         private final String topic;
         private final IMessageReceived listener;
+        private final ETtnStackVersion version;
 
-        private MqttCallbackHandler(MqttClient client, String topic, IMessageReceived listener) {
+        private MqttCallbackHandler(MqttClient client, String topic, IMessageReceived listener,
+                ETtnStackVersion version) {
             this.client = client;
             this.topic = topic;
             this.listener = listener;
+            this.version = version;
         }
 
         @Override
@@ -95,13 +109,36 @@ public final class MqttListener {
         public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
             LOG.info("Message arrived on topic '{}'", topic);
 
-            // notify our listener, in an exception safe manner
+            // handle message, in an exception safe manner
             try {
+                // decode JSON
                 String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
-                listener.messageReceived(topic, message);
+
+                // parse device EUI and payload
+                String deviceEui;
+                byte[] payload;
+                switch (version) {
+                case V2:
+                    TtnUplinkMessage uplinkV2 = mapper.readValue(message, TtnUplinkMessage.class);
+                    deviceEui = uplinkV2.getHardwareSerial();
+                    payload = uplinkV2.getRawPayload();
+                    break;
+                case V3:
+                    Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
+                    deviceEui = uplinkV3.getEndDeviceIds().getDeviceEui();
+                    payload = uplinkV3.getUplinkMessage().getPayload();
+                    break;
+                default:
+                    throw new IllegalStateException("Unhandled TTN version " + version);
+                }
+                
+                // notify listener
+                listener.messageReceived(deviceEui, payload);
+            } catch (IOException e) {
+                LOG.warn("Could not parse MQTT message: '{}'", mqttMessage);
             } catch (Exception e) {
-                LOG.trace("Caught exception", e);
-                LOG.error("Caught exception in MQTT listener: {}", e.getMessage());
+                LOG.trace("Caught unhandled uplink exception in MQTT listener", e);
+                LOG.error("Caught unhandled uplink exception in MQTT listener: {}", e.getMessage());
             }
         }
 

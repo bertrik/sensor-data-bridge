@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalDouble;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import nl.bertriksikken.loraforwarder.rudzl.dto.RudzlMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.PayloadParseException;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnCayenneMessage;
 import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
@@ -31,8 +29,6 @@ import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
-import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
-import nl.bertriksikken.ttn.dto.TtnUplinkMetaData.TtnUplinkGateway;
 
 public final class LoraLuftdatenForwarder {
 
@@ -64,65 +60,38 @@ public final class LoraLuftdatenForwarder {
         openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfig().getIds(), openSenseClient);
 
         TtnConfig ttnConfig = config.getTtnConfig();
-        for (TtnAppConfig ttnAppConfig : config.getTtnConfig().getApps()) {
-            EPayloadEncoding encoding = ttnAppConfig.getEncoding();
-            LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", ttnAppConfig.getName(),
+        for (TtnAppConfig appConfig : config.getTtnConfig().getApps()) {
+            EPayloadEncoding encoding = appConfig.getEncoding();
+            LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", appConfig.getName(),
                     encoding);
-            MqttListener listener = new MqttListener((topic, message) -> messageReceived(encoding, topic, message),
-                    ttnConfig.getUrl(), ttnAppConfig.getName(), ttnAppConfig.getKey());
+            MqttListener listener = new MqttListener(ttnConfig, appConfig, 
+                    (deviceEui, payload) -> messageReceived(encoding, deviceEui, payload));
             mqttListeners.add(listener);
         }
     }
 
-    private void messageReceived(EPayloadEncoding encoding, String topic, String message) {
-        LOG.info("Received: '{}'", message);
+    private void messageReceived(EPayloadEncoding encoding, String deviceEui, byte[] payload) {
+        LOG.info("Received: '{}'", payload);
 
-        // decode JSON
-        ObjectMapper mapper = new ObjectMapper();
-        TtnUplinkMessage uplink;
-        try {
-            uplink = mapper.readValue(message, TtnUplinkMessage.class);
-        } catch (IOException e) {
-            LOG.warn("Could not parse JSON: '{}'", message);
-            return;
-        }
         // decode and upload
         try {
-            SensorData sensorData = decodeTtnMessage(encoding, uplink);
-            luftdatenUploader.scheduleUpload(uplink.getHardwareSerial(), sensorData);
-            openSenseUploader.scheduleUpload(uplink.getHardwareSerial(), sensorData);
+            SensorData sensorData = decodeTtnMessage(encoding, payload);
+            luftdatenUploader.scheduleUpload(deviceEui, sensorData);
+            openSenseUploader.scheduleUpload(deviceEui, sensorData);
         } catch (PayloadParseException e) {
-            LOG.warn("Could not parse payload from: '{}", uplink);
+            LOG.warn("Could not parse '{}' payload from: '{}", encoding, payload);
         }
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplinkMessage)
+    SensorData decodeTtnMessage(EPayloadEncoding encoding, byte[] payload)
             throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
-        // add RSSI if present
-        OptionalDouble bestRssi = uplinkMessage.getMetaData().getGateways().stream()
-                .mapToDouble(TtnUplinkGateway::getRssi).max();
-        if (bestRssi.isPresent()) {
-            double rssi = bestRssi.getAsDouble();
-            if (Double.isFinite(rssi)) {
-                sensorData.addValue(ESensorItem.RSSI, rssi);
-            }
-        }
-
         switch (encoding) {
-        case RUDZL:
-            RudzlMessage rudzlMessage = new RudzlMessage(uplinkMessage.getPayloadFields());
-            sensorData.addValue(ESensorItem.PM10, rudzlMessage.getPM10());
-            sensorData.addValue(ESensorItem.PM2_5, rudzlMessage.getPM2_5());
-            sensorData.addValue(ESensorItem.HUMI, rudzlMessage.getRH());
-            sensorData.addValue(ESensorItem.TEMP, rudzlMessage.getT());
-            sensorData.addValue(ESensorItem.PRESSURE, rudzlMessage.getP() * 100.0); // mBar to Pa
-            break;
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();
-            ulmMessage.parse(uplinkMessage.getRawPayload());
+            ulmMessage.parse(payload);
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
             sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
             sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
@@ -130,7 +99,7 @@ public final class LoraLuftdatenForwarder {
             break;
         case CAYENNE:
             TtnCayenneMessage cayenne = new TtnCayenneMessage();
-            cayenne.parse(uplinkMessage.getRawPayload());
+            cayenne.parse(payload);
             if (cayenne.hasPm10()) {
                 sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
             }

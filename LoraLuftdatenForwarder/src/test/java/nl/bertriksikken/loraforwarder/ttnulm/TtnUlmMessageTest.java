@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.bertriksikken.ttn.dto.TtnUplinkMessage;
+import nl.bertriksikken.ttnv2.dto.TtnUplinkMessage;
 
 public final class TtnUlmMessageTest {
 

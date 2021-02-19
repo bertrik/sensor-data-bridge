@@ -1,5 +1,6 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +11,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class EndDevice {
 
     @JsonProperty("created_at")
-    private final String createdAt = "";
+    private final String createdAt;
 
     @JsonProperty("updated_at")
-    private final String updatedAt = "";
+    private final String updatedAt;
 
     private final Map<String, String> attributes = new HashMap<>();
 
+    public EndDevice() {
+        String creationTime = Instant.now().toString();
+        this.createdAt = creationTime;
+        this.updatedAt = creationTime;
+    }
+    
     public String getCreatedAt() {
         return createdAt;
     }

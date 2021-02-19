@@ -7,7 +7,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
- * REST API for luftdaten.info
+ * REST API for TTN device registry
  */
 public interface IEndDeviceRegistryRestApi {
 

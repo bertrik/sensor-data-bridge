@@ -53,6 +53,11 @@ public final class OpenSenseUploader {
         executor.shutdown();
     }
 
+    public void addMapping(String devEui, String opensenseId) {
+        LOG.info("Adding opensense mapping {} -> {}", devEui, opensenseId);
+        boxIds.put(devEui, opensenseId);
+    }
+
     public void scheduleUpload(String deviceId, SensorData data) {
         String boxId = boxIds.getOrDefault(deviceId, "");
         if (boxId.isBlank()) {

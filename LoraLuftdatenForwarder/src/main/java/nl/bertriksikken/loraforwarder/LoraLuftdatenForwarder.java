@@ -34,7 +34,7 @@ import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
-import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistryRestApi;
+import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
 import nl.bertriksikken.ttnv3.enddevice.IEndDeviceRegistryRestApi;
 
 public final class LoraLuftdatenForwarder {
@@ -45,7 +45,7 @@ public final class LoraLuftdatenForwarder {
     private final List<MqttListener> mqttListeners = new ArrayList<>();
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
-    private final Map<String, EndDeviceRegistryRestApi> deviceRegistries = new HashMap<>();
+    private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
 
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
@@ -76,14 +76,14 @@ public final class LoraLuftdatenForwarder {
                     (deviceEui, payload) -> messageReceived(encoding, deviceEui, payload));
             mqttListeners.add(listener);
 
-            // for each TTN v3 app, create a device registry client so we can look up attributes
+            // for each TTN v3 app, create a device registry client so we can look up
+            // attributes
             if (appConfig.getVersion() == ETtnStackVersion.V3) {
                 String url = "https://eu1.cloud.thethings.network";
-                IEndDeviceRegistryRestApi endDeviceRegistryRestApi = EndDeviceRegistryRestApi
-                        .newRestClient(url, Duration.ofSeconds(20));
-                EndDeviceRegistryRestApi registry = new EndDeviceRegistryRestApi(endDeviceRegistryRestApi,
-                        appConfig.getKey());
-                deviceRegistries.put(appConfig.getName(), registry);
+                IEndDeviceRegistryRestApi endDeviceRegistryRestApi = EndDeviceRegistry.newRestClient(url,
+                        Duration.ofSeconds(20));
+                EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(endDeviceRegistryRestApi, appConfig.getKey());
+                deviceRegistries.put(appConfig.getName(), deviceRegistry);
             }
         }
     }
@@ -152,14 +152,14 @@ public final class LoraLuftdatenForwarder {
      */
     private void start() throws MqttException {
         LOG.info("Starting LoraLuftdatenForwarder application");
-        
+
         // fetch TTNv3 attributes and add opensense mapping
-        for (Entry<String, EndDeviceRegistryRestApi> entry : deviceRegistries.entrySet()) {
+        for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
             String applicationId = entry.getKey();
-            EndDeviceRegistryRestApi api = entry.getValue();
+            EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
-                List<EndDevice> devices = api.listEndDevices(applicationId);
+                List<EndDevice> devices = registry.listEndDevices(applicationId);
                 for (EndDevice device : devices) {
                     String devEui = device.getIds().getDevEui();
                     String opensenseId = device.getAttributes().getOrDefault("opensense-id", "");
@@ -170,7 +170,7 @@ public final class LoraLuftdatenForwarder {
                 LOG.warn("Error getting opensense map ids for {}", e.getMessage());
             }
         }
-        
+
         // start opensense uploader
         openSenseUploader.start();
 

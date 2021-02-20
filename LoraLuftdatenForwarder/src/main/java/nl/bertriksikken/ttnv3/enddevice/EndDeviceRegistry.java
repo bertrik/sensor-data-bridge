@@ -13,14 +13,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public final class EndDeviceRegistryRestApi {
+/**
+ * Communicates with the TTN v3 device registry API.
+ */
+public final class EndDeviceRegistry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EndDeviceRegistryRestApi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndDeviceRegistry.class);
 
     private final IEndDeviceRegistryRestApi restApi;
     private final String authToken;
 
-    public EndDeviceRegistryRestApi(IEndDeviceRegistryRestApi restApi, String apiKey) {
+    public EndDeviceRegistry(IEndDeviceRegistryRestApi restApi, String apiKey) {
         this.restApi = restApi;
         this.authToken = "Bearer " + apiKey;
     }

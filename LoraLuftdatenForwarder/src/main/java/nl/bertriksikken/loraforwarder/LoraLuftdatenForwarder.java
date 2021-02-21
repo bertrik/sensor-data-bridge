@@ -83,10 +83,11 @@ public final class LoraLuftdatenForwarder {
             // for each TTN v3 app, create a device registry client so we can look up
             // attributes
             if (appConfig.getVersion() == ETtnStackVersion.V3) {
-                IEndDeviceRegistryRestApi endDeviceRegistryRestApi = EndDeviceRegistry
-                        .newRestClient(ttnConfig.getIdentityServerUrl(), Duration.ofSeconds(20));
-                EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(endDeviceRegistryRestApi, appConfig.getKey());
-                deviceRegistries.put(appConfig.getName(), deviceRegistry);
+                IEndDeviceRegistryRestApi restApi = EndDeviceRegistry.newRestClient(ttnConfig.getIdentityServerUrl(),
+                        Duration.ofSeconds(20));
+                String appName = appConfig.getName();
+                EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
+                deviceRegistries.put(appName, deviceRegistry);
             }
         }
     }
@@ -177,7 +178,7 @@ public final class LoraLuftdatenForwarder {
             EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
-                List<EndDevice> devices = registry.listEndDevices(applicationId);
+                List<EndDevice> devices = registry.listEndDevices();
                 for (EndDevice device : devices) {
                     String devEui = device.getIds().getDevEui();
                     String opensenseId = device.getAttributes().getOrDefault("opensense-id", "");

@@ -21,10 +21,12 @@ public final class EndDeviceRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(EndDeviceRegistry.class);
 
     private final IEndDeviceRegistryRestApi restApi;
+    private final String applicationId;
     private final String authToken;
 
-    public EndDeviceRegistry(IEndDeviceRegistryRestApi restApi, String apiKey) {
+    public EndDeviceRegistry(IEndDeviceRegistryRestApi restApi, String applicationId, String apiKey) {
         this.restApi = restApi;
+        this.applicationId = applicationId;
         this.authToken = "Bearer " + apiKey;
     }
 
@@ -46,7 +48,7 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
-    public List<EndDevice> listEndDevices(String applicationId) throws IOException {
+    public List<EndDevice> listEndDevices() throws IOException {
         String fields = String.join(",", IEndDeviceRegistryRestApi.FIELD_IDS,
                 IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES);
         Response<EndDevices> response = restApi.listEndDevices(authToken, applicationId, fields).execute();

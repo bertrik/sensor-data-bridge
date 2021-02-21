@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -46,6 +49,7 @@ public final class LoraLuftdatenForwarder {
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
@@ -153,7 +157,22 @@ public final class LoraLuftdatenForwarder {
     private void start() throws MqttException {
         LOG.info("Starting LoraLuftdatenForwarder application");
 
-        // fetch TTNv3 attributes and add opensense mapping
+        // schedule task to fetch opensense ids
+        executor.scheduleAtFixedRate(this::updateOpenSenseMapping, 0, 60, TimeUnit.MINUTES);
+
+        // start opensense uploader
+        openSenseUploader.start();
+
+        luftdatenUploader.start();
+        for (MqttListener listener : mqttListeners) {
+            listener.start();
+        }
+
+        LOG.info("Started LoraLuftdatenForwarder application");
+    }
+
+    // retrieves application attributes and updates the device EUI -> opensense id mapping in the opensense uploader
+    private void updateOpenSenseMapping() {
         for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
             String applicationId = entry.getKey();
             EndDeviceRegistry registry = entry.getValue();
@@ -169,19 +188,10 @@ public final class LoraLuftdatenForwarder {
             } catch (IOException e) {
                 LOG.warn("Error getting opensense map ids for {}", e.getMessage());
             }
+            LOG.info("Fetching TTNv3 application attributes done");
         }
-
-        // start opensense uploader
-        openSenseUploader.start();
-
-        luftdatenUploader.start();
-        for (MqttListener listener : mqttListeners) {
-            listener.start();
-        }
-
-        LOG.info("Started LoraLuftdatenForwarder application");
     }
-
+    
     /**
      * Stops the application.
      * 
@@ -190,6 +200,7 @@ public final class LoraLuftdatenForwarder {
     private void stop() {
         LOG.info("Stopping LoraLuftdatenForwarder application");
 
+        executor.shutdownNow();
         mqttListeners.forEach(MqttListener::stop);
         openSenseUploader.stop();
         luftdatenUploader.stop();

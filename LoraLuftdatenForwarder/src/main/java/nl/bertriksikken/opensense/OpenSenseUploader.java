@@ -2,9 +2,9 @@ package nl.bertriksikken.opensense;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,7 +26,7 @@ public final class OpenSenseUploader {
 
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Map<String, String> boxIds = new HashMap<>();
+    private final Map<String, String> boxIds = new ConcurrentHashMap<>();
 
     public OpenSenseUploader(Map<String, String> boxIds, IOpenSenseRestApi restClient) {
         this.boxIds.putAll(boxIds);
@@ -54,8 +54,14 @@ public final class OpenSenseUploader {
     }
 
     public void addMapping(String devEui, String opensenseId) {
-        LOG.info("Adding opensense mapping {} -> {}", devEui, opensenseId);
-        boxIds.put(devEui, opensenseId);
+        String oldValue = boxIds.put(devEui, opensenseId);
+        if (oldValue == null) {
+            LOG.info("Added opensense mapping {} -> {}", devEui, opensenseId);
+        } else {
+            if (!oldValue.equals(opensenseId)) {
+                LOG.info("Updated opensense mapping {} -> {}", devEui, opensenseId);
+            }
+        }
     }
 
     public void scheduleUpload(String deviceId, SensorData data) {

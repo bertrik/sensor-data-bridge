@@ -41,7 +41,7 @@ public final class MqttListener {
      * @param appKey   the key of the TTN application
      */
     public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
-        String url = (appConfig.getVersion() == ETtnStackVersion.V2) ? config.getUrlV2() : config.getUrlV3();
+        String url = (appConfig.getVersion() == ETtnStackVersion.V2) ? config.getMqttUrlV2() : config.getMqttUrlV3();
         String topic = (appConfig.getVersion() == ETtnStackVersion.V2) ? "+/devices/+/up" : "v3/+/devices/+/up";
         
         LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appConfig.getName());

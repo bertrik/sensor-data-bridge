@@ -83,9 +83,8 @@ public final class LoraLuftdatenForwarder {
             // for each TTN v3 app, create a device registry client so we can look up
             // attributes
             if (appConfig.getVersion() == ETtnStackVersion.V3) {
-                String url = "https://eu1.cloud.thethings.network";
-                IEndDeviceRegistryRestApi endDeviceRegistryRestApi = EndDeviceRegistry.newRestClient(url,
-                        Duration.ofSeconds(20));
+                IEndDeviceRegistryRestApi endDeviceRegistryRestApi = EndDeviceRegistry
+                        .newRestClient(ttnConfig.getIdentityServerUrl(), Duration.ofSeconds(20));
                 EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(endDeviceRegistryRestApi, appConfig.getKey());
                 deviceRegistries.put(appConfig.getName(), deviceRegistry);
             }

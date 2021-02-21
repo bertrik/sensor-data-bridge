@@ -16,6 +16,9 @@ public final class TtnConfig {
     @JsonProperty("identity_server_url")
     private String identityServerUrl = "https://eu1.cloud.thethings.network";
     
+    @JsonProperty("identity_server_timeout")
+    private int identityServerTimeout = 20;
+    
     @JsonProperty("apps")
     private List<TtnAppConfig> apps = Arrays.asList(new TtnAppConfig());
 
@@ -31,8 +34,12 @@ public final class TtnConfig {
         return identityServerUrl;
     }
     
+    public long getIdentityServerTimeout() {
+        return identityServerTimeout;
+    }
     public List<TtnAppConfig> getApps() {
         return apps;
     }
+
     
 }

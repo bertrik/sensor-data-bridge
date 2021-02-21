@@ -84,7 +84,7 @@ public final class LoraLuftdatenForwarder {
             // attributes
             if (appConfig.getVersion() == ETtnStackVersion.V3) {
                 IEndDeviceRegistryRestApi restApi = EndDeviceRegistry.newRestClient(ttnConfig.getIdentityServerUrl(),
-                        Duration.ofSeconds(20));
+                        Duration.ofSeconds(ttnConfig.getIdentityServerTimeout()));
                 String appName = appConfig.getName();
                 EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
                 deviceRegistries.put(appName, deviceRegistry);

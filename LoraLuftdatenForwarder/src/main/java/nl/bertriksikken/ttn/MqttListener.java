@@ -42,7 +42,7 @@ public final class MqttListener {
      */
     public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
         String url = (appConfig.getVersion() == ETtnStackVersion.V2) ? config.getMqttUrlV2() : config.getMqttUrlV3();
-        String topic = (appConfig.getVersion() == ETtnStackVersion.V2) ? "+/devices/+/up" : "v3/+/devices/+/up";
+        String topic = appConfig.getVersion().getPrefix() + "+/devices/+/up";
         
         LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appConfig.getName());
         try {
@@ -51,7 +51,7 @@ public final class MqttListener {
             throw new IllegalArgumentException(e);
         }
         
-        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, topic, callback, appConfig.getVersion()));
+        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, topic, callback));
 
         // create connect options
         options = new MqttConnectOptions();
@@ -90,14 +90,11 @@ public final class MqttListener {
         private final MqttClient client;
         private final String topic;
         private final IMessageReceived listener;
-        private final ETtnStackVersion version;
 
-        private MqttCallbackHandler(MqttClient client, String topic, IMessageReceived listener,
-                ETtnStackVersion version) {
+        private MqttCallbackHandler(MqttClient client, String topic, IMessageReceived listener) {
             this.client = client;
             this.topic = topic;
             this.listener = listener;
-            this.version = version;
         }
 
         @Override
@@ -117,19 +114,14 @@ public final class MqttListener {
                 // parse device EUI and payload
                 String deviceEui;
                 byte[] payload;
-                switch (version) {
-                case V2:
-                    TtnUplinkMessage uplinkV2 = mapper.readValue(message, TtnUplinkMessage.class);
-                    deviceEui = uplinkV2.getHardwareSerial();
-                    payload = uplinkV2.getRawPayload();
-                    break;
-                case V3:
+                if (topic.startsWith(ETtnStackVersion.V3.getPrefix())) {
                     Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
                     deviceEui = uplinkV3.getEndDeviceIds().getDeviceEui();
                     payload = uplinkV3.getUplinkMessage().getPayload();
-                    break;
-                default:
-                    throw new IllegalStateException("Unhandled TTN version " + version);
+                } else {
+                    TtnUplinkMessage uplinkV2 = mapper.readValue(message, TtnUplinkMessage.class);
+                    deviceEui = uplinkV2.getHardwareSerial();
+                    payload = uplinkV2.getRawPayload();
                 }
                 
                 // notify listener

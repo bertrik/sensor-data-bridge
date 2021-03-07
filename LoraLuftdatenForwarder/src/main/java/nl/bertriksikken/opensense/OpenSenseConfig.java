@@ -18,7 +18,6 @@ public final class OpenSenseConfig {
     
     public OpenSenseConfig() {
         ids.put("0ttn-deveui-here", "put-opensense-boxid-here");
-        ids.put("0004A30B001E00BE", "5eca4a0fd0545b001c0e5d46");
     }
 
     public String getUrl() {

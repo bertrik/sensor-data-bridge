@@ -9,10 +9,10 @@ public final class TtnAppConfig {
     private String name = "particulatematter";
 
     @JsonProperty("version")
-    private ETtnStackVersion version = ETtnStackVersion.V2;
+    private ETtnStackVersion version = ETtnStackVersion.V3;
     
     @JsonProperty("key")
-    private String key = "ttn-account-v2.cNaB2zO-nRiXaCUYmSAugzm-BaG_ZSHbEc5KgHNQFsk";
+    private String key = "NNSXS.LHD22PFZMI3B7WF6FDWIK45N4244U7DWRVWZASI.XXXXXX";
 
     @JsonProperty("encoding")
     private EPayloadEncoding encoding = EPayloadEncoding.CAYENNE;

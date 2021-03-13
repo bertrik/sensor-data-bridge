@@ -79,10 +79,14 @@ public final class LuftdatenUploader {
         String sensorId = "TTN-" + deviceId;
 
         // pin 1 (dust sensors)
-        if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)) {
+        if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
+                || data.hasValue(ESensorItem.PM4_0)) {
             LuftdatenMessage p1Message = new LuftdatenMessage();
             if (data.hasValue(ESensorItem.PM10)) {
                 p1Message.addItem("P1", data.getValue(ESensorItem.PM10));
+            }
+            if (data.hasValue(ESensorItem.PM4_0)) {
+                p1Message.addItem("P4", data.getValue(ESensorItem.PM4_0));
             }
             if (data.hasValue(ESensorItem.PM2_5)) {
                 p1Message.addItem("P2", data.getValue(ESensorItem.PM2_5));

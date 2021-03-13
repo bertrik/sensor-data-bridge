@@ -9,16 +9,18 @@ import nl.sikken.bertrik.cayenne.CayenneMessage;
 import nl.sikken.bertrik.cayenne.ECayenneItem;
 
 /**
- * Cayenne message containing SDS data (as analog values on channels 100 and 25)
+ * Cayenne message containing SDS data (as analog values on channels 0..4)
  * and DHT data.
  */
 public final class TtnCayenneMessage {
 
-    private static final int CHANNEL_PM10 = 1;
     private static final int CHANNEL_PM2_5 = 2;
+    private static final int CHANNEL_PM4 = 4;
+    private static final int CHANNEL_PM10 = 1;
 
     private Optional<Double> pm10 = Optional.empty();
     private Optional<Double> pm2_5 = Optional.empty();
+    private Optional<Double> pm4 = Optional.empty();
     private Optional<Double> rhPerc = Optional.empty();
     private Optional<Double> tempC = Optional.empty();
     private Optional<Double> pressureMillibar = Optional.empty();
@@ -39,6 +41,10 @@ public final class TtnCayenneMessage {
             CayenneItem p25 = cayenneMessage.ofChannel(CHANNEL_PM2_5);
             if (p25 != null) {
                 pm2_5 = Optional.of(p25.getValue().doubleValue());
+            }
+            CayenneItem p4 = cayenneMessage.ofChannel(CHANNEL_PM4);
+            if (p4 != null) {
+                pm4 = Optional.of(p4.getValue().doubleValue());
             }
             CayenneItem temp = cayenneMessage.ofType(ECayenneItem.TEMPERATURE);
             if (temp != null) {
@@ -68,6 +74,14 @@ public final class TtnCayenneMessage {
 
     public double getPm10() {
         return pm10.get();
+    }
+
+    public boolean hasPm4() {
+        return pm4.isPresent();
+    }
+
+    public double getPm4() {
+        return pm4.get();
     }
 
     public boolean hasPm2_5() {

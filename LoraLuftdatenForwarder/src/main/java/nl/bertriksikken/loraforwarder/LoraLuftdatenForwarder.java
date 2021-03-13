@@ -124,6 +124,9 @@ public final class LoraLuftdatenForwarder {
             if (cayenne.hasPm10()) {
                 sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
             }
+            if (cayenne.hasPm4()) {
+                sensorData.addValue(ESensorItem.PM4_0, cayenne.getPm4());
+            }
             if (cayenne.hasPm2_5()) {
                 sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
             }

@@ -1,0 +1,16 @@
+{
+  "reports": [
+    {
+      "serialNumber": "IMEI:868333030676163",
+      "timestamp": 1615660679246,
+      "subscriptionId": "06f872fc-02b3-4b20-8394-3f19a7006ca9",
+      "resourcePath": "uplinkMsg/0/data",
+      "value": "01a3021c"
+    }
+  ],
+  "registrations": [],
+  "deregistrations": [],
+  "updates": [],
+  "expirations": [],
+  "responses": []
+}

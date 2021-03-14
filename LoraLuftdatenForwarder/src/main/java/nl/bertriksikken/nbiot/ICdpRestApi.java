@@ -9,16 +9,15 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/nbiot")
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.TEXT_PLAIN)
 public interface ICdpRestApi {
 
     @POST
     @Path("/uplink")
-    public void upload(CdpMessage cdpMessage);
+    public void uplink(CdpMessage cdpMessage);
 
     @GET
     @Path("/ping")
-    @Produces(MediaType.TEXT_PLAIN)
     String ping();
 
 }

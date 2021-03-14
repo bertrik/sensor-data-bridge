@@ -32,4 +32,11 @@ public final class CdpMessageTest {
         }
     }
 
+    @Test
+    public void testToString() {
+        CdpMessage message = new CdpMessage();
+        String s = message.toString();
+        Assert.assertNotNull(s);
+    }
+    
 }

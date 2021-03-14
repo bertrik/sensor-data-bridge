@@ -1,5 +1,7 @@
 package nl.bertriksikken.nbiot;
 
+import java.io.IOException;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -8,26 +10,41 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class CdpRestServer implements ICdpRestApi {
+public final class NbIotReceiver {
     
-    private static final Logger LOG = LoggerFactory.getLogger(CdpRestServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NbIotReceiver.class);
 
     private final Server server;
     
     public static void main(String[] args) throws Exception {
-        CdpRestServer restServer = new CdpRestServer();
+        NbIotReceiver restServer = new NbIotReceiver();
         restServer.start();
     }
     
-    public CdpRestServer() throws Exception {
-        this.server = createRestServer(9000, "", this.getClass());
+    public NbIotReceiver() {
+        this.server = createRestServer(9000, "", CdpRestApi.class);
     }
     
-    public void start() throws Exception {
-        server.start();
+    public void start() throws IOException {
+        LOG.info("Starting NB-IOT server");
+        try {
+            server.start();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+    
+    public void stop() {
+        LOG.info("Stopping NB-IOT server");
+        try {
+            server.stop();
+        } catch (Exception e) {
+            LOG.error("Caught exception during shutdown: {}", e.getMessage());
+            LOG.trace("Caught exception during shutdown", e);
+        }
     }
 
-    private Server createRestServer(int port, String contextPath, Class<?> clazz) throws Exception {
+    private Server createRestServer(int port, String contextPath, Class<?> clazz) {
         Server server = new Server(port);
 
         // setup context
@@ -41,17 +58,7 @@ public final class CdpRestServer implements ICdpRestApi {
         
         return server;
     }
-    
-    @Override
-    public void upload(CdpMessage cdpMessage) {
-        LOG.info("upload");
-    }
 
-    @Override
-    public String ping() {
-        LOG.info("ping received, sending pong");
-        return "pong!";
-    }
 
 
 }

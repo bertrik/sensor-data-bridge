@@ -27,6 +27,7 @@ import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
+import nl.bertriksikken.nbiot.NbIotReceiver;
 import nl.bertriksikken.opensense.IOpenSenseRestApi;
 import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
@@ -45,6 +46,7 @@ public final class LoraLuftdatenForwarder {
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
     private static final String CONFIG_FILE = "loraluftdatenforwarder.yaml";
 
+    private final NbIotReceiver nbIotReceiver;
     private final List<MqttListener> mqttListeners = new ArrayList<>();
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
@@ -60,7 +62,9 @@ public final class LoraLuftdatenForwarder {
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
     }
 
-    private LoraLuftdatenForwarder(LoraForwarderConfig config) {
+    private LoraLuftdatenForwarder(LoraForwarderConfig config) throws IOException {
+        nbIotReceiver = new NbIotReceiver();
+        
         LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(luftdatenConfig.getUrl(),
                 Duration.ofSeconds(luftdatenConfig.getTimeout()));
@@ -156,10 +160,13 @@ public final class LoraLuftdatenForwarder {
      * Starts the application.
      * 
      * @throws MqttException in case of a problem starting MQTT client
+     * @throws IOException 
      */
-    private void start() throws MqttException {
+    private void start() throws MqttException, IOException {
         LOG.info("Starting LoraLuftdatenForwarder application");
 
+        nbIotReceiver.start();
+        
         // schedule task to fetch opensense ids
         executor.scheduleAtFixedRate(this::updateOpenSenseMapping, 0, 60, TimeUnit.MINUTES);
 
@@ -207,6 +214,7 @@ public final class LoraLuftdatenForwarder {
         mqttListeners.forEach(MqttListener::stop);
         openSenseUploader.stop();
         luftdatenUploader.stop();
+        nbIotReceiver.stop();
 
         LOG.info("Stopped LoraLuftdatenForwarder application");
     }

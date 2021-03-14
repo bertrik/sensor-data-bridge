@@ -16,13 +16,8 @@ public final class NbIotReceiver {
 
     private final Server server;
     
-    public static void main(String[] args) throws Exception {
-        NbIotReceiver restServer = new NbIotReceiver();
-        restServer.start();
-    }
-    
-    public NbIotReceiver() {
-        this.server = createRestServer(9000, "", CdpRestApi.class);
+    public NbIotReceiver(NbIotConfig config) {
+        this.server = createRestServer(config.getPort(), config.getPath(), CdpRestApi.class);
     }
     
     public void start() throws IOException {

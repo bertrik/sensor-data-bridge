@@ -63,7 +63,7 @@ public final class LoraLuftdatenForwarder {
     }
 
     private LoraLuftdatenForwarder(LoraForwarderConfig config) throws IOException {
-        nbIotReceiver = new NbIotReceiver();
+        nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
         
         LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(luftdatenConfig.getUrl(),

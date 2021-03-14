@@ -10,6 +10,9 @@ dependencies {
     implementation libraries.mqtt_client
     implementation libraries.jackson
     
+    // REST server
+    implementation libraries.jersey_server
+    
     implementation libraries.retrofit
     testImplementation libraries.retrofit_mock
 }

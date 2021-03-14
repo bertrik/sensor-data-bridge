@@ -6,8 +6,8 @@ libraries.slf4j = 'org.slf4j:slf4j-api:1.7.28'
 libraries.slf4jlog4j = 'org.slf4j:slf4j-log4j12:1.7.28'
 
 libraries.jackson = [
-    'com.fasterxml.jackson.core:jackson-databind:2.12.1',
-    'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.1'
+    'com.fasterxml.jackson.core:jackson-databind:2.12.2',
+    'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.2'
 ]
 
 libraries.retrofit = [
@@ -15,11 +15,23 @@ libraries.retrofit = [
     'com.squareup.retrofit2:converter-jackson:2.9.0',
     'com.squareup.retrofit2:converter-scalars:2.9.0'
 ]
-libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.9.0'
 
+libraries.jersey_server = [
+    'org.glassfish.jersey.core:jersey-server:2.33',
+    'org.glassfish.jersey.media:jersey-media-json-jackson:2.33',
+    'org.glassfish.jersey.containers:jersey-container-servlet:2.33',
+    'org.glassfish.jersey.inject:jersey-hk2:2.33',
+
+    'org.eclipse.jetty:jetty-server:9.4.38.v20210224',
+    'org.eclipse.jetty:jetty-servlet:9.4.38.v20210224'
+]
+
+libraries.jaxwsrs_api = 'javax.ws.rs:javax.ws.rs-api:2.1.1'
 libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5' 
 
 // test libraries
+libraries.retrofit_mock = 'com.squareup.retrofit2:retrofit-mock:2.9.0'
 libraries.junit = 'junit:junit:4.13.2'
 libraries.mockito = 'org.mockito:mockito-core:3.8.0'
+
 

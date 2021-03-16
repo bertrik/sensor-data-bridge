@@ -95,6 +95,17 @@ public final class CayenneMessage {
     }
 
     /**
+     * Finds an item by type and channel.
+     * 
+     * @param type the desired type
+     * @param channel the desired channel
+     * @return the item, or null if it does not exist
+     */
+    public CayenneItem find(ECayenneItem type, int channel) {
+        return items.stream().filter(i -> (i.getType() == type) && (i.getChannel() == channel)).findFirst().orElse(null);
+    }
+
+    /**
      * Finds an item by type.
      * 
      * @param type the desired type

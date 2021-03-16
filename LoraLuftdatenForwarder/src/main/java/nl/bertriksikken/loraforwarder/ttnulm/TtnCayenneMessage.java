@@ -34,15 +34,15 @@ public final class TtnCayenneMessage {
         try {
             cayenneMessage.parse(raw);
 
-            CayenneItem p10 = cayenneMessage.ofChannel(CHANNEL_PM10);
+            CayenneItem p10 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM10);
             if (p10 != null) {
                 pm10 = Optional.of(p10.getValue().doubleValue());
             }
-            CayenneItem p25 = cayenneMessage.ofChannel(CHANNEL_PM2_5);
+            CayenneItem p25 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM2_5);
             if (p25 != null) {
                 pm2_5 = Optional.of(p25.getValue().doubleValue());
             }
-            CayenneItem p4 = cayenneMessage.ofChannel(CHANNEL_PM4);
+            CayenneItem p4 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM4);
             if (p4 != null) {
                 pm4 = Optional.of(p4.getValue().doubleValue());
             }

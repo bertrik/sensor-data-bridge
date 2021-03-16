@@ -40,8 +40,8 @@ public final class CdpMessage {
 
         @Override
         public String toString() {
-            return String.format(Locale.ROOT, "{serial=%s,timestamp=%d,path=%s,value=%s}", serialNumber, timestamp,
-                    resourcePath, value);
+            return String.format(Locale.ROOT, "{serial=%s,ts=%d,subid=%s,path=%s,value=%s}", serialNumber, timestamp,
+                    subscriptionId, resourcePath, value);
         }
     }
 }

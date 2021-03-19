@@ -1,6 +1,10 @@
 package nl.bertriksikken.nbiot;
 
 public final class HexConverter {
+    
+    private HexConverter() {
+        // utility class has no public constructor
+    }
 
     public static byte[] fromString(String hex) throws NumberFormatException {
         if ((hex.length() % 2) != 0) {

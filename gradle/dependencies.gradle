@@ -2,8 +2,8 @@ ext {
     libraries = [:]
 }
 
-libraries.slf4j = 'org.slf4j:slf4j-api:1.7.28'
-libraries.slf4jlog4j = 'org.slf4j:slf4j-log4j12:1.7.28'
+libraries.slf4j = 'org.slf4j:slf4j-api:1.7.30'
+libraries.slf4jlog4j = 'org.slf4j:slf4j-log4j12:1.7.30'
 
 libraries.jackson = [
     'com.fasterxml.jackson.core:jackson-databind:2.12.2',

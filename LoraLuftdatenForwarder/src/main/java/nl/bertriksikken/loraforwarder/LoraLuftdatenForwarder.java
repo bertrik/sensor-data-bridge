@@ -72,7 +72,7 @@ public final class LoraLuftdatenForwarder {
         OpenSenseConfig openSenseConfig = config.getOpenSenseConfig();
         IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(openSenseConfig.getUrl(),
                 Duration.ofSeconds(openSenseConfig.getTimeoutSec()));
-        openSenseUploader = new OpenSenseUploader(config.getOpenSenseConfig().getIds(), openSenseClient);
+        openSenseUploader = new OpenSenseUploader(openSenseClient);
 
         TtnConfig ttnConfig = config.getTtnConfig();
         for (TtnAppConfig appConfig : config.getTtnConfig().getApps()) {

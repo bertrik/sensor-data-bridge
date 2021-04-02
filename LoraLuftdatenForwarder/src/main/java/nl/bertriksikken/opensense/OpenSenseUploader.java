@@ -27,12 +27,9 @@ public final class OpenSenseUploader {
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, String> boxIds = new ConcurrentHashMap<>();
-
-    public OpenSenseUploader(Map<String, String> boxIds, IOpenSenseRestApi restClient) {
-        this.boxIds.putAll(boxIds);
+    
+    public OpenSenseUploader(IOpenSenseRestApi restClient) {
         this.restClient = Objects.requireNonNull(restClient);
-
-        LOG.info("Created OpenSenseUploader, with a total of {} sensebox ids", boxIds.size());
     }
 
     public static IOpenSenseRestApi newRestClient(String url, Duration timeout) {

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.bertriksikken.ttnv2.dto.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.dto.Ttnv3UplinkMessage;
 
 /**
@@ -112,17 +111,9 @@ public final class MqttListener {
                 String message = new String(mqttMessage.getPayload(), StandardCharsets.US_ASCII);
 
                 // parse device EUI and payload
-                String deviceEui;
-                byte[] payload;
-                if (topic.startsWith(ETtnStackVersion.V3.getPrefix())) {
-                    Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
-                    deviceEui = uplinkV3.getEndDeviceIds().getDeviceEui();
-                    payload = uplinkV3.getUplinkMessage().getPayload();
-                } else {
-                    TtnUplinkMessage uplinkV2 = mapper.readValue(message, TtnUplinkMessage.class);
-                    deviceEui = uplinkV2.getHardwareSerial();
-                    payload = uplinkV2.getRawPayload();
-                }
+                Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
+                String deviceEui = uplinkV3.getEndDeviceIds().getDeviceEui();
+                byte[] payload = uplinkV3.getUplinkMessage().getPayload();
                 
                 // notify listener
                 if (payload.length > 0) {

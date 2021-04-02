@@ -27,7 +27,7 @@ public final class OpenSenseUploader {
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, String> boxIds = new ConcurrentHashMap<>();
-    
+
     public OpenSenseUploader(IOpenSenseRestApi restClient) {
         this.restClient = Objects.requireNonNull(restClient);
     }
@@ -80,6 +80,9 @@ public final class OpenSenseUploader {
         if (data.hasValue(ESensorItem.PM1_0)) {
             message.addItem(pmPrefix + "P0", data.getValue(ESensorItem.PM2_5));
         }
+        if (data.hasValue(ESensorItem.PM4_0)) {
+            message.addItem(pmPrefix + "P4", data.getValue(ESensorItem.PM4_0));
+        }
 
         // humidity/temperature/pressure
         String meteoPrefix = getMeteoPrefix(data);
@@ -106,12 +109,16 @@ public final class OpenSenseUploader {
     }
 
     private String getPmPrefix(SensorData data) {
+        if (data.hasValue(ESensorItem.PM10) && data.hasValue(ESensorItem.PM2_5) && data.hasValue(ESensorItem.PM1_0)
+                && data.hasValue(ESensorItem.PM4_0)) {
+            return "SPS30_";
+        }
         if (data.hasValue(ESensorItem.PM10) && data.hasValue(ESensorItem.PM2_5) && data.hasValue(ESensorItem.PM1_0)) {
             return "PMS_";
         }
         return "SDS_";
     }
-    
+
     private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {
         LOG.info("Upload for {} to opensense box {}: {}", luftdatenId, boxId, message);
         try {

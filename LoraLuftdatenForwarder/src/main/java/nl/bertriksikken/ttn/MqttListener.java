@@ -125,7 +125,11 @@ public final class MqttListener {
                 }
                 
                 // notify listener
-                listener.messageReceived(deviceEui, payload);
+                if (payload.length > 0) {
+                    listener.messageReceived(deviceEui, payload);
+                } else {
+                    LOG.info("Ignoring empty payload");
+                }
             } catch (IOException e) {
                 LOG.warn("Could not parse MQTT message: '{}'", mqttMessage);
             } catch (Exception e) {

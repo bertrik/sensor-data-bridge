@@ -33,7 +33,6 @@ import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
-import nl.bertriksikken.ttn.ETtnStackVersion;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
@@ -84,15 +83,12 @@ public final class LoraLuftdatenForwarder {
                     (deviceEui, payload) -> messageReceived(encoding, deviceEui, payload));
             mqttListeners.add(listener);
 
-            // for each TTN v3 app, create a device registry client so we can look up
-            // attributes
-            if (appConfig.getVersion() == ETtnStackVersion.V3) {
-                IEndDeviceRegistryRestApi restApi = EndDeviceRegistry.newRestClient(ttnConfig.getIdentityServerUrl(),
-                        Duration.ofSeconds(ttnConfig.getIdentityServerTimeout()));
-                String appName = appConfig.getName();
-                EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
-                deviceRegistries.put(appName, deviceRegistry);
-            }
+            // for each app, create a device registry client so we can look up attributes
+            IEndDeviceRegistryRestApi restApi = EndDeviceRegistry.newRestClient(ttnConfig.getIdentityServerUrl(),
+                    Duration.ofSeconds(ttnConfig.getIdentityServerTimeout()));
+            String appName = appConfig.getName();
+            EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
+            deviceRegistries.put(appName, deviceRegistry);
         }
     }
 

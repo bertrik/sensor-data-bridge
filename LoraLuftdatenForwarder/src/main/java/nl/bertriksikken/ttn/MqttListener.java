@@ -40,17 +40,14 @@ public final class MqttListener {
      * @param appKey   the key of the TTN application
      */
     public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
-        String url = (appConfig.getVersion() == ETtnStackVersion.V2) ? config.getMqttUrlV2() : config.getMqttUrlV3();
-        String topic = appConfig.getVersion().getPrefix() + "+/devices/+/up";
-        
-        LOG.info("Creating client for MQTT server '{}' for app '{}'", url, appConfig.getName());
+        LOG.info("Creating MQTT client for app '{}'", appConfig.getName());
         try {
-            this.mqttClient = new MqttClient(url, MqttClient.generateClientId(), new MemoryPersistence());
+            this.mqttClient = new MqttClient(config.getMqttUrl(), MqttClient.generateClientId(), new MemoryPersistence());
         } catch (MqttException e) {
             throw new IllegalArgumentException(e);
         }
         
-        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, topic, callback));
+        mqttClient.setCallback(new MqttCallbackHandler(mqttClient, "v3/+/devices/+/up", callback));
 
         // create connect options
         options = new MqttConnectOptions();

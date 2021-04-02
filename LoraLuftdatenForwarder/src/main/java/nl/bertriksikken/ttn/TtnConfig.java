@@ -7,11 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class TtnConfig {
 
-    @JsonProperty("mqtt_url_v2")
-    private String mqttUrlV2 = "tcp://eu.thethings.network";
-    
-    @JsonProperty("mqtt_url_v3")
-    private String mqttUrlV3 = "tcp://eu1.cloud.thethings.network";
+    @JsonProperty("mqtt_url")
+    private String mqttUrl = "tcp://eu1.cloud.thethings.network";
     
     @JsonProperty("identity_server_url")
     private String identityServerUrl = "https://eu1.cloud.thethings.network";
@@ -22,12 +19,8 @@ public final class TtnConfig {
     @JsonProperty("apps")
     private List<TtnAppConfig> apps = Arrays.asList(new TtnAppConfig());
 
-    public String getMqttUrlV2() {
-        return mqttUrlV2;
-    }
-
-    public String getMqttUrlV3() {
-        return mqttUrlV3;
+    public String getMqttUrl() {
+        return mqttUrl;
     }
 
     public String getIdentityServerUrl() {

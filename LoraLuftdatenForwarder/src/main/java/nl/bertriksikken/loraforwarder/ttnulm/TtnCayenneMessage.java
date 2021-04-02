@@ -17,10 +17,12 @@ public final class TtnCayenneMessage {
     private static final int CHANNEL_PM2_5 = 2;
     private static final int CHANNEL_PM4 = 4;
     private static final int CHANNEL_PM10 = 1;
+    private static final int CHANNEL_PM1 = 0;
 
     private Optional<Double> pm10 = Optional.empty();
     private Optional<Double> pm2_5 = Optional.empty();
     private Optional<Double> pm4 = Optional.empty();
+    private Optional<Double> pm1 = Optional.empty();
     private Optional<Double> rhPerc = Optional.empty();
     private Optional<Double> tempC = Optional.empty();
     private Optional<Double> pressureMillibar = Optional.empty();
@@ -45,6 +47,10 @@ public final class TtnCayenneMessage {
             CayenneItem p4 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM4);
             if (p4 != null) {
                 pm4 = Optional.of(p4.getValue().doubleValue());
+            }
+            CayenneItem p1 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM1);
+            if (p1 != null) {
+                pm1 = Optional.of(p1.getValue().doubleValue());
             }
             CayenneItem temp = cayenneMessage.ofType(ECayenneItem.TEMPERATURE);
             if (temp != null) {
@@ -90,6 +96,14 @@ public final class TtnCayenneMessage {
 
     public double getPm2_5() {
         return pm2_5.get();
+    }
+
+    public boolean hasPm1_0() {
+        return pm1.isPresent();
+    }
+
+    public Double getPm1_0() {
+        return pm1.get();
     }
 
     public boolean hasRhPerc() {

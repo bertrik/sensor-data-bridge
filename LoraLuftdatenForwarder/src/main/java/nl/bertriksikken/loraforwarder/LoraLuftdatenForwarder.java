@@ -134,6 +134,9 @@ public final class LoraLuftdatenForwarder {
             if (cayenne.hasPm2_5()) {
                 sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
             }
+            if (cayenne.hasPm1_0()) {
+                sensorData.addValue(ESensorItem.PM1_0, cayenne.getPm1_0());
+            }
             if (cayenne.hasRhPerc()) {
                 sensorData.addValue(ESensorItem.HUMI, cayenne.getRhPerc());
             }

@@ -20,6 +20,7 @@ public final class EndDevice {
     @JsonProperty("updated_at")
     private final String updatedAt;
 
+    @JsonProperty("attributes")
     private final Map<String, String> attributes = new HashMap<>();
 
     public EndDevice() {

@@ -2,6 +2,7 @@ package nl.bertriksikken.opensense;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +12,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -48,17 +50,6 @@ public final class OpenSenseUploader {
     public void stop() {
         LOG.info("Stopping OpenSenseUploader");
         executor.shutdown();
-    }
-
-    public void addMapping(String devEui, String opensenseId) {
-        String oldValue = boxIds.put(devEui, opensenseId);
-        if (oldValue == null) {
-            LOG.info("Added opensense mapping {} -> {}", devEui, opensenseId);
-        } else {
-            if (!oldValue.equals(opensenseId)) {
-                LOG.info("Updated opensense mapping {} -> {}", devEui, opensenseId);
-            }
-        }
     }
 
     public void scheduleUpload(String deviceId, SensorData data) {
@@ -134,6 +125,21 @@ public final class OpenSenseUploader {
             LOG.warn("Caught IOException: {}", e.getMessage());
         } catch (Exception e) {
             LOG.error("Caught exception: ", e);
+        }
+    }
+
+    public void processAttributes(Map<String, AttributeMap> attributes) {
+        Map<String, String> newBoxIds = new HashMap<>();
+        attributes.forEach((dev, attr) -> processDeviceAttributes(newBoxIds, dev, attr));
+        boxIds.clear();
+        boxIds.putAll(newBoxIds);
+        boxIds.forEach((device, id) -> LOG.info("Opensense mapping: {} -> {}", device, id));
+    }
+
+    private void processDeviceAttributes(Map<String, String> map, String device, AttributeMap attributes) {
+        String opensenseId = attributes.getOrDefault("opensense-id", "");
+        if (!opensenseId.isBlank()) {
+            map.put(device, opensenseId);
         }
     }
 

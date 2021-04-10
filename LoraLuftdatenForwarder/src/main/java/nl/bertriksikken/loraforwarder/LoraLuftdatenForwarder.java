@@ -180,25 +180,25 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Started LoraLuftdatenForwarder application");
     }
 
-    // retrieves application attributes and updates the device EUI -> opensense id mapping in the opensense uploader
+    // retrieves application attributes and notifies each interested components
     private void updateOpenSenseMapping() {
+        // fetch all attributes
+        Map<String, AttributeMap> attributes = new HashMap<>();
         for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
             String applicationId = entry.getKey();
             EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
                 List<EndDevice> devices = registry.listEndDevices();
-                for (EndDevice device : devices) {
-                    String devEui = device.getIds().getDevEui();
-                    String opensenseId = device.getAttributes().getOrDefault("opensense-id", "");
-                    if (!opensenseId.isBlank())
-                        openSenseUploader.addMapping(devEui, opensenseId);
-                }
+                devices.forEach(d -> attributes.put(d.getIds().getDevEui(), new AttributeMap(d.getAttributes())));
             } catch (IOException e) {
                 LOG.warn("Error getting opensense map ids for {}", e.getMessage());
             }
             LOG.info("Fetching TTNv3 application attributes done");
         }
+        
+        // notify all uploaders
+        openSenseUploader.processAttributes(attributes);
     }
     
     /**

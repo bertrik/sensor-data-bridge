@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
 import nl.sikken.bertrik.cayenne.CayenneMessage;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -41,8 +42,7 @@ public final class MyDevicesHttpUploader {
     public void upload(CayenneMessage cayenneMessage, String userName, String password, String clientId) {
         LOG.info("Upload to mydevices.com for client {}: {}", clientId, cayenneMessage);
         MyDevicesMessage message = MyDevicesMessage.fromCayenne(cayenneMessage);
-        String line = String.join(":", userName, password);
-        String authToken = "Basic " + Base64.getEncoder().encodeToString(line.getBytes(StandardCharsets.US_ASCII));
+        String authToken = Credentials.basic(userName, password);
         try {
             Response<String> response = restApi.publish(authToken, clientId, message).execute();
             LOG.info("Upload to mydevices.com for client {} successful: {}", clientId, response.message());

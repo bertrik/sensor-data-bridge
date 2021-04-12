@@ -1,5 +1,7 @@
 package nl.bertriksikken.mydevices.dto;
 
+import java.util.Locale;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class MyDevicesItem {
@@ -23,4 +25,9 @@ public final class MyDevicesItem {
         this.unit = unit;
     }
 
+    @Override
+    public String toString() {
+        return String.format(Locale.ROOT, "{%s[%d]=%.1f %s}", type, channel, value, unit);
+    }
+    
 }

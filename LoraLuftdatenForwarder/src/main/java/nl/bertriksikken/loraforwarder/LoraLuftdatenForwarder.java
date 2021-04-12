@@ -27,6 +27,9 @@ import nl.bertriksikken.loraforwarder.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
+import nl.bertriksikken.mydevices.IMyDevicesRestApi;
+import nl.bertriksikken.mydevices.MyDevicesConfig;
+import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
 import nl.bertriksikken.nbiot.NbIotReceiver;
 import nl.bertriksikken.opensense.IOpenSenseRestApi;
 import nl.bertriksikken.opensense.OpenSenseConfig;
@@ -49,6 +52,7 @@ public final class LoraLuftdatenForwarder {
     private final List<MqttListener> mqttListeners = new ArrayList<>();
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
+    private final MyDevicesHttpUploader myDevicesUploader;
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -63,7 +67,7 @@ public final class LoraLuftdatenForwarder {
 
     private LoraLuftdatenForwarder(LoraForwarderConfig config) throws IOException {
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
-        
+
         LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
         ILuftdatenApi restClient = LuftdatenUploader.newRestClient(luftdatenConfig.getUrl(),
                 Duration.ofSeconds(luftdatenConfig.getTimeout()));
@@ -73,6 +77,11 @@ public final class LoraLuftdatenForwarder {
         IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(openSenseConfig.getUrl(),
                 Duration.ofSeconds(openSenseConfig.getTimeoutSec()));
         openSenseUploader = new OpenSenseUploader(openSenseClient);
+
+        MyDevicesConfig myDevicesConfig = new MyDevicesConfig();
+        IMyDevicesRestApi myDevicesClient = MyDevicesHttpUploader.newRestClient(myDevicesConfig.getUrl(),
+                Duration.ofSeconds(myDevicesConfig.getTimeoutSec()));
+        myDevicesUploader = new MyDevicesHttpUploader(myDevicesClient);
 
         TtnConfig ttnConfig = config.getTtnConfig();
         for (TtnAppConfig appConfig : config.getTtnConfig().getApps()) {
@@ -100,6 +109,7 @@ public final class LoraLuftdatenForwarder {
             SensorData sensorData = decodeTtnMessage(encoding, payload);
             luftdatenUploader.scheduleUpload(deviceEui, sensorData);
             openSenseUploader.scheduleUpload(deviceEui, sensorData);
+            myDevicesUploader.scheduleUpload(deviceEui, sensorData);
         } catch (PayloadParseException e) {
             LOG.warn("Could not parse '{}' payload from: '{}", encoding, payload);
         }
@@ -159,13 +169,13 @@ public final class LoraLuftdatenForwarder {
      * Starts the application.
      * 
      * @throws MqttException in case of a problem starting MQTT client
-     * @throws IOException 
+     * @throws IOException
      */
     private void start() throws MqttException, IOException {
         LOG.info("Starting LoraLuftdatenForwarder application");
 
         nbIotReceiver.start();
-        
+
         // schedule task to fetch opensense ids
         executor.scheduleAtFixedRate(this::updateOpenSenseMapping, 0, 60, TimeUnit.MINUTES);
 
@@ -196,11 +206,12 @@ public final class LoraLuftdatenForwarder {
             }
             LOG.info("Fetching TTNv3 application attributes done");
         }
-        
+
         // notify all uploaders
         openSenseUploader.processAttributes(attributes);
+        myDevicesUploader.processAttributes(attributes);
     }
-    
+
     /**
      * Stops the application.
      * 

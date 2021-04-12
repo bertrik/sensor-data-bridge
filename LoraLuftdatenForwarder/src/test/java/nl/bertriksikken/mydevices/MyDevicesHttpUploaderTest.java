@@ -2,9 +2,9 @@ package nl.bertriksikken.mydevices;
 
 import java.time.Duration;
 
-import nl.sikken.bertrik.cayenne.CayenneItem;
-import nl.sikken.bertrik.cayenne.CayenneMessage;
-import nl.sikken.bertrik.cayenne.ECayenneItem;
+import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
+import nl.bertriksikken.pm.ESensorItem;
+import nl.bertriksikken.pm.SensorData;
 
 public final class MyDevicesHttpUploaderTest {
 
@@ -12,23 +12,25 @@ public final class MyDevicesHttpUploaderTest {
         MyDevicesHttpUploaderTest test = new MyDevicesHttpUploaderTest();
         test.testUpload();
     }
-    
+
     public void testUpload() {
-        CayenneMessage message = new CayenneMessage();
-        message.add(new CayenneItem(1, ECayenneItem.ANALOG_INPUT, 1.0));
-        message.add(new CayenneItem(0, ECayenneItem.ANALOG_INPUT, 0.0));
-        message.add(new CayenneItem(2, ECayenneItem.ANALOG_INPUT, 2.0));
-        message.add(new CayenneItem(4, ECayenneItem.ANALOG_INPUT, 4.0));
-        message.add(new CayenneItem(5, ECayenneItem.HUMIDITY, 50.0));
-        message.add(new CayenneItem(6, ECayenneItem.TEMPERATURE, 21.3));
-        message.add(new CayenneItem(7, ECayenneItem.BAROMETER, 1023.4));
+        SensorData data = new SensorData();
+        data.addValue(ESensorItem.PM10, 10.0);
+        data.addValue(ESensorItem.PM4_0, 4.0);
+        data.addValue(ESensorItem.PM2_5, 2.5);
+        data.addValue(ESensorItem.PM1_0, 1.0);
+        data.addValue(ESensorItem.HUMI, 50.0);
+        data.addValue(ESensorItem.TEMP, 21.3);
+        data.addValue(ESensorItem.PRESSURE, 102345.0);
+        MyDevicesMessage message = MyDevicesMessage.fromSensorData(data);
 
         String url = "https://api.mydevices.com";
-        IMyDevicesRestApi restApi = MyDevicesHttpUploader.newRestClient(url, Duration.ofSeconds(5));
+        IMyDevicesRestApi restApi = MyDevicesHttpUploader.newRestClient(url, Duration.ofSeconds(10));
         MyDevicesHttpUploader uploader = new MyDevicesHttpUploader(restApi);
-        
-        MyDevicesConfig config = new MyDevicesConfig();
-        uploader.upload(message, config.getUser(), config.getPass(), config.getClientId());
+
+        MyDevicesCredentials credentials = new MyDevicesCredentials("1b3d0d60-9b7e-11e7-a1da-536ee79fd847",
+                "f865f85afcb51f0a3c732d0c2910d93d8cd3b59e", "e78a12a0-98aa-11eb-a2e4-b32ea624e442");
+        uploader.uploadMeasurement("device", credentials, message);
     }
 
 }

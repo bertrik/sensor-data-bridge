@@ -2,64 +2,38 @@ package nl.bertriksikken.ttnv3.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import nl.bertriksikken.ttn.TtnUplinkMessage;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class Ttnv3UplinkMessage {
 
     @JsonProperty("end_device_ids")
-    EndDeviceIds endDeviceIds;
-    
-    @JsonProperty("received_at")
-    String receivedAt;
-    
+    private JsonNode endDeviceIds;
+
     @JsonProperty("uplink_message")
-    UplinkMessage uplinkMessage;
-    
-    public EndDeviceIds getEndDeviceIds() {
-        return endDeviceIds;
-    }
+    private UplinkMessage uplinkMessage;
 
-    public String getReceivedAt() {
-        return receivedAt;
-    }
-
-    public UplinkMessage getUplinkMessage() {
-        return uplinkMessage;
+    public TtnUplinkMessage toTtnUplinkMessage() {
+        String devEui = endDeviceIds.at("/dev_eui").asText("");
+        int sf = uplinkMessage.settings.at("/data_rate/lora/spreading_factor").asInt();
+        return new TtnUplinkMessage(devEui, uplinkMessage.payload, uplinkMessage.fport, sf);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class EndDeviceIds {
-        @JsonProperty("device_id")
-        String deviceId;
-        
-        @JsonProperty("dev_eui")
-        String deviceEui;
-
-        @JsonProperty("join_eui")
-        String joinEui;
-
-        @JsonProperty("dev_addr")
-        String deviceAddress;
-
-        public String getDeviceEui() {
-            return deviceEui;
-        }
-    }
-    
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class UplinkMessage {
+    private static final class UplinkMessage {
         @JsonProperty("f_port")
-        int fport;
-        
-        @JsonProperty("f_cnt")
-        int fcnt;
-        
-        @JsonProperty("frm_payload")
-        byte[] payload = new byte[0];
+        private int fport;
 
-        public byte[] getPayload() {
-            return payload.clone();
-        }
+        @JsonProperty("f_cnt")
+        private int fcnt;
+
+        @JsonProperty("frm_payload")
+        private byte[] payload = new byte[0];
+        
+        @JsonProperty("settings")
+        private JsonNode settings;
     }
-    
+
 }

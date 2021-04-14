@@ -78,7 +78,7 @@ public final class LoraLuftdatenForwarder {
                 Duration.ofSeconds(openSenseConfig.getTimeoutSec()));
         openSenseUploader = new OpenSenseUploader(openSenseClient);
 
-        MyDevicesConfig myDevicesConfig = new MyDevicesConfig();
+        MyDevicesConfig myDevicesConfig = config.getMyDevicesConfig();
         IMyDevicesRestApi myDevicesClient = MyDevicesHttpUploader.newRestClient(myDevicesConfig.getUrl(),
                 Duration.ofSeconds(myDevicesConfig.getTimeoutSec()));
         myDevicesUploader = new MyDevicesHttpUploader(myDevicesClient);

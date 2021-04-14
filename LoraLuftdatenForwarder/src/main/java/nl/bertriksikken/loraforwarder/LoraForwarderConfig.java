@@ -3,6 +3,7 @@ package nl.bertriksikken.loraforwarder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
+import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.nbiot.NbIotConfig;
 import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.ttn.TtnConfig;
@@ -24,6 +25,9 @@ public final class LoraForwarderConfig {
     @JsonProperty("opensense")
     private OpenSenseConfig openSenseConfig = new OpenSenseConfig();
 
+    @JsonProperty("mydevices")
+    private MyDevicesConfig myDevicesConfig = new MyDevicesConfig();
+    
     public TtnConfig getTtnConfig() {
         return ttnConfig;
     }
@@ -38,6 +42,10 @@ public final class LoraForwarderConfig {
 
     public NbIotConfig getNbIotConfig() {
         return nbIotConfig;
+    }
+    
+    public MyDevicesConfig getMyDevicesConfig() {
+        return myDevicesConfig;
     }
 
 }

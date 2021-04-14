@@ -2,7 +2,7 @@ package nl.bertriksikken.mydevices;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MyDevicesConfig {
+public final class MyDevicesConfig {
 
     @JsonProperty("url")
     private String url = "https://api.mydevices.com";

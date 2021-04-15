@@ -34,6 +34,15 @@ public final class MyDevicesMessage extends ArrayList<MyDevicesItem> {
         if (data.hasValue(ESensorItem.PRESSURE)) {
             message.add(new MyDevicesItem(12, "bp", data.getValue(ESensorItem.PRESSURE), "pa"));
         }
+        if (data.hasValue(ESensorItem.LORA_RSSI)) {
+            message.add(new MyDevicesItem(100, "rssi", data.getValue(ESensorItem.LORA_RSSI), "dbm"));
+        }
+        if (data.hasValue(ESensorItem.LORA_SNR)) {
+            message.add(new MyDevicesItem(101, "snr", data.getValue(ESensorItem.LORA_SNR), "db"));
+        }
+        if (data.hasValue(ESensorItem.LORA_SF)) {
+            message.add(new MyDevicesItem(102, "analog_sensor", data.getValue(ESensorItem.LORA_SF), "null"));
+        }
         return message;
     }
     

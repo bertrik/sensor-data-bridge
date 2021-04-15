@@ -7,7 +7,7 @@ public final class TtnUplinkMessageTest {
     
     @Test
     public void testString() {
-        TtnUplinkMessage message = new TtnUplinkMessage("deviceui", new byte[] {1, 2, 3}, 1, 7);
+        TtnUplinkMessage message = new TtnUplinkMessage("deviceui", new byte[] {1, 2, 3}, 1);
         Assert.assertNotNull(message.toString());
     }
 

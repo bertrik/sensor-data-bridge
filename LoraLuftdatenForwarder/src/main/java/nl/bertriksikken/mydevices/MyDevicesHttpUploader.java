@@ -22,6 +22,9 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Uploads data to myDevices using the HTTP method.
+ * <br>
+ * See https://developers.mydevices.com/cayenne/docs/cayenne-mqtt-api/
+ * #cayenne-mqtt-api-overview-using-mqtt-with-cayenne-option-3-use-http-to-push-mqtt-data
  */
 public final class MyDevicesHttpUploader {
 

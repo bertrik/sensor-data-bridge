@@ -119,6 +119,18 @@ public final class LoraLuftdatenForwarder {
     SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplink) throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
+        // common fields
+        if (Double.isFinite(uplink.getRSSI())) {
+            sensorData.addValue(ESensorItem.LORA_RSSI, uplink.getRSSI());
+        }
+        if (Double.isFinite(uplink.getSNR())) {
+            sensorData.addValue(ESensorItem.LORA_SNR, uplink.getSNR());
+        }
+        if (uplink.getSF() > 0) {
+            sensorData.addValue(ESensorItem.LORA_SF, (double)uplink.getSF());
+        }
+            
+        // specific fields
         switch (encoding) {
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();

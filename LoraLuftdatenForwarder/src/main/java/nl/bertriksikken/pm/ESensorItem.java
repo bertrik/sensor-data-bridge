@@ -20,7 +20,9 @@ public enum ESensorItem {
     NO2("NO2 concentration (unit?)"),
     RADIATION("Radiation (unit?)"), 
     
-    RSSI("Signal strength, in dBm");
+    LORA_SF("Spreading factor"),
+    LORA_SNR("Signal-to-noise ratio"),
+    LORA_RSSI("Signal strength, in dBm");
 
     private String description;
 

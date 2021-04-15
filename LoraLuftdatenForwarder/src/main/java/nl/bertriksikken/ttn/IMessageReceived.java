@@ -8,9 +8,8 @@ public interface IMessageReceived {
     /**
      * Indicates that a message was received.
      * 
-     * @param topic   the topic
-     * @param message the message
+     * @param uplink the uplink message
      */
-    void messageReceived(String deviceId, byte[] payload) throws Exception;
+    void messageReceived(TtnUplinkMessage uplink) throws Exception;
 
 }

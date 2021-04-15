@@ -39,6 +39,7 @@ import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
+import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
 import nl.bertriksikken.ttnv3.enddevice.IEndDeviceRegistryRestApi;
@@ -88,8 +89,7 @@ public final class LoraLuftdatenForwarder {
             // add listener for each app
             EPayloadEncoding encoding = appConfig.getEncoding();
             LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", appConfig.getName(), encoding);
-            MqttListener listener = new MqttListener(ttnConfig, appConfig,
-                    (deviceEui, payload) -> messageReceived(encoding, deviceEui, payload));
+            MqttListener listener = new MqttListener(ttnConfig, appConfig, uplink -> messageReceived(encoding, uplink));
             mqttListeners.add(listener);
 
             // for each app, create a device registry client so we can look up attributes
@@ -101,28 +101,28 @@ public final class LoraLuftdatenForwarder {
         }
     }
 
-    private void messageReceived(EPayloadEncoding encoding, String deviceEui, byte[] payload) {
-        LOG.info("Received: '{}'", payload);
+    private void messageReceived(EPayloadEncoding encoding, TtnUplinkMessage uplink) {
+        LOG.info("Received: '{}'", uplink);
 
         // decode and upload
         try {
-            SensorData sensorData = decodeTtnMessage(encoding, payload);
-            luftdatenUploader.scheduleUpload(deviceEui, sensorData);
-            openSenseUploader.scheduleUpload(deviceEui, sensorData);
-            myDevicesUploader.scheduleUpload(deviceEui, sensorData);
+            SensorData sensorData = decodeTtnMessage(encoding, uplink);
+            luftdatenUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
+            openSenseUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
+            myDevicesUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
         } catch (PayloadParseException e) {
-            LOG.warn("Could not parse '{}' payload from: '{}", encoding, payload);
+            LOG.warn("Could not parse '{}' payload from: '{}", encoding, uplink.getRawPayload());
         }
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(EPayloadEncoding encoding, byte[] payload) throws PayloadParseException {
+    SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplink) throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
         switch (encoding) {
         case TTN_ULM:
             TtnUlmMessage ulmMessage = new TtnUlmMessage();
-            ulmMessage.parse(payload);
+            ulmMessage.parse(uplink.getRawPayload());
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
             sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
             sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
@@ -130,7 +130,7 @@ public final class LoraLuftdatenForwarder {
             break;
         case CAYENNE:
             TtnCayenneMessage cayenne = new TtnCayenneMessage();
-            cayenne.parse(payload);
+            cayenne.parse(uplink.getRawPayload());
             if (cayenne.hasPm10()) {
                 sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
             }

@@ -110,12 +110,10 @@ public final class MqttListener {
                 // parse device EUI and payload
                 Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
                 TtnUplinkMessage uplink = uplinkV3.toTtnUplinkMessage();
-                String deviceEui = uplink.getDeviceEui();
-                byte[] payload = uplink.getRawPayload();
                 
                 // notify listener
-                if (payload.length > 0) {
-                    listener.messageReceived(deviceEui, payload);
+                if (uplink.getRawPayload().length > 0) {
+                    listener.messageReceived(uplink);
                 } else {
                     LOG.info("Ignoring empty payload");
                 }

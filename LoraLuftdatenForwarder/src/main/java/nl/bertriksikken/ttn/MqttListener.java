@@ -34,10 +34,9 @@ public final class MqttListener {
     /**
      * Constructor.
      * 
-     * @param callback the interface for indicating a received message.
-     * @param url      the URL of the MQTT server
-     * @param appId    the name of the TTN application
-     * @param appKey   the key of the TTN application
+     * @param config the global TTN configuration
+     * @param appConfig the application-specific configuration
+     * @param callback callback for message notification
      */
     public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
         LOG.info("Creating MQTT client for app '{}'", appConfig.getName());

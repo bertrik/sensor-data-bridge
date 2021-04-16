@@ -22,8 +22,6 @@ public final class LuftdatenMessage {
 
     /**
      * Constructor.
-     * 
-     * @param softwareVersion the software version
      */
     public LuftdatenMessage() {
         this.softwareVersion = SOFTWARE_VERSION;

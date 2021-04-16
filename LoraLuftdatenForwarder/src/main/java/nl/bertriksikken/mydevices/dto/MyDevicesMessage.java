@@ -32,7 +32,7 @@ public final class MyDevicesMessage extends ArrayList<MyDevicesItem> {
             message.add(new MyDevicesItem(11, "temp", data.getValue(ESensorItem.TEMP), "c"));
         }
         if (data.hasValue(ESensorItem.PRESSURE)) {
-            message.add(new MyDevicesItem(12, "bp", data.getValue(ESensorItem.PRESSURE), "pa"));
+            message.add(new MyDevicesItem(12, "bp", data.getValue(ESensorItem.PRESSURE) / 100, "hpa"));
         }
         if (data.hasValue(ESensorItem.LORA_RSSI)) {
             message.add(new MyDevicesItem(100, "rssi", data.getValue(ESensorItem.LORA_RSSI), "dbm"));

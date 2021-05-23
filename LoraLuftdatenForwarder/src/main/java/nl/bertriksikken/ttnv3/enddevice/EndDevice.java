@@ -1,6 +1,5 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -10,69 +9,73 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class EndDevice {
-    
+
+    public static final String LOCATION_USER = "user";
+
     @JsonProperty
-    private final DeviceIds ids;
-
-    @JsonProperty("created_at")
-    private final String createdAt;
-
-    @JsonProperty("updated_at")
-    private final String updatedAt;
+    private DeviceIds ids = new DeviceIds();
 
     @JsonProperty("attributes")
     private final Map<String, String> attributes = new HashMap<>();
 
-    public EndDevice() {
-        this.ids = new DeviceIds();
-        String creationTime = Instant.now().toString();
-        this.createdAt = creationTime;
-        this.updatedAt = creationTime;
+    @JsonProperty("locations")
+    private final Map<String, Location> locations = new HashMap<>();
+
+    private EndDevice() {
+        // jackson constructor
+    }
+
+    public EndDevice(String applicationId, String deviceId) {
+        this();
+        this.ids = new DeviceIds(applicationId, deviceId);
+    }
+
+    public String getDeviceId() {
+        return ids.getDeviceId();
     }
     
     public DeviceIds getIds() {
         return ids;
     }
-    
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
 
     public Map<String, String> getAttributes() {
         return new HashMap<>(attributes);
     }
-    
+
+    public void setLocation(String type, Location location) {
+        locations.put(type, location);
+    }
+
+    public Map<String, Location> getLocations() {
+        return new HashMap<>(locations);
+    }
+
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "{%s,%s}", ids, attributes);
     }
-    
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class DeviceIds {
         @JsonProperty("device_id")
-        private final String deviceId;
+        private String deviceId = "";
 
         @JsonProperty("dev_eui")
-        private final String devEui;
-        
-        @JsonProperty("join_eui")
-        private final String joinEui;
-        
-        DeviceIds(String deviceId, String devEui, String joinEui) {
+        private String devEui = "";
+
+        @JsonProperty("application_ids")
+        private final Map<String, String> applicationIds = new HashMap<>();
+
+        DeviceIds(String applicationId, String deviceId) {
+            this();
+            applicationIds.put("application_id", applicationId);
             this.deviceId = deviceId;
-            this.devEui = devEui;
-            this.joinEui = joinEui;
         }
 
+        // jackson constructor
         private DeviceIds() {
-            // jackson constructor
-            this("", "", "");
         }
-        
+
         public String getDeviceId() {
             return deviceId;
         }
@@ -81,14 +84,10 @@ public final class EndDevice {
             return devEui;
         }
 
-        public String getJoinEui() {
-            return joinEui;
-        }
-        
         @Override
         public String toString() {
             return String.format(Locale.ROOT, "{%s,%s}", deviceId, devEui);
         }
     }
-    
+
 }

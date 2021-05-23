@@ -30,6 +30,10 @@ public final class EndDeviceRegistry {
         this.authToken = "Bearer " + apiKey;
     }
 
+    public EndDevice buildEndDevice(String deviceId) {
+        return new EndDevice(applicationId, deviceId);
+    }
+
     public static IEndDeviceRegistryRestApi newRestClient(String url, Duration timeout) {
         LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
 
@@ -39,9 +43,9 @@ public final class EndDeviceRegistry {
         return retrofit.create(IEndDeviceRegistryRestApi.class);
     }
 
-    public EndDevice getEndDeviceInfo(String applicationId, String deviceId) throws IOException {
-        String fields = IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES;
-        Response<EndDevice> response = restApi.requestDeviceInfo(authToken, applicationId, deviceId, fields).execute();
+    public EndDevice getEndDevice(String deviceId, List<String> fields) throws IOException {
+        String fieldMask = String.join(",", fields);
+        Response<EndDevice> response = restApi.getEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
         if (!response.isSuccessful()) {
             LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
         }
@@ -57,6 +61,18 @@ public final class EndDeviceRegistry {
         }
         EndDevices endDevices = response.body();
         return endDevices.getEndDevices();
+    }
+
+    public EndDevice updateEndDevice(EndDevice endDevice, List<String> fields) throws IOException {
+        FieldMask fieldMask = new FieldMask(fields);
+        UpdateEndDeviceRequest updateEndDeviceRequest = new UpdateEndDeviceRequest(endDevice, fieldMask);
+        Response<EndDevice> response = restApi
+                .updateEndDevice(authToken, applicationId, endDevice.getIds().getDeviceId(), updateEndDeviceRequest)
+                .execute();
+        if (!response.isSuccessful()) {
+            LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
+        }
+        return response.body();
     }
 
 }

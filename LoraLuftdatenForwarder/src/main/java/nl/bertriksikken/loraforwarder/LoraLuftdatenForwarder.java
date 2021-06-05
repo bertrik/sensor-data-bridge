@@ -133,16 +133,14 @@ public final class LoraLuftdatenForwarder {
         // specific fields
         switch (encoding) {
         case TTN_ULM:
-            TtnUlmMessage ulmMessage = new TtnUlmMessage();
-            ulmMessage.parse(uplink.getRawPayload());
+            TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
             sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
             sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
             sensorData.addValue(ESensorItem.TEMP, ulmMessage.getTempC());
             break;
         case CAYENNE:
-            TtnCayenneMessage cayenne = new TtnCayenneMessage();
-            cayenne.parse(uplink.getRawPayload());
+            TtnCayenneMessage cayenne = TtnCayenneMessage.parse(uplink.getRawPayload());
             if (cayenne.hasPm10()) {
                 sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
             }

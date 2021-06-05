@@ -13,19 +13,18 @@ public final class TtnUlmMessage {
     private double rhPerc;
     private double tempC;
 
-    public TtnUlmMessage() {
-    }
-    
-    public void parse(byte[] raw)  throws PayloadParseException {
+    public static TtnUlmMessage parse(byte[] raw)  throws PayloadParseException {
+        TtnUlmMessage message = new TtnUlmMessage();
         try {
             ByteBuffer bb = ByteBuffer.wrap(raw).order(ByteOrder.BIG_ENDIAN);
-            this.pm10 = bb.getShort() / 100.0;
-            this.pm2_5 = bb.getShort() / 100.0;
-            this.rhPerc = bb.getShort() / 100.0;
-            this.tempC = bb.getShort() / 100.0;
+            message.pm10 = bb.getShort() / 100.0;
+            message.pm2_5 = bb.getShort() / 100.0;
+            message.rhPerc = bb.getShort() / 100.0;
+            message.tempC = bb.getShort() / 100.0;
         } catch (BufferUnderflowException e) {
             throw new PayloadParseException(e);
         }
+        return message;
     }
 
     public double getPm10() {

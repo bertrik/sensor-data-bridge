@@ -10,8 +10,8 @@ import nl.sikken.bertrik.cayenne.CayenneMessage;
 import nl.sikken.bertrik.cayenne.ECayenneItem;
 
 /**
- * Cayenne message containing SDS data (as analog values on channels 0..4)
- * and DHT data.
+ * Cayenne message containing SDS data (as analog values on channels 0..4) and
+ * DHT data.
  */
 public final class TtnCayenneMessage {
 
@@ -29,50 +29,50 @@ public final class TtnCayenneMessage {
     private Optional<Double> pressureMillibar = Optional.empty();
     private Optional<double[]> position = Optional.empty();
 
-    public TtnCayenneMessage() {
-    }
-
-    public void parse(byte[] raw) throws PayloadParseException {
+    public static TtnCayenneMessage parse(byte[] raw) throws PayloadParseException {
+        TtnCayenneMessage message = new TtnCayenneMessage();
         CayenneMessage cayenneMessage = new CayenneMessage();
         try {
             cayenneMessage.parse(raw);
 
             CayenneItem p10 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM10);
             if (p10 != null) {
-                pm10 = Optional.of(p10.getValue().doubleValue());
+                message.pm10 = Optional.of(p10.getValue().doubleValue());
             }
             CayenneItem p25 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM2_5);
             if (p25 != null) {
-                pm2_5 = Optional.of(p25.getValue().doubleValue());
+                message.pm2_5 = Optional.of(p25.getValue().doubleValue());
             }
             CayenneItem p4 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM4);
             if (p4 != null) {
-                pm4 = Optional.of(p4.getValue().doubleValue());
+                message.pm4 = Optional.of(p4.getValue().doubleValue());
             }
             CayenneItem p1 = cayenneMessage.find(ECayenneItem.ANALOG_INPUT, CHANNEL_PM1);
             if (p1 != null) {
-                pm1 = Optional.of(p1.getValue().doubleValue());
+                message.pm1 = Optional.of(p1.getValue().doubleValue());
             }
             CayenneItem temp = cayenneMessage.ofType(ECayenneItem.TEMPERATURE);
             if (temp != null) {
-                tempC = Optional.of(temp.getValue().doubleValue());
+                message.tempC = Optional.of(temp.getValue().doubleValue());
             }
             CayenneItem rh = cayenneMessage.ofType(ECayenneItem.HUMIDITY);
             if (rh != null) {
-                rhPerc = Optional.of(rh.getValue().doubleValue());
+                message.rhPerc = Optional.of(rh.getValue().doubleValue());
             }
             CayenneItem baro = cayenneMessage.ofType(ECayenneItem.BAROMETER);
             if (baro != null) {
-                pressureMillibar = Optional.of(baro.getValue().doubleValue());
+                message.pressureMillibar = Optional.of(baro.getValue().doubleValue());
             }
             CayenneItem pos = cayenneMessage.ofType(ECayenneItem.GPS_LOCATION);
             if (pos != null) {
-                position = Optional.of(Arrays.stream(pos.getValues()).mapToDouble(Number::doubleValue).toArray());
+                message.position = Optional
+                        .of(Arrays.stream(pos.getValues()).mapToDouble(Number::doubleValue).toArray());
 
             }
         } catch (CayenneException e) {
             throw new PayloadParseException(e);
         }
+        return message;
     }
 
     public boolean hasPm10() {

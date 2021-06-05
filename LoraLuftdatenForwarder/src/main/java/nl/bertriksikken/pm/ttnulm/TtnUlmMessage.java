@@ -1,8 +1,10 @@
-package nl.bertriksikken.loraforwarder.ttnulm;
+package nl.bertriksikken.pm.ttnulm;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import nl.bertriksikken.pm.PayloadParseException;
 
 public final class TtnUlmMessage {
 

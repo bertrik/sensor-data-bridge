@@ -1,4 +1,4 @@
-package nl.bertriksikken.loraforwarder.ttnulm;
+package nl.bertriksikken.pm;
 
 public final class PayloadParseException extends Exception {
 

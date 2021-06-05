@@ -1,7 +1,9 @@
-package nl.bertriksikken.loraforwarder.ttnulm;
+package nl.bertriksikken.pm.cayenne;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import nl.bertriksikken.pm.PayloadParseException;
 
 public final class TtnCayenneMessageTest {
 

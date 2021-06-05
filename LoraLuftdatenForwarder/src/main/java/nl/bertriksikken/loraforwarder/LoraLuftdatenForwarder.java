@@ -35,6 +35,7 @@ import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
+import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
@@ -128,6 +129,22 @@ public final class LoraLuftdatenForwarder {
         }
         if (uplink.getSF() > 0) {
             sensorData.addValue(ESensorItem.LORA_SF, (double)uplink.getSF());
+        }
+        
+        // SPS30 specific decoding
+        if (uplink.getPort() == Sps30Message.LORAWAN_PORT) {
+            Sps30Message message = Sps30Message.parse(uplink.getRawPayload());
+            sensorData.addValue(ESensorItem.PM1_0, message.getPm1_0());
+            sensorData.addValue(ESensorItem.PM2_5, message.getPm2_5());
+            sensorData.addValue(ESensorItem.PM4_0, message.getPm4_0());
+            sensorData.addValue(ESensorItem.PM10, message.getPm10());
+            sensorData.addValue(ESensorItem.PM0_5_N, message.getN0_5());
+            sensorData.addValue(ESensorItem.PM1_0_N, message.getN1_0());
+            sensorData.addValue(ESensorItem.PM2_5_N, message.getN2_5());
+            sensorData.addValue(ESensorItem.PM4_0_N, message.getN4_0());
+            sensorData.addValue(ESensorItem.PM10_N, message.getN10());
+            sensorData.addValue(ESensorItem.PM_PS, message.getPs());
+            return sensorData;
         }
             
         // specific fields

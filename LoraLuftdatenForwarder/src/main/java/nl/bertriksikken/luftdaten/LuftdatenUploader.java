@@ -75,6 +75,13 @@ public final class LuftdatenUploader {
         executor.execute(() -> uploadMeasurement(sensorId, pin, message));
     }
 
+    private void addSimpleItem(SensorData data, LuftdatenMessage message, ESensorItem item, String name) {
+        if (data.hasValue(item)) {
+            double value = data.getValue(item);
+            message.addItem(name, value);
+        }
+    }
+    
     public void scheduleUpload(String deviceId, SensorData data) {
         String sensorId = "TTN-" + deviceId;
 
@@ -82,18 +89,20 @@ public final class LuftdatenUploader {
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
                 || data.hasValue(ESensorItem.PM4_0)) {
             LuftdatenMessage p1Message = new LuftdatenMessage();
-            if (data.hasValue(ESensorItem.PM10)) {
-                p1Message.addItem("P1", data.getValue(ESensorItem.PM10));
-            }
-            if (data.hasValue(ESensorItem.PM4_0)) {
-                p1Message.addItem("P4", data.getValue(ESensorItem.PM4_0));
-            }
-            if (data.hasValue(ESensorItem.PM2_5)) {
-                p1Message.addItem("P2", data.getValue(ESensorItem.PM2_5));
-            }
-            if (data.hasValue(ESensorItem.PM1_0)) {
-                p1Message.addItem("P0", data.getValue(ESensorItem.PM1_0));
-            }
+
+            addSimpleItem(data, p1Message, ESensorItem.PM10, "P1");
+            addSimpleItem(data, p1Message, ESensorItem.PM4_0, "P4");
+            addSimpleItem(data, p1Message, ESensorItem.PM2_5, "P2");
+            addSimpleItem(data, p1Message, ESensorItem.PM1_0, "P0");
+
+            addSimpleItem(data, p1Message, ESensorItem.PM10_N, "N10");
+            addSimpleItem(data, p1Message, ESensorItem.PM4_0_N, "N4");
+            addSimpleItem(data, p1Message, ESensorItem.PM2_5_N, "N25");
+            addSimpleItem(data, p1Message, ESensorItem.PM1_0_N, "N1");
+            addSimpleItem(data, p1Message, ESensorItem.PM0_5_N, "N05");
+            
+            addSimpleItem(data, p1Message, ESensorItem.PM_PS, "TS");
+            
             scheduleUpload(sensorId, "1", p1Message);
         }
 

@@ -1,7 +1,8 @@
 package nl.bertriksikken.ttn;
 
-import java.util.Arrays;
 import java.util.Locale;
+
+import nl.bertriksikken.nbiot.HexConverter;
 
 /**
  * Common class containing only the fields from the TTN upload message relevant
@@ -21,7 +22,7 @@ public final class TtnUplinkMessage {
         this.rawPayload = rawPayload.clone();
         this.port = port;
     }
-    
+
     public void setRadioParams(double rssi, double snr, int sf) {
         this.rssi = rssi;
         this.snr = snr;
@@ -43,7 +44,7 @@ public final class TtnUplinkMessage {
     public double getRSSI() {
         return rssi;
     }
-    
+
     public double getSNR() {
         return snr;
     }
@@ -51,11 +52,11 @@ public final class TtnUplinkMessage {
     public int getSF() {
         return sf;
     }
-    
+
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", deviceEui, Arrays.toString(rawPayload),
-                port, sf);
+        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", deviceEui,
+                HexConverter.toString(rawPayload), port, sf);
     }
-    
+
 }

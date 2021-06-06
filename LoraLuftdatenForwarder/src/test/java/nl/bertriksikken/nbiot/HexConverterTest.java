@@ -30,4 +30,11 @@ public final class HexConverterTest {
         Assert.assertArrayEquals(new byte[] {0}, HexConverter.fromString("000"));
     }
 
+    @Test
+    public void testToString() {
+        Assert.assertEquals("(null)", HexConverter.toString(null));
+        Assert.assertEquals("", HexConverter.toString(new byte[0]));
+        Assert.assertEquals("123481", HexConverter.toString(new byte[] {0x12, 0x34, (byte)0x81}));
+    }
+    
 }

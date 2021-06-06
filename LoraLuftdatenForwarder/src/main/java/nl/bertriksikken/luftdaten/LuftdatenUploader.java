@@ -101,7 +101,10 @@ public final class LuftdatenUploader {
             addSimpleItem(data, p1Message, ESensorItem.PM1_0_N, "N1");
             addSimpleItem(data, p1Message, ESensorItem.PM0_5_N, "N05");
             
-            addSimpleItem(data, p1Message, ESensorItem.PM_PS, "TS");
+            // encode particle size with 3 decimals
+            if (data.hasValue(ESensorItem.PM_TPS)) {
+                p1Message.addItem("TS", String.format(Locale.ROOT, "%.3f", data.getValue(ESensorItem.PM_TPS)));
+            }
             
             scheduleUpload(sensorId, "1", p1Message);
         }

@@ -13,17 +13,20 @@ public final class Sps30Message {
 
     public static final int LORAWAN_PORT = 30;
 
+    // mass concentration (ug/m3)
     private double pm05;
     private double pm1_0;
     private double pm2_5;
     private double pm4_0;
     private double pm10;
+    // number concentration (#/cm3)
     private double n0_5;
     private double n1_0;
     private double n2_5;
     private double n4_0;
     private double n10;
-    private double ps;
+    // typical particle size (um)
+    private double tps;
 
     public static Sps30Message parse(byte[] raw) throws PayloadParseException {
         Sps30Message message = new Sps30Message();
@@ -38,7 +41,7 @@ public final class Sps30Message {
             message.n2_5 = bb.getShort() & 0xFFFF;
             message.n4_0 = bb.getShort() & 0xFFFF;
             message.n10 = bb.getShort() & 0xFFFF;
-            message.ps = bb.getShort() & 0xFFFF;
+            message.tps = (bb.getShort() & 0xFFFF) / 1000.0;
         } catch (BufferUnderflowException e) {
             throw new PayloadParseException(e);
         }
@@ -85,7 +88,7 @@ public final class Sps30Message {
         return n10;
     }
 
-    public double getPs() {
-        return ps;
+    public double getTps() {
+        return tps;
     }
 }

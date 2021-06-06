@@ -143,7 +143,7 @@ public final class LoraLuftdatenForwarder {
             sensorData.addValue(ESensorItem.PM2_5_N, message.getN2_5());
             sensorData.addValue(ESensorItem.PM4_0_N, message.getN4_0());
             sensorData.addValue(ESensorItem.PM10_N, message.getN10());
-            sensorData.addValue(ESensorItem.PM_PS, message.getPs());
+            sensorData.addValue(ESensorItem.PM_TPS, message.getTps());
             return sensorData;
         }
             

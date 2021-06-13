@@ -10,15 +10,19 @@ import nl.bertriksikken.nbiot.HexConverter;
  */
 public final class TtnUplinkMessage {
 
-    private final String deviceEui;
+    private final String appId;
+    private final String devId;
+    private final String devEui;
     private final byte[] rawPayload;
     private final int port;
     private double rssi = Double.NaN;
     private double snr = Double.NaN;
     private int sf = 0;
 
-    public TtnUplinkMessage(String deviceEui, byte[] rawPayload, int port) {
-        this.deviceEui = deviceEui;
+    public TtnUplinkMessage(String appId, String devId, String devEui, byte[] rawPayload, int port) {
+        this.appId = appId;
+        this.devId = devId;
+        this.devEui = devEui;
         this.rawPayload = rawPayload.clone();
         this.port = port;
     }
@@ -29,8 +33,16 @@ public final class TtnUplinkMessage {
         this.sf = sf;
     }
 
-    public String getDeviceEui() {
-        return deviceEui;
+    public String getAppId() {
+        return appId;
+    }
+    
+    public String getDevId() {
+        return devId;
+    }
+    
+    public String getDevEui() {
+        return devEui;
     }
 
     public byte[] getRawPayload() {
@@ -55,7 +67,7 @@ public final class TtnUplinkMessage {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", deviceEui,
+        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", devEui,
                 HexConverter.toString(rawPayload), port, sf);
     }
 

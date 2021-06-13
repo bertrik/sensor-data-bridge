@@ -23,20 +23,24 @@ public final class GeoLocationService {
      * Constructor.
      * 
      * @param restClient the REST client
-     * @param key the API key
+     * @param key        the API key
      */
-    public GeoLocationService(IGeoLocationRestApi restClient, String key) {
+    GeoLocationService(IGeoLocationRestApi restClient, String key) {
         this.restClient = restClient;
         this.key = key;
     }
 
-    public static IGeoLocationRestApi newRestClient(String url, Duration timeout) {
-        LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
+    /**
+     * Factory method.
+     */
+    public static GeoLocationService create(GeoLocationConfig config) {
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeout()))
+                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
-        return retrofit.create(IGeoLocationRestApi.class);
+        IGeoLocationRestApi restClient = retrofit.create(IGeoLocationRestApi.class);
+        return new GeoLocationService(restClient, config.getApiKey());
     }
 
     /**

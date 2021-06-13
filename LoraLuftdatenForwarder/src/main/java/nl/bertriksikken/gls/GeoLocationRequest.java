@@ -36,7 +36,7 @@ public final class GeoLocationRequest {
         wifiAccessPoints.add(new WifiAccessPoint(macAddress, signalStrength, channel));
     }
 
-    private final class WifiAccessPoint {
+    private static final class WifiAccessPoint {
         @JsonProperty("macAddress")
         private final String macAddress;
 

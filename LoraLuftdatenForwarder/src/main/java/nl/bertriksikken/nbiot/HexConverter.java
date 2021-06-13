@@ -24,11 +24,11 @@ public final class HexConverter {
         if (data == null) {
             return "(null)";
         }
-        String hex = "";
+        StringBuilder sb = new StringBuilder();
         for (byte b : data) {
-            hex += String.format(Locale.ROOT, "%02X", b);
+            sb.append(String.format(Locale.ROOT, "%02X", b));
         }
-        return hex;
+        return sb.toString();
     }
     
 }

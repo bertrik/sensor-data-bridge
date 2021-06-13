@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
@@ -55,7 +56,9 @@ public final class LoraLuftdatenForwarder {
     private final LuftdatenUploader luftdatenUploader;
     private final OpenSenseUploader openSenseUploader;
     private final MyDevicesHttpUploader myDevicesUploader;
+    private final GeoLocationService geoLocationService;
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
+    private final Map<String, CommandHandler> commandHandlers = new HashMap<>();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public static void main(String[] args) throws IOException, MqttException {
@@ -85,6 +88,8 @@ public final class LoraLuftdatenForwarder {
                 Duration.ofSeconds(myDevicesConfig.getTimeoutSec()));
         myDevicesUploader = new MyDevicesHttpUploader(myDevicesClient);
 
+        geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
+
         TtnConfig ttnConfig = config.getTtnConfig();
         for (TtnAppConfig appConfig : config.getTtnConfig().getApps()) {
             // add listener for each app
@@ -99,18 +104,31 @@ public final class LoraLuftdatenForwarder {
             String appName = appConfig.getName();
             EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
             deviceRegistries.put(appName, deviceRegistry);
+
+            // register command handler
+            CommandHandler commandHandler = new CommandHandler(geoLocationService, deviceRegistry);
+            commandHandlers.put(appName, commandHandler);
         }
     }
 
     private void messageReceived(EPayloadEncoding encoding, TtnUplinkMessage uplink) {
         LOG.info("Received: '{}'", uplink);
 
-        // decode and upload
         try {
+            // decode and handle command response
+            if (uplink.getPort() == CommandHandler.LORAWAN_PORT) {
+                CommandHandler commandHandler = commandHandlers.get(uplink.getAppId());
+                if (commandHandler != null) {
+                    commandHandler.processResponse(uplink);
+                }
+                return;
+            }
+
+            // decode and upload telemetry message
             SensorData sensorData = decodeTtnMessage(encoding, uplink);
-            luftdatenUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
-            openSenseUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
-            myDevicesUploader.scheduleUpload(uplink.getDeviceEui(), sensorData);
+            luftdatenUploader.scheduleUpload(uplink.getDevEui(), sensorData);
+            openSenseUploader.scheduleUpload(uplink.getDevEui(), sensorData);
+            myDevicesUploader.scheduleUpload(uplink.getDevEui(), sensorData);
         } catch (PayloadParseException e) {
             LOG.warn("Could not parse '{}' payload from: '{}", encoding, uplink.getRawPayload());
         }
@@ -128,9 +146,9 @@ public final class LoraLuftdatenForwarder {
             sensorData.addValue(ESensorItem.LORA_SNR, uplink.getSNR());
         }
         if (uplink.getSF() > 0) {
-            sensorData.addValue(ESensorItem.LORA_SF, (double)uplink.getSF());
+            sensorData.addValue(ESensorItem.LORA_SF, (double) uplink.getSF());
         }
-        
+
         // SPS30 specific decoding
         if (uplink.getPort() == Sps30Message.LORAWAN_PORT) {
             Sps30Message message = Sps30Message.parse(uplink.getRawPayload());
@@ -146,7 +164,7 @@ public final class LoraLuftdatenForwarder {
             sensorData.addValue(ESensorItem.PM_TPS, message.getTps());
             return sensorData;
         }
-            
+
         // specific fields
         switch (encoding) {
         case TTN_ULM:
@@ -249,6 +267,7 @@ public final class LoraLuftdatenForwarder {
 
         executor.shutdownNow();
         mqttListeners.forEach(MqttListener::stop);
+        commandHandlers.values().forEach(CommandHandler::stop);
         openSenseUploader.stop();
         luftdatenUploader.stop();
         nbIotReceiver.stop();

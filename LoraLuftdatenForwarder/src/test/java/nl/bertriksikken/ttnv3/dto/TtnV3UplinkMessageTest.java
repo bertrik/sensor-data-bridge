@@ -28,7 +28,7 @@ public final class TtnV3UplinkMessageTest {
 	        Ttnv3UplinkMessage ttnv3UplinkMessage = mapper.readValue(is, Ttnv3UplinkMessage.class);
 	        TtnUplinkMessage message = ttnv3UplinkMessage.toTtnUplinkMessage(); 
 	        
-	        Assert.assertEquals("0000547AF1BF713C", message.getDeviceEui());
+	        Assert.assertEquals("0000547AF1BF713C", message.getDevEui());
             Assert.assertEquals(19, message.getRawPayload().length);
             Assert.assertEquals(1, message.getPort());
             Assert.assertEquals(7, message.getSF());

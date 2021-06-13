@@ -19,8 +19,11 @@ public final class Ttnv3UplinkMessage {
     private UplinkMessage uplinkMessage;
 
     public TtnUplinkMessage toTtnUplinkMessage() {
+        String devId = endDeviceIds.at("/device_id").asText("");
+        String appId = endDeviceIds.at("/application_ids/application_id").asText("");
         String devEui = endDeviceIds.at("/dev_eui").asText("");
-        TtnUplinkMessage message = new TtnUplinkMessage(devEui, uplinkMessage.payload, uplinkMessage.fport);
+        TtnUplinkMessage message = new TtnUplinkMessage(appId, devId, devEui, uplinkMessage.payload,
+                uplinkMessage.fport);
         int sf = uplinkMessage.settings.at("/data_rate/lora/spreading_factor").asInt();
         double rssi = uplinkMessage.rxMetadata.stream().mapToDouble(m -> m.at("/rssi").asDouble()).max()
                 .orElse(Double.NaN);

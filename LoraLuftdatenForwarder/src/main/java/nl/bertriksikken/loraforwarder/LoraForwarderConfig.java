@@ -2,6 +2,7 @@ package nl.bertriksikken.loraforwarder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import nl.bertriksikken.gls.GeoLocationConfig;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.nbiot.NbIotConfig;
@@ -27,6 +28,9 @@ public final class LoraForwarderConfig {
 
     @JsonProperty("mydevices")
     private MyDevicesConfig myDevicesConfig = new MyDevicesConfig();
+
+    @JsonProperty("geolocation")
+    private GeoLocationConfig geoLocationConfig = new GeoLocationConfig();
     
     public TtnConfig getTtnConfig() {
         return ttnConfig;
@@ -46,6 +50,10 @@ public final class LoraForwarderConfig {
     
     public MyDevicesConfig getMyDevicesConfig() {
         return myDevicesConfig;
+    }
+
+    public GeoLocationConfig getGeoLocationConfig() {
+        return geoLocationConfig;
     }
 
 }

@@ -26,6 +26,10 @@ public final class Location {
         // jackson constructor
     }
     
+    public Location(double latitude, double longitude) {
+        this(SOURCE_REGISTRY, latitude, longitude, 0);
+    }
+    
     Location(String source, double latitude, double longitude, int altitude) {
         this();
         this.source = source;

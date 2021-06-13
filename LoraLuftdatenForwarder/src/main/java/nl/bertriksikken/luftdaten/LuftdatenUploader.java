@@ -47,13 +47,15 @@ public final class LuftdatenUploader {
      * @param timeout the timeout
      * @return a new REST client.
      */
-    public static ILuftdatenApi newRestClient(String url, Duration timeout) {
-        LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
+    public static LuftdatenUploader create(LuftdatenConfig config) {
+        LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeout());
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeout()))
+                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
-        return retrofit.create(ILuftdatenApi.class);
+        ILuftdatenApi restClient = retrofit.create(ILuftdatenApi.class);
+        return new LuftdatenUploader(restClient);
     }
 
     private void uploadMeasurement(String sensorId, String pin, LuftdatenMessage luftdatenMessage) {
@@ -81,7 +83,7 @@ public final class LuftdatenUploader {
             message.addItem(name, value);
         }
     }
-    
+
     public void scheduleUpload(String deviceId, SensorData data) {
         String sensorId = "TTN-" + deviceId;
 
@@ -100,12 +102,12 @@ public final class LuftdatenUploader {
             addSimpleItem(data, p1Message, ESensorItem.PM2_5_N, "N25");
             addSimpleItem(data, p1Message, ESensorItem.PM1_0_N, "N1");
             addSimpleItem(data, p1Message, ESensorItem.PM0_5_N, "N05");
-            
+
             // encode particle size with 3 decimals
             if (data.hasValue(ESensorItem.PM_TPS)) {
                 p1Message.addItem("TS", String.format(Locale.ROOT, "%.3f", data.getValue(ESensorItem.PM_TPS)));
             }
-            
+
             scheduleUpload(sensorId, "1", p1Message);
         }
 

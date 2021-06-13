@@ -1,7 +1,5 @@
 package nl.bertriksikken.mydevices;
 
-import java.time.Duration;
-
 import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -24,9 +22,8 @@ public final class MyDevicesHttpUploaderTest {
         data.addValue(ESensorItem.PRESSURE, 102345.0);
         MyDevicesMessage message = MyDevicesMessage.fromSensorData(data);
 
-        String url = "https://api.mydevices.com";
-        IMyDevicesRestApi restApi = MyDevicesHttpUploader.newRestClient(url, Duration.ofSeconds(10));
-        MyDevicesHttpUploader uploader = new MyDevicesHttpUploader(restApi);
+        MyDevicesConfig config = new MyDevicesConfig();
+        MyDevicesHttpUploader uploader = MyDevicesHttpUploader.create(config);
 
         MyDevicesCredentials credentials = new MyDevicesCredentials("1b3d0d60-9b7e-11e7-a1da-536ee79fd847",
                 "f865f85afcb51f0a3c732d0c2910d93d8cd3b59e", "e78a12a0-98aa-11eb-a2e4-b32ea624e442");

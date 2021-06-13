@@ -30,17 +30,20 @@ public final class OpenSenseUploader {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<String, String> boxIds = new ConcurrentHashMap<>();
 
-    public OpenSenseUploader(IOpenSenseRestApi restClient) {
+    OpenSenseUploader(IOpenSenseRestApi restClient) {
         this.restClient = Objects.requireNonNull(restClient);
     }
 
-    public static IOpenSenseRestApi newRestClient(String url, Duration timeout) {
-        LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
+    public static OpenSenseUploader create(OpenSenseConfig config) {
+        LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeoutSec());
 
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeoutSec()))
+                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
-        return retrofit.create(IOpenSenseRestApi.class);
+        IOpenSenseRestApi restClient = retrofit.create(IOpenSenseRestApi.class);
+        return new OpenSenseUploader(restClient);
     }
 
     public void start() {

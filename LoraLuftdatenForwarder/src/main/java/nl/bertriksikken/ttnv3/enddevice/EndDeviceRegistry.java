@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.bertriksikken.ttn.TtnAppConfig;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -24,7 +25,7 @@ public final class EndDeviceRegistry {
     private final String applicationId;
     private final String authToken;
 
-    public EndDeviceRegistry(IEndDeviceRegistryRestApi restApi, String applicationId, String apiKey) {
+    EndDeviceRegistry(IEndDeviceRegistryRestApi restApi, String applicationId, String apiKey) {
         this.restApi = restApi;
         this.applicationId = applicationId;
         this.authToken = "Bearer " + apiKey;
@@ -34,13 +35,13 @@ public final class EndDeviceRegistry {
         return new EndDevice(applicationId, deviceId);
     }
 
-    public static IEndDeviceRegistryRestApi newRestClient(String url, Duration timeout) {
+    public static EndDeviceRegistry create(String url, int timeout, TtnAppConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(timeout)).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
-        return retrofit.create(IEndDeviceRegistryRestApi.class);
+        IEndDeviceRegistryRestApi restApi = retrofit.create(IEndDeviceRegistryRestApi.class);
+        return new EndDeviceRegistry(restApi, config.getName(), config.getKey());
     }
 
     public EndDevice getEndDevice(String deviceId, List<String> fields) throws IOException {

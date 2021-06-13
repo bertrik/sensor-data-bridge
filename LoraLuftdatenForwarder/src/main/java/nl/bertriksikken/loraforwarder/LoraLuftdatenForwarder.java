@@ -3,7 +3,6 @@ package nl.bertriksikken.loraforwarder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.gls.GeoLocationService;
-import nl.bertriksikken.luftdaten.ILuftdatenApi;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
-import nl.bertriksikken.mydevices.IMyDevicesRestApi;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
 import nl.bertriksikken.nbiot.NbIotReceiver;
-import nl.bertriksikken.opensense.IOpenSenseRestApi;
 import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
@@ -44,7 +40,6 @@ import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
-import nl.bertriksikken.ttnv3.enddevice.IEndDeviceRegistryRestApi;
 
 public final class LoraLuftdatenForwarder {
 
@@ -74,19 +69,13 @@ public final class LoraLuftdatenForwarder {
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
         LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
-        ILuftdatenApi restClient = LuftdatenUploader.newRestClient(luftdatenConfig.getUrl(),
-                Duration.ofSeconds(luftdatenConfig.getTimeout()));
-        luftdatenUploader = new LuftdatenUploader(restClient);
+        luftdatenUploader = LuftdatenUploader.create(luftdatenConfig);
 
         OpenSenseConfig openSenseConfig = config.getOpenSenseConfig();
-        IOpenSenseRestApi openSenseClient = OpenSenseUploader.newRestClient(openSenseConfig.getUrl(),
-                Duration.ofSeconds(openSenseConfig.getTimeoutSec()));
-        openSenseUploader = new OpenSenseUploader(openSenseClient);
+        openSenseUploader = OpenSenseUploader.create(openSenseConfig);
 
         MyDevicesConfig myDevicesConfig = config.getMyDevicesConfig();
-        IMyDevicesRestApi myDevicesClient = MyDevicesHttpUploader.newRestClient(myDevicesConfig.getUrl(),
-                Duration.ofSeconds(myDevicesConfig.getTimeoutSec()));
-        myDevicesUploader = new MyDevicesHttpUploader(myDevicesClient);
+        myDevicesUploader = MyDevicesHttpUploader.create(myDevicesConfig);
 
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
 
@@ -99,15 +88,13 @@ public final class LoraLuftdatenForwarder {
             mqttListeners.add(listener);
 
             // for each app, create a device registry client so we can look up attributes
-            IEndDeviceRegistryRestApi restApi = EndDeviceRegistry.newRestClient(ttnConfig.getIdentityServerUrl(),
-                    Duration.ofSeconds(ttnConfig.getIdentityServerTimeout()));
-            String appName = appConfig.getName();
-            EndDeviceRegistry deviceRegistry = new EndDeviceRegistry(restApi, appName, appConfig.getKey());
-            deviceRegistries.put(appName, deviceRegistry);
+            EndDeviceRegistry deviceRegistry = EndDeviceRegistry.create(ttnConfig.getIdentityServerUrl(),
+                    ttnConfig.getIdentityServerTimeout(), appConfig);
+            deviceRegistries.put(appConfig.getName(), deviceRegistry);
 
             // register command handler
             CommandHandler commandHandler = new CommandHandler(geoLocationService, deviceRegistry);
-            commandHandlers.put(appName, commandHandler);
+            commandHandlers.put(appConfig.getName(), commandHandler);
         }
     }
 

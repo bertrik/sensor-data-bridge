@@ -21,8 +21,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
- * Uploads data to myDevices using the HTTP method.
- * <br>
+ * Uploads data to myDevices using the HTTP method. <br>
  * See https://developers.mydevices.com/cayenne/docs/cayenne-mqtt-api/
  * #cayenne-mqtt-api-overview-using-mqtt-with-cayenne-option-3-use-http-to-push-mqtt-data
  */
@@ -39,17 +38,20 @@ public final class MyDevicesHttpUploader {
 
     private final Map<String, MyDevicesCredentials> credentialMap = new HashMap<>();
 
-    public static IMyDevicesRestApi newRestClient(String url, Duration timeout) {
-        LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
-        return retrofit.create(IMyDevicesRestApi.class);
+    MyDevicesHttpUploader(IMyDevicesRestApi restApi) {
+        this.restApi = restApi;
     }
 
-    public MyDevicesHttpUploader(IMyDevicesRestApi restApi) {
-        this.restApi = restApi;
+    public static MyDevicesHttpUploader create(MyDevicesConfig config) {
+        LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeoutSec());
+
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeoutSec()))
+                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
+        IMyDevicesRestApi restApi = retrofit.create(IMyDevicesRestApi.class);
+        return new MyDevicesHttpUploader(restApi);
     }
 
     public void scheduleUpload(String deviceId, SensorData sensorData) {

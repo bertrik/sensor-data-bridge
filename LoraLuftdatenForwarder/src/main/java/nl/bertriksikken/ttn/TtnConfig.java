@@ -27,7 +27,7 @@ public final class TtnConfig {
         return identityServerUrl;
     }
     
-    public long getIdentityServerTimeout() {
+    public int getIdentityServerTimeout() {
         return identityServerTimeout;
     }
     public List<TtnAppConfig> getApps() {

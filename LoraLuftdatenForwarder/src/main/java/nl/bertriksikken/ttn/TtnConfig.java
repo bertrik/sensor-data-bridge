@@ -1,6 +1,7 @@
 package nl.bertriksikken.ttn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,7 +32,7 @@ public final class TtnConfig {
         return identityServerTimeout;
     }
     public List<TtnAppConfig> getApps() {
-        return apps;
+        return Collections.unmodifiableList(apps);
     }
 
     

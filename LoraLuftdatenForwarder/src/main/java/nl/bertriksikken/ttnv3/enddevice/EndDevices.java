@@ -1,6 +1,7 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,7 +13,7 @@ public final class EndDevices {
     private final List<EndDevice> endDevices = new ArrayList<>();
 
     public List<EndDevice> getEndDevices() {
-        return endDevices;
+        return Collections.unmodifiableList(endDevices);
     }
 
     @Override

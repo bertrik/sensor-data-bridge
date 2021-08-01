@@ -35,7 +35,7 @@ public final class LuftdatenUploader {
      * 
      * @param restClient the REST client
      */
-    public LuftdatenUploader(ILuftdatenApi restClient) {
+    LuftdatenUploader(ILuftdatenApi restClient) {
         this.restClient = restClient;
         this.executor = Executors.newSingleThreadExecutor();
     }

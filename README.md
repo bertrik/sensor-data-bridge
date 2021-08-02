@@ -4,7 +4,6 @@ Bridge software for receiving airborne particulate matter data from TheThingsNet
 # Building the application
 Execute the following commands:
 * cd LoraLuftdatenForwarder
-* cd gradle
 * ./gradlew assemble
 
 A compressed distribution archive (.tar/.zip) is now available in LoraLuftdatenForwarder/build/dist

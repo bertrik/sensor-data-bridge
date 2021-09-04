@@ -5,21 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class UpdateEndDeviceRequest {
 
     @JsonProperty("end_device")
-    private EndDevice endDevice;
+    private final EndDevice endDevice;
 
     @JsonProperty("field_mask")
-    private FieldMask fieldMask;
+    private final FieldMask fieldMask;
 
     UpdateEndDeviceRequest(EndDevice endDevice, FieldMask fieldMask) {
         this.endDevice = endDevice;
         this.fieldMask = fieldMask;
     }
 
-    public EndDevice getEndDevice() {
-        return endDevice;
-    }
-
-    public FieldMask getFieldMask() {
-        return fieldMask;
-    }
 }

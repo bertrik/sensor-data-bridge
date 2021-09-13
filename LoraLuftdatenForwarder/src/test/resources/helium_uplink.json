@@ -1,76 +1,35 @@
 {
-  "app_eui": "3655731B237B9BA8",
-  "dc": {
-    "balance": 964794,
-    "nonce": 4
-  },
-  "decoded": {
-    "payload": [
-      {
-        "channel": 1,
-        "name": "gps",
-        "type": 136,
-        "value": {
-          "altitude": 79,
-          "latitude": 37.9017,
-          "longitude": -122.0686
-        }
-      },
-      {
-        "channel": 2,
-        "name": "temperature",
-        "type": 103,
-        "unit": "celcius",
-        "value": 50
-      },
-      {
-        "channel": 3,
-        "last": true,
-        "name": "accelerometer",
-        "type": 113,
-        "unit": "G",
-        "value": {
-          "x": 1,
-          "y": 2,
-          "z": 3
-        }
-      }
-    ],
-    "status": "success"
-  },
-  "dev_eui": "ED9196B2424BF383",
-  "devaddr": "13040048",
-  "downlink_url": "https://staging-console.helium.com/api/v1/down/76c46dea-45dd-4d47-924a-67a7ec234e2b/yQIQUAqE_-rpS18pxjUbIUYNBl3kf6oi/91c9b41c-acb6-4887-93a1-dea80d13e92f",
-  "fcnt": 87,
+  "app_eui": "6081F9D16837130E",
+  "dev_eui": "0004A30B001F21FA",
+  "devaddr": "5A010048",
+  "fcnt": 0,
   "hotspots": [
     {
-      "channel": 12,
-      "frequency": 904.7000122070312,
-      "id": "117ei8DWNjSFuLgg3BrtTNSTi2tt14LRUFgt1Bk2kYqkHWrg82c",
-      "lat": 37.900364668729985,
-      "long": -122.07205324641957,
-      "name": "square-goldenrod-gorilla",
-      "reported_at": 1606869315,
-      "rssi": -31,
-      "snr": 12.199999809265137,
-      "spreading": "SF9BW125",
+      "channel": 3,
+      "frequency": 867.0999755859375,
+      "hold_time": 934,
+      "id": "112BYHxn9Z8MJRDpJ67zbd647MGiD5xhAYQdvdq5aNjfZ8C5rkPF",
+      "lat": 52.01744965806703,
+      "long": 4.729875754358667,
+      "name": "melted-quartz-antelope",
+      "reported_at": 1631457565832,
+      "rssi": -120,
+      "snr": -7.5,
+      "spreading": "SF7BW125",
       "status": "success"
     }
   ],
-  "id": "91c9b41c-acb6-4887-93a1-dea80d13e92f",
+  "id": "ecace44e-3cd9-46f0-b7ad-9da592534d82",
   "metadata": {
-    "labels": [
-      {
-        "id": "13f1e65c-f888-41e9-98b8-810f07c04f9d",
-        "name": "Pipedream Template Testing",
-        "organization_id": "ae2f4a57-f4db-4ca2-bca3-aadb79f326b8"
-      }
-    ],
-    "organization_id": "ae2f4a57-f4db-4ca2-bca3-aadb79f326b8"
+    "adr_allowed": true,
+    "cf_list_enabled": false,
+    "multi_buy": 1,
+    "organization_id": "990da1fe-506d-41f5-961a-d774196e4c6f"
   },
-  "name": "Home Disco DevKit",
-  "payload": "AYgFyIntX7IAHtwCZwH0A3ED6AfQC7g=",
-  "payload_size": 23,
+  "name": "kissmapper",
+  "payload": "Aw==",
+  "payload_size": 1,
   "port": 1,
-  "reported_at": 1606869315
+  "reported_at": 1631457565832,
+  "uuid": "a44f811b-cf3c-4bb2-95fc-d5ce59400c29"
 }

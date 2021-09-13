@@ -2,7 +2,6 @@ package nl.bertriksikken.helium;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,22 +20,21 @@ public class HeliumUplinkMessageTest {
             HeliumUplinkMessage uplink = mapper.readValue(is, HeliumUplinkMessage.class);
             Assert.assertNotNull(uplink);
 
-            Assert.assertEquals("3655731B237B9BA8", uplink.appEui);
-            Assert.assertEquals("13040048", uplink.devAddr);
-            Assert.assertEquals("ED9196B2424BF383", uplink.devEui);
-            Assert.assertEquals(87, uplink.fcnt);
-            Assert.assertEquals("Home Disco DevKit", uplink.name);
+            Assert.assertEquals("6081F9D16837130E", uplink.appEui);
+            Assert.assertEquals("5A010048", uplink.devAddr);
+            Assert.assertEquals("0004A30B001F21FA", uplink.devEui);
+            Assert.assertEquals(0, uplink.fcnt);
+            Assert.assertEquals("kissmapper", uplink.name);
             Assert.assertEquals(1, uplink.port);
-            Assert.assertEquals(1606869315, uplink.reportedAt);
-            Assert.assertArrayEquals(new byte[] { 1, -120, 5, -56, -119, -19, 95, -78, 0, 30, -36, 2, 103, 1, -12, 3,
-                    113, 3, -24, 7, -48, 11, -72 }, uplink.payload);
+            Assert.assertEquals(1631457565832L, uplink.reportedAt);
+            Assert.assertArrayEquals(new byte[] { 3 }, uplink.payload);
 
             HotSpot hotSpot = uplink.hotSpots.get(0);
-            Assert.assertEquals(37.9003, hotSpot.latitude, 0.0001);
-            Assert.assertEquals(-122.0720, hotSpot.longitude, 0.0001);
-            Assert.assertEquals("square-goldenrod-gorilla", hotSpot.name);
-            Assert.assertEquals(-31, hotSpot.rssi, 0.1);
-            Assert.assertEquals(12.2, hotSpot.snr, 0.1);
+            Assert.assertEquals(52.01745, hotSpot.latitude, 0.00001);
+            Assert.assertEquals(4.729876, hotSpot.longitude, 0.00001);
+            Assert.assertEquals("melted-quartz-antelope", hotSpot.name);
+            Assert.assertEquals(-120, hotSpot.rssi, 0.1);
+            Assert.assertEquals(-7.5, hotSpot.snr, 0.1);
         }
 
     }

@@ -13,8 +13,11 @@ dependencies {
     
     // REST server
     implementation libraries.jersey_server
-    
+    // REST client
     implementation libraries.retrofit
+    
+    compileOnly libraries.spotbugs_annotations
+    
     testImplementation libraries.retrofit_mock
 }
 

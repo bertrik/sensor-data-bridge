@@ -6,6 +6,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings("URF_UNREAD_FIELD")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class HeliumUplinkMessage {
 

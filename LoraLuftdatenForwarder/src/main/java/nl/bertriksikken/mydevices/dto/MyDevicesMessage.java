@@ -50,7 +50,7 @@ public final class MyDevicesMessage extends ArrayList<MyDevicesItem> {
         MyDevicesMessage message = new MyDevicesMessage();
         for (CayenneItem item : cayenneMessage.getItems()) {
             int channel = item.getChannel();
-            Double value = item.getValue().doubleValue();
+            double value = item.getValue().doubleValue();
             switch (item.getType()) {
             case ANALOG_INPUT:
                 message.add(new MyDevicesItem(channel, "analog_sensor", value, "null"));

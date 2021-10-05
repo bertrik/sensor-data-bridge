@@ -41,11 +41,9 @@ public final class LuftdatenUploader {
     }
 
     /**
-     * Creates a new REST client.
+     * Creates a new luftdaten REST client.
      * 
-     * @param url     the URL of the server, e.g. "https://api.luftdaten.info"
-     * @param timeout the timeout
-     * @return a new REST client.
+     * @param config the luftdaten config
      */
     public static LuftdatenUploader create(LuftdatenConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeout());

@@ -58,7 +58,7 @@ public final class CommandHandler {
             executor.execute(() -> handleWifiLocalisation(bb, uplink.getDevId()));
             break;
         default:
-            LOG.warn("Unhandled command %d", cmd);
+            LOG.warn("Unhandled command {}", cmd);
             break;
         }
     }

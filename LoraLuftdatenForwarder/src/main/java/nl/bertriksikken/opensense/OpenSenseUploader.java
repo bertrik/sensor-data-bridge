@@ -57,7 +57,7 @@ public final class OpenSenseUploader {
 
     public void scheduleUpload(String deviceId, SensorData data) {
         String boxId = boxIds.getOrDefault(deviceId, "");
-        if (boxId.isBlank()) {
+        if (boxId.isEmpty()) {
             return;
         }
 
@@ -140,8 +140,8 @@ public final class OpenSenseUploader {
     }
 
     private void processDeviceAttributes(Map<String, String> map, String device, AttributeMap attributes) {
-        String opensenseId = attributes.getOrDefault("opensense-id", "");
-        if (!opensenseId.isBlank()) {
+        String opensenseId = attributes.getOrDefault("opensense-id", "").trim();
+        if (!opensenseId.isEmpty()) {
             map.put(device, opensenseId);
         }
     }

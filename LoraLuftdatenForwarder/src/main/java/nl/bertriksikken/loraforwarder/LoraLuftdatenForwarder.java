@@ -84,7 +84,7 @@ public final class LoraLuftdatenForwarder {
             // add listener for each app
             EPayloadEncoding encoding = appConfig.getEncoding();
             LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", appConfig.getName(), encoding);
-            MqttListener listener = new MqttListener(ttnConfig, appConfig, uplink -> messageReceived(encoding, uplink));
+            MqttListener listener = new MqttListener(ttnConfig, appConfig, uplink -> messageReceived(appConfig, uplink));
             mqttListeners.add(listener);
 
             // for each app, create a device registry client so we can look up attributes
@@ -98,7 +98,7 @@ public final class LoraLuftdatenForwarder {
         }
     }
 
-    private void messageReceived(EPayloadEncoding encoding, TtnUplinkMessage uplink) {
+    private void messageReceived(TtnAppConfig appConfig, TtnUplinkMessage uplink) {
         LOG.info("Received: '{}'", uplink);
 
         try {
@@ -110,14 +110,15 @@ public final class LoraLuftdatenForwarder {
                 }
                 return;
             }
+            AppDeviceId appDeviceId = new AppDeviceId(uplink.getAppId(), uplink.getDevEui());
 
             // decode and upload telemetry message
-            SensorData sensorData = decodeTtnMessage(encoding, uplink);
-            luftdatenUploader.scheduleUpload(uplink.getDevEui(), sensorData);
-            openSenseUploader.scheduleUpload(uplink.getDevEui(), sensorData);
-            myDevicesUploader.scheduleUpload(uplink.getDevEui(), sensorData);
+            SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
+            luftdatenUploader.scheduleUpload(appDeviceId, sensorData);
+            openSenseUploader.scheduleUpload(appDeviceId, sensorData);
+            myDevicesUploader.scheduleUpload(appDeviceId, sensorData);
         } catch (PayloadParseException e) {
-            LOG.warn("Could not parse '{}' payload from: '{}", encoding, uplink.getRawPayload());
+            LOG.warn("Could not parse '{}' payload from: '{}", appConfig.getEncoding(), uplink.getRawPayload());
         }
     }
 
@@ -225,14 +226,16 @@ public final class LoraLuftdatenForwarder {
     // retrieves application attributes and notifies each interested components
     private void updateAttributes() {
         // fetch all attributes
-        Map<String, AttributeMap> attributes = new HashMap<>();
+        Map<AppDeviceId, AttributeMap> attributes = new HashMap<>();
         for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
             String applicationId = entry.getKey();
             EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
-                List<EndDevice> devices = registry.listEndDevices();
-                devices.forEach(d -> attributes.put(d.getIds().getDevEui(), new AttributeMap(d.getAttributes())));
+                for (EndDevice device : registry.listEndDevices()) {
+                    AppDeviceId appDeviceId = new AppDeviceId(applicationId, device.getIds().getDevEui());
+                    attributes.put(appDeviceId, new AttributeMap(device.getAttributes()));
+                }
             } catch (IOException e) {
                 LOG.warn("Error getting opensense map ids for {}", e.getMessage());
             }

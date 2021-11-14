@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
 import nl.bertriksikken.pm.SensorData;
@@ -36,7 +37,7 @@ public final class MyDevicesHttpUploader {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final IMyDevicesRestApi restApi;
 
-    private final Map<String, MyDevicesCredentials> credentialMap = new HashMap<>();
+    private final Map<AppDeviceId, MyDevicesCredentials> credentialMap = new HashMap<>();
 
     MyDevicesHttpUploader(IMyDevicesRestApi restApi) {
         this.restApi = restApi;
@@ -54,11 +55,11 @@ public final class MyDevicesHttpUploader {
         return new MyDevicesHttpUploader(restApi);
     }
 
-    public void scheduleUpload(String deviceId, SensorData sensorData) {
-        MyDevicesCredentials credentials = credentialMap.get(deviceId);
+    public void scheduleUpload(AppDeviceId appDeviceId, SensorData sensorData) {
+        MyDevicesCredentials credentials = credentialMap.get(appDeviceId);
         if (credentials != null) {
             MyDevicesMessage message = MyDevicesMessage.fromSensorData(sensorData);
-            executor.execute(() -> uploadMeasurement(deviceId, credentials, message));
+            executor.execute(() -> uploadMeasurement(appDeviceId.getDeviceId(), credentials, message));
         }
     }
 
@@ -80,17 +81,18 @@ public final class MyDevicesHttpUploader {
         }
     }
 
-    public void processAttributes(Map<String, AttributeMap> attributes) {
-        Map<String, MyDevicesCredentials> map = new HashMap<>();
+    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        Map<AppDeviceId, MyDevicesCredentials> map = new HashMap<>();
         attributes.forEach((dev, attr) -> processDeviceAttributes(map, dev, attr));
         credentialMap.clear();
         credentialMap.putAll(map);
         credentialMap.forEach((device, c) -> LOG.info("myDevices mapping: {} -> {}", device, c.clientId));
     }
 
-    private void processDeviceAttributes(Map<String, MyDevicesCredentials> map, String device, AttributeMap attr) {
+    private void processDeviceAttributes(Map<AppDeviceId, MyDevicesCredentials> map, AppDeviceId appDeviceId,
+            AttributeMap attr) {
         if (attr.containsKey(KEY_USERNAME) && attr.containsKey(KEY_PASSWORD) && attr.containsKey(KEY_CLIENTID)) {
-            map.put(device,
+            map.put(appDeviceId,
                     new MyDevicesCredentials(attr.get(KEY_USERNAME), attr.get(KEY_PASSWORD), attr.get(KEY_CLIENTID)));
         }
     }

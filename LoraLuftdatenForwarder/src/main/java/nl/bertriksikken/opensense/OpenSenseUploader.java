@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
@@ -28,7 +29,7 @@ public final class OpenSenseUploader {
 
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Map<String, String> boxIds = new ConcurrentHashMap<>();
+    private final Map<AppDeviceId, String> boxIds = new ConcurrentHashMap<>();
 
     OpenSenseUploader(IOpenSenseRestApi restClient) {
         this.restClient = Objects.requireNonNull(restClient);
@@ -55,8 +56,8 @@ public final class OpenSenseUploader {
         executor.shutdown();
     }
 
-    public void scheduleUpload(String deviceId, SensorData data) {
-        String boxId = boxIds.getOrDefault(deviceId, "");
+    public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
+        String boxId = boxIds.getOrDefault(appDeviceId, "");
         if (boxId.isEmpty()) {
             return;
         }
@@ -91,7 +92,7 @@ public final class OpenSenseUploader {
         }
 
         // schedule upload
-        String luftdatenId = "TTN-" + deviceId;
+        String luftdatenId = "TTN-" + appDeviceId.getDeviceId();
         executor.execute(() -> uploadMeasurement(boxId, luftdatenId, message));
     }
 
@@ -131,15 +132,15 @@ public final class OpenSenseUploader {
         }
     }
 
-    public void processAttributes(Map<String, AttributeMap> attributes) {
-        Map<String, String> newBoxIds = new HashMap<>();
-        attributes.forEach((dev, attr) -> processDeviceAttributes(newBoxIds, dev, attr));
+    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        Map<AppDeviceId, String> newBoxIds = new HashMap<>();
+        attributes.forEach((appDevId, attr) -> processDeviceAttributes(newBoxIds, appDevId, attr));
         boxIds.clear();
         boxIds.putAll(newBoxIds);
         boxIds.forEach((device, id) -> LOG.info("Opensense mapping: {} -> {}", device, id));
     }
 
-    private void processDeviceAttributes(Map<String, String> map, String device, AttributeMap attributes) {
+    private void processDeviceAttributes(Map<AppDeviceId, String> map, AppDeviceId device, AttributeMap attributes) {
         String opensenseId = attributes.getOrDefault("opensense-id", "").trim();
         if (!opensenseId.isEmpty()) {
             map.put(device, opensenseId);

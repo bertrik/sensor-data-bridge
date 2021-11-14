@@ -1,6 +1,7 @@
 package nl.bertriksikken.luftdaten;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
@@ -32,8 +34,8 @@ public final class LuftdatenUploader {
     private final ObjectMapper mapper = new ObjectMapper();
     private final ILuftdatenApi restClient;
     private final ExecutorService executor;
-    // map from device EUI to sensor.community id
-    private final Map<String, String> sensComIds = new ConcurrentHashMap<>();
+    // map from device id to sensor.community id
+    private final Map<AppDeviceId, String> sensComIds = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
@@ -87,12 +89,12 @@ public final class LuftdatenUploader {
         }
     }
 
-    public void scheduleUpload(String deviceId, SensorData data) {
+    public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
         // the default id is just "TTN-" followed by the EUI in hex
-        String defaultSensorId = "TTN-" + deviceId;
-        
+        String defaultSensorId = "TTN-" + appDeviceId.getDeviceId();
+
         // look up custom sensor.community id
-        String sensorId = sensComIds.getOrDefault(deviceId, defaultSensorId);
+        String sensorId = sensComIds.getOrDefault(appDeviceId, defaultSensorId);
 
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
@@ -178,16 +180,20 @@ public final class LuftdatenUploader {
         executor.shutdown();
     }
 
-    public void processAttributes(Map<String, AttributeMap> attributes) {
-        attributes.forEach((dev, attr) -> processDeviceAttributes(dev, attr));
+    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        Map<AppDeviceId, String> map = new HashMap<>();
+        attributes.forEach((dev, attr) -> processDeviceAttributes(map, dev, attr));
+        sensComIds.clear();
+        sensComIds.putAll(map);
+        sensComIds.forEach((key, value) -> LOG.info("SensCom mapping: {} -> {}", key, value));
     }
 
-    private void processDeviceAttributes(String deviceId, AttributeMap attributes) {
+    private void processDeviceAttributes(Map<AppDeviceId, String> map, AppDeviceId appDeviceId,
+            AttributeMap attributes) {
         String sensComId = attributes.getOrDefault("senscom-id", "").trim();
         if (!sensComId.isEmpty()) {
-            sensComIds.put(deviceId, sensComId);
+            map.put(appDeviceId, sensComId);
         }
     }
-    
-    
+
 }

@@ -209,7 +209,7 @@ public final class LoraLuftdatenForwarder {
         nbIotReceiver.start();
 
         // schedule task to fetch opensense ids
-        executor.scheduleAtFixedRate(this::updateOpenSenseMapping, 0, 60, TimeUnit.MINUTES);
+        executor.scheduleAtFixedRate(this::updateAttributes, 0, 60, TimeUnit.MINUTES);
 
         // start opensense uploader
         openSenseUploader.start();
@@ -223,7 +223,7 @@ public final class LoraLuftdatenForwarder {
     }
 
     // retrieves application attributes and notifies each interested components
-    private void updateOpenSenseMapping() {
+    private void updateAttributes() {
         // fetch all attributes
         Map<String, AttributeMap> attributes = new HashMap<>();
         for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
@@ -242,6 +242,7 @@ public final class LoraLuftdatenForwarder {
         // notify all uploaders
         openSenseUploader.processAttributes(attributes);
         myDevicesUploader.processAttributes(attributes);
+        luftdatenUploader.processAttributes(attributes);
     }
 
     /**

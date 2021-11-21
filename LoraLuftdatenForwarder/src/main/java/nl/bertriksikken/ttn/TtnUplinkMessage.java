@@ -14,16 +14,19 @@ public final class TtnUplinkMessage {
     private final String devId;
     private final String devEui;
     private final byte[] rawPayload;
+    private final String decodedFields;
     private final int port;
     private double rssi = Double.NaN;
     private double snr = Double.NaN;
     private int sf = 0;
 
-    public TtnUplinkMessage(String appId, String devId, String devEui, byte[] rawPayload, int port) {
+    public TtnUplinkMessage(String appId, String devId, String devEui, byte[] rawPayload, String decodedFields,
+            int port) {
         this.appId = appId;
         this.devId = devId;
         this.devEui = devEui;
         this.rawPayload = rawPayload.clone();
+        this.decodedFields = decodedFields;
         this.port = port;
     }
 
@@ -36,11 +39,11 @@ public final class TtnUplinkMessage {
     public String getAppId() {
         return appId;
     }
-    
+
     public String getDevId() {
         return devId;
     }
-    
+
     public String getDevEui() {
         return devEui;
     }
@@ -49,6 +52,10 @@ public final class TtnUplinkMessage {
         return rawPayload.clone();
     }
 
+    public String getDecodedFields() {
+        return decodedFields;
+    }
+    
     public int getPort() {
         return port;
     }
@@ -67,8 +74,8 @@ public final class TtnUplinkMessage {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", devEui,
-                HexConverter.toString(rawPayload), port, sf);
+        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", devEui, HexConverter.toString(rawPayload),
+                port, sf);
     }
 
 }

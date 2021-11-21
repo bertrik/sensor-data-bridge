@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import nl.bertriksikken.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.luftdaten.LuftdatenConfig;
 import nl.bertriksikken.luftdaten.LuftdatenUploader;
@@ -191,6 +192,10 @@ public final class LoraLuftdatenForwarder {
                 sensorData.addValue(ESensorItem.POS_LON, position[1]);
                 sensorData.addValue(ESensorItem.POS_ALT, position[2]);
             }
+            break;
+        case APELDOORN:
+            ApeldoornMsg apeldoornMsg = ApeldoornMsg.parse(uplink.getDecodedFields());
+            apeldoornMsg.getSensorData(sensorData);
             break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);

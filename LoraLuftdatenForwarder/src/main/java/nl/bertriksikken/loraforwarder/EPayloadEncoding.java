@@ -3,8 +3,8 @@ package nl.bertriksikken.loraforwarder;
 public enum EPayloadEncoding {
 
     TTN_ULM("ttnulm"),
-    CAYENNE("cayenne");
-  
+    CAYENNE("cayenne"),
+    APELDOORN("apeldoorn");
 	
 	private final String id;
 

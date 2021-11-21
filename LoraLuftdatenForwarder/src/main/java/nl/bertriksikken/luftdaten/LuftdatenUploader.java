@@ -90,11 +90,12 @@ public final class LuftdatenUploader {
     }
 
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
-        // the default id is just "TTN-" followed by the EUI in hex
-        String defaultSensorId = "TTN-" + appDeviceId.getDeviceId();
-
         // look up custom sensor.community id
-        String sensorId = sensComIds.getOrDefault(appDeviceId, defaultSensorId);
+        String sensorId = sensComIds.getOrDefault(appDeviceId, "");
+        if (sensorId.isEmpty()) {
+            // no sensor.community id found, so no upload
+            return;
+        }
 
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)

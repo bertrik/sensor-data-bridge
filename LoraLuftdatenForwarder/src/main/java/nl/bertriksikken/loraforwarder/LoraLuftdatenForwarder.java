@@ -111,7 +111,7 @@ public final class LoraLuftdatenForwarder {
                 }
                 return;
             }
-            AppDeviceId appDeviceId = new AppDeviceId(uplink.getAppId(), uplink.getDevEui());
+            AppDeviceId appDeviceId = new AppDeviceId(uplink.getAppId(), uplink.getDevId());
 
             // decode and upload telemetry message
             SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
@@ -238,14 +238,14 @@ public final class LoraLuftdatenForwarder {
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
                 for (EndDevice device : registry.listEndDevices()) {
-                    AppDeviceId appDeviceId = new AppDeviceId(applicationId, device.getIds().getDevEui());
+                    AppDeviceId appDeviceId = new AppDeviceId(applicationId, device.getDeviceId());
                     attributes.put(appDeviceId, new AttributeMap(device.getAttributes()));
                 }
             } catch (IOException e) {
                 LOG.warn("Error getting opensense map ids for {}", e.getMessage());
             }
-            LOG.info("Fetching TTNv3 application attributes done");
         }
+        LOG.info("Fetching TTNv3 application attributes done");
 
         // notify all uploaders
         openSenseUploader.processAttributes(attributes);

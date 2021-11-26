@@ -1,8 +1,8 @@
-package nl.bertriksikken.luftdaten;
+package nl.bertriksikken.senscom;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public final class LuftdatenConfig {
+public final class SensComConfig {
 
     @JsonProperty("url")
     private String url = "https://api.sensor.community";

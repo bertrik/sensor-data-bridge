@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
-import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
+import nl.bertriksikken.senscom.SensComMessage;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -62,7 +62,7 @@ public final class OpenSenseUploader {
             return;
         }
 
-        LuftdatenMessage message = new LuftdatenMessage();
+        SensComMessage message = new SensComMessage();
 
         // particulate matter
         String pmPrefix = getPmPrefix(data);
@@ -92,8 +92,8 @@ public final class OpenSenseUploader {
         }
 
         // schedule upload
-        String luftdatenId = "TTN-" + appDeviceId.getDeviceId();
-        executor.execute(() -> uploadMeasurement(boxId, luftdatenId, message));
+        String sensComId = "TTN-" + appDeviceId.getDeviceId();
+        executor.execute(() -> uploadMeasurement(boxId, sensComId, message));
     }
 
     private String getMeteoPrefix(SensorData data) {
@@ -114,15 +114,15 @@ public final class OpenSenseUploader {
         return "SDS_";
     }
 
-    private void uploadMeasurement(String boxId, String luftdatenId, LuftdatenMessage message) {
-        LOG.info("Upload for {} to opensense box {}: {}", luftdatenId, boxId, message);
+    private void uploadMeasurement(String boxId, String sensComId, SensComMessage message) {
+        LOG.info("Upload for {} to opensense box {}: {}", sensComId, boxId, message);
         try {
             Response<String> response = restClient.postNewMeasurements(boxId, true, message).execute();
             if (response.isSuccessful()) {
                 String result = response.body();
-                LOG.info("Upload for {} to opensense box {} success: {}", luftdatenId, boxId, result);
+                LOG.info("Upload for {} to opensense box {} success: {}", sensComId, boxId, result);
             } else {
-                LOG.warn("Upload for {} to opensense box {} failure: {}", luftdatenId, boxId,
+                LOG.warn("Upload for {} to opensense box {} failure: {}", sensComId, boxId,
                         response.errorBody().string());
             }
         } catch (IOException e) {

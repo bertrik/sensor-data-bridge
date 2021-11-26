@@ -1,20 +1,20 @@
-package nl.bertriksikken.luftdaten.dto;
+package nl.bertriksikken.senscom;
 
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * One luftdaten.info measurement item.
+ * One sensor.community measurement item.
  */
-public final class LuftdatenItem {
+public final class SensComItem {
 
     @JsonProperty("value_type")
     private String name;
     @JsonProperty("value")
     private String value;
 
-    private LuftdatenItem() {
+    private SensComItem() {
         // jackson constructor
     }
 
@@ -24,7 +24,7 @@ public final class LuftdatenItem {
      * @param name  the item name
      * @param value the item value
      */
-    LuftdatenItem(String name, String value) {
+    SensComItem(String name, String value) {
         this();
         this.name = name;
         this.value = value;
@@ -36,7 +36,7 @@ public final class LuftdatenItem {
      * @param name the item name
      * @param value the item value as double, it will be rounded to 1 decimal
      */
-    LuftdatenItem(String name, Double value) {
+    SensComItem(String name, Double value) {
         this(name, String.format(Locale.ROOT, "%.1f", value));
     }
 

@@ -1,4 +1,4 @@
-package nl.bertriksikken.luftdaten.dto;
+package nl.bertriksikken.senscom;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,9 +8,9 @@ import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Luftdaten message as uploaded through a POST.
+ * Sensor.community message as uploaded through a POST.
  */
-public final class LuftdatenMessage {
+public final class SensComMessage {
 
     private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
 
@@ -18,24 +18,24 @@ public final class LuftdatenMessage {
     private String softwareVersion;
 
     @JsonProperty("sensordatavalues")
-    private final List<LuftdatenItem> items = new ArrayList<>();
+    private final List<SensComItem> items = new ArrayList<>();
 
     /**
      * Constructor.
      */
-    public LuftdatenMessage() {
+    public SensComMessage() {
         this.softwareVersion = SOFTWARE_VERSION;
     }
 
     public void addItem(String name, String value) {
-        items.add(new LuftdatenItem(name, value));
+        items.add(new SensComItem(name, value));
     }
 
     public void addItem(String name, Double value) {
-        items.add(new LuftdatenItem(name, value));
+        items.add(new SensComItem(name, value));
     }
 
-    public List<LuftdatenItem> getItems() {
+    public List<SensComItem> getItems() {
         return Collections.unmodifiableList(items);
     }
 

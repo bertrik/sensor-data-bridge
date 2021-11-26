@@ -1,15 +1,14 @@
-package nl.bertriksikken.luftdaten;
+package nl.bertriksikken.senscom;
 
-import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 /**
- * REST API for luftdaten.info
+ * REST API for sensor.community
  */
-public interface ILuftdatenApi {
+public interface ISensComApi {
 
     /**
      * Uploads sensor measurement data.
@@ -21,6 +20,6 @@ public interface ILuftdatenApi {
      */
     @POST("/v1/push-sensor-data/")
     Call<String> pushSensorData(@Header("X-Pin") String pin, @Header("X-Sensor") String sensor,
-            @Body LuftdatenMessage message);
+            @Body SensComMessage message);
 
 }

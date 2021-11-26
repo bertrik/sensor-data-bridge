@@ -22,8 +22,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.gls.GeoLocationService;
-import nl.bertriksikken.luftdaten.LuftdatenConfig;
-import nl.bertriksikken.luftdaten.LuftdatenUploader;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
 import nl.bertriksikken.nbiot.NbIotReceiver;
@@ -35,6 +33,8 @@ import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
 import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
+import nl.bertriksikken.senscom.SensComConfig;
+import nl.bertriksikken.senscom.SensComUploader;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
@@ -49,7 +49,7 @@ public final class LoraLuftdatenForwarder {
 
     private final NbIotReceiver nbIotReceiver;
     private final List<MqttListener> mqttListeners = new ArrayList<>();
-    private final LuftdatenUploader luftdatenUploader;
+    private final SensComUploader sensComUploader;
     private final OpenSenseUploader openSenseUploader;
     private final MyDevicesHttpUploader myDevicesUploader;
     private final GeoLocationService geoLocationService;
@@ -69,8 +69,8 @@ public final class LoraLuftdatenForwarder {
     private LoraLuftdatenForwarder(LoraForwarderConfig config) throws IOException {
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
-        LuftdatenConfig luftdatenConfig = config.getLuftdatenConfig();
-        luftdatenUploader = LuftdatenUploader.create(luftdatenConfig);
+        SensComConfig sensComConfig = config.getSensComConfig();
+        sensComUploader = SensComUploader.create(sensComConfig);
 
         OpenSenseConfig openSenseConfig = config.getOpenSenseConfig();
         openSenseUploader = OpenSenseUploader.create(openSenseConfig);
@@ -115,7 +115,7 @@ public final class LoraLuftdatenForwarder {
 
             // decode and upload telemetry message
             SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
-            luftdatenUploader.scheduleUpload(appDeviceId, sensorData);
+            sensComUploader.scheduleUpload(appDeviceId, sensorData);
             openSenseUploader.scheduleUpload(appDeviceId, sensorData);
             myDevicesUploader.scheduleUpload(appDeviceId, sensorData);
         } catch (PayloadParseException e) {
@@ -220,7 +220,7 @@ public final class LoraLuftdatenForwarder {
         // start opensense uploader
         openSenseUploader.start();
 
-        luftdatenUploader.start();
+        sensComUploader.start();
         for (MqttListener listener : mqttListeners) {
             listener.start();
         }
@@ -250,7 +250,7 @@ public final class LoraLuftdatenForwarder {
         // notify all uploaders
         openSenseUploader.processAttributes(attributes);
         myDevicesUploader.processAttributes(attributes);
-        luftdatenUploader.processAttributes(attributes);
+        sensComUploader.processAttributes(attributes);
     }
 
     /**
@@ -265,7 +265,7 @@ public final class LoraLuftdatenForwarder {
         mqttListeners.forEach(MqttListener::stop);
         commandHandlers.values().forEach(CommandHandler::stop);
         openSenseUploader.stop();
-        luftdatenUploader.stop();
+        sensComUploader.stop();
         nbIotReceiver.stop();
 
         LOG.info("Stopped LoraLuftdatenForwarder application");

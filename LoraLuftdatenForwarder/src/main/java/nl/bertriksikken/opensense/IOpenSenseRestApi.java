@@ -1,7 +1,7 @@
 package nl.bertriksikken.opensense;
 
-import nl.bertriksikken.luftdaten.dto.LuftdatenMessage;
 import nl.bertriksikken.opensense.dto.SenseBox;
+import nl.bertriksikken.senscom.SensComMessage;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -16,6 +16,6 @@ public interface IOpenSenseRestApi {
 
     @POST("/boxes/{boxid}/data")
     Call<String> postNewMeasurements(@Path("boxid") String boxId, @Query("luftdaten") boolean isLuftdaten,
-            @Body LuftdatenMessage message);
+            @Body SensComMessage message);
 
 }

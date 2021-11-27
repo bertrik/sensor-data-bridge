@@ -164,7 +164,19 @@ public final class SensComUploader {
             scheduleUpload(sensorId, "13", p13Message);
         }
 
-        // pin 15: sound not implemented
+        // pin 15: sound
+        if (data.hasValue(ESensorItem.NOISE_LA_MIN) && data.hasValue(ESensorItem.NOISE_LA_EQ)
+                && data.hasValue(ESensorItem.NOISE_LA_MAX)) {
+            SensComMessage p15Message = new SensComMessage();
+            p15Message.addItem("noise_LAeq",
+                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_EQ)));
+            p15Message.addItem("noise_LA_min",
+                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MIN)));
+            p15Message.addItem("noise_LA_max",
+                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MAX)));
+            scheduleUpload(sensorId, "15", p15Message);
+        }
+
         // pin 17: NO2 not implemented
         // pin 19: radiation not implemented
     }

@@ -35,6 +35,7 @@ import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.senscom.SensComConfig;
 import nl.bertriksikken.senscom.SensComUploader;
+import nl.bertriksikken.soundkit.NoiseMsg;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
@@ -196,6 +197,10 @@ public final class LoraLuftdatenForwarder {
         case APELDOORN:
             ApeldoornMsg apeldoornMsg = ApeldoornMsg.parse(uplink.getDecodedFields());
             apeldoornMsg.getSensorData(sensorData);
+            break;
+        case SOUNDKIT:
+            NoiseMsg soundKitMsg = NoiseMsg.parse(uplink.getDecodedFields());
+            soundKitMsg.getSensorData(sensorData);
             break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);

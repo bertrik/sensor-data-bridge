@@ -23,7 +23,9 @@ public enum ESensorItem {
     POS_LON("Longitude in degrees"),
     POS_ALT("Altitude in meters"),
     
-    SOUND("Sound pressure (unit?)"),
+    NOISE_LA_EQ("Noise avg (dBA)"),
+    NOISE_LA_MIN("Noise min (dBA)"),
+    NOISE_LA_MAX("Noise max (dBA)"),
     
     NO2("NO2 concentration (unit?)"),
     RADIATION("Radiation (unit?)"), 

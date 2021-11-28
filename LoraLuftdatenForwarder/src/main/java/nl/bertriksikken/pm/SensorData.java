@@ -23,4 +23,9 @@ public final class SensorData {
         return items.get(item);
     }
 
+    @Override
+    public String toString() {
+        return items.toString();
+    }
+
 }

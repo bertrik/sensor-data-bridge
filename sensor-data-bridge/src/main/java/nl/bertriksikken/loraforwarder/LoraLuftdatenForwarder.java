@@ -46,7 +46,7 @@ import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
 public final class LoraLuftdatenForwarder {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
-    private static final String CONFIG_FILE = "loraluftdatenforwarder.yaml";
+    private static final String CONFIG_FILE = "sensor-data-bridge.yaml";
 
     private final NbIotReceiver nbIotReceiver;
     private final List<MqttListener> mqttListeners = new ArrayList<>();

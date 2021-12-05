@@ -1,0 +1,21 @@
+# copy this to /etc/systemd/system
+# then sudo systemctl daemon-reload
+# and enable with sudo systemctl enable --now sensor-data-bridge
+
+[Unit]
+Description=sensor-data-bridge
+After=network.target
+
+[Service]
+WorkingDirectory=/home/bertrik/sensor-data-bridge
+ExecStart=/home/bertrik/sensor-data-bridge/bin/sensor-data-bridge
+Type=simple
+KillMode=process
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=15s
+User=bertrik
+Environment="LORA_SENSOR_DATA_BRIDGE_OPTS=-Xmx64M"
+
+[Install]
+WantedBy=multi-user.target

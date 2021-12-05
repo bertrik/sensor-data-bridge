@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class SensComMessage {
 
-    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/LoraLuftdatenForwarder";
-
     @JsonProperty("software_version")
     private String softwareVersion;
 
@@ -23,8 +21,8 @@ public final class SensComMessage {
     /**
      * Constructor.
      */
-    public SensComMessage() {
-        this.softwareVersion = SOFTWARE_VERSION;
+    public SensComMessage(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
     }
 
     public void addItem(String name, String value) {

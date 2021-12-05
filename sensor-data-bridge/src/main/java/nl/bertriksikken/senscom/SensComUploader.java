@@ -29,6 +29,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public final class SensComUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(SensComUploader.class);
+    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final ISensComApi restClient;
@@ -97,7 +98,7 @@ public final class SensComUploader {
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
                 || data.hasValue(ESensorItem.PM4_0)) {
-            SensComMessage p1Message = new SensComMessage();
+            SensComMessage p1Message = new SensComMessage(SOFTWARE_VERSION);
 
             addSimpleItem(data, p1Message, ESensorItem.PM10, "P1");
             addSimpleItem(data, p1Message, ESensorItem.PM4_0, "P4");
@@ -121,7 +122,7 @@ public final class SensComUploader {
         // pin 3: temperature & pressure, but no humidity
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
                 && !data.hasValue(ESensorItem.HUMI)) {
-            SensComMessage p3Message = new SensComMessage();
+            SensComMessage p3Message = new SensComMessage(SOFTWARE_VERSION);
             p3Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
             scheduleUpload(sensorId, "3", p3Message);
@@ -130,7 +131,7 @@ public final class SensComUploader {
         // pin 7: temperature & humidity, but no pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
-            SensComMessage p7Message = new SensComMessage();
+            SensComMessage p7Message = new SensComMessage(SOFTWARE_VERSION);
             p7Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p7Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
             scheduleUpload(sensorId, "7", p7Message);
@@ -138,7 +139,7 @@ public final class SensComUploader {
 
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
-            SensComMessage p9Message = new SensComMessage();
+            SensComMessage p9Message = new SensComMessage(SOFTWARE_VERSION);
             p9Message.addItem("latitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LAT)));
             p9Message.addItem("longitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LON)));
             if (data.hasValue(ESensorItem.POS_ALT)) {
@@ -149,7 +150,7 @@ public final class SensComUploader {
 
         // pin 11: temperature & humidity & pressure
         if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {
-            SensComMessage p11Message = new SensComMessage();
+            SensComMessage p11Message = new SensComMessage(SOFTWARE_VERSION);
             p11Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p11Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
             p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
@@ -159,7 +160,7 @@ public final class SensComUploader {
         // pin 13: only temperature
         if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
-            SensComMessage p13Message = new SensComMessage();
+            SensComMessage p13Message = new SensComMessage(SOFTWARE_VERSION);
             p13Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             scheduleUpload(sensorId, "13", p13Message);
         }
@@ -167,7 +168,7 @@ public final class SensComUploader {
         // pin 15: sound
         if (data.hasValue(ESensorItem.NOISE_LA_MIN) && data.hasValue(ESensorItem.NOISE_LA_EQ)
                 && data.hasValue(ESensorItem.NOISE_LA_MAX)) {
-            SensComMessage p15Message = new SensComMessage();
+            SensComMessage p15Message = new SensComMessage(SOFTWARE_VERSION);
             p15Message.addItem("noise_LAeq",
                     String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_EQ)));
             p15Message.addItem("noise_LA_min",

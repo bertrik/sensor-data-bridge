@@ -26,6 +26,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public final class OpenSenseUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenSenseUploader.class);
+    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
 
     private final IOpenSenseRestApi restClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -62,7 +63,7 @@ public final class OpenSenseUploader {
             return;
         }
 
-        SensComMessage message = new SensComMessage();
+        SensComMessage message = new SensComMessage(SOFTWARE_VERSION);
 
         // particulate matter
         String pmPrefix = getPmPrefix(data);

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
 import nl.bertriksikken.pm.SensorData;
 import okhttp3.Credentials;
@@ -59,7 +60,8 @@ public final class MyDevicesHttpUploader {
         MyDevicesCredentials credentials = credentialMap.get(appDeviceId);
         if (credentials != null) {
             MyDevicesMessage message = MyDevicesMessage.fromSensorData(sensorData);
-            executor.execute(() -> uploadMeasurement(appDeviceId.getDeviceId(), credentials, message));
+            executor.execute(new CatchingRunnable(LOG,
+                    () -> uploadMeasurement(appDeviceId.getDeviceId(), credentials, message)));
         }
     }
 

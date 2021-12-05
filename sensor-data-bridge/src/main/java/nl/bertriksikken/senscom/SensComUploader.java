@@ -1,5 +1,6 @@
 package nl.bertriksikken.senscom;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import okhttp3.OkHttpClient;
@@ -71,7 +73,7 @@ public final class SensComUploader {
 
     // schedules an upload to all pins
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
-        executor.execute(() -> performUpload(appDeviceId, data));
+        executor.execute(new CatchingRunnable(LOG, () -> performUpload(appDeviceId, data)));
     }
 
     // uploads to all pins, runs on our executor
@@ -179,9 +181,8 @@ public final class SensComUploader {
             } else {
                 LOG.warn("Request failed: {}", response.message());
             }
-        } catch (Exception e) {
-            LOG.trace("Caught exception", e);
-            LOG.warn("Caught exception: {}", e.getMessage());
+        } catch (IOException e) {
+            LOG.warn("Caught IOException", e.getMessage());
         }
     }
 
@@ -193,7 +194,7 @@ public final class SensComUploader {
     }
 
     public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
-        executor.execute(() -> processAttributes(attributes));
+        executor.execute(new CatchingRunnable(LOG, () -> processAttributes(attributes)));
     }
 
     private void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {

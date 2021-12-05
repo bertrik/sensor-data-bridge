@@ -22,6 +22,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.gls.GeoLocationService;
+import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
 import nl.bertriksikken.nbiot.NbIotReceiver;
@@ -220,7 +221,7 @@ public final class LoraLuftdatenForwarder {
         nbIotReceiver.start();
 
         // schedule task to fetch opensense ids
-        executor.scheduleAtFixedRate(this::updateAttributes, 0, 60, TimeUnit.MINUTES);
+        executor.scheduleAtFixedRate(new CatchingRunnable(LOG, this::updateAttributes), 0, 60, TimeUnit.MINUTES);
 
         // start opensense uploader
         openSenseUploader.start();

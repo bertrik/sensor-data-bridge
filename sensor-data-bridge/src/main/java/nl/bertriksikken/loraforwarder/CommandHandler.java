@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import nl.bertriksikken.gls.GeoLocationRequest;
 import nl.bertriksikken.gls.GeoLocationResponse;
 import nl.bertriksikken.gls.GeoLocationService;
+import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
@@ -55,7 +56,7 @@ public final class CommandHandler {
         int cmd = bb.get() & 0xFF;
         switch (cmd) {
         case 0:
-            executor.execute(() -> handleWifiLocalisation(bb, uplink.getDevId()));
+            executor.execute(new CatchingRunnable(LOG, () -> handleWifiLocalisation(bb, uplink.getDevId())));
             break;
         default:
             LOG.warn("Unhandled command {}", cmd);

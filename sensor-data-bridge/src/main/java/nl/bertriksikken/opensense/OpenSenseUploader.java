@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.senscom.SensComMessage;
@@ -94,7 +95,7 @@ public final class OpenSenseUploader {
 
         // schedule upload
         String sensComId = "TTN-" + appDeviceId.getDeviceId();
-        executor.execute(() -> uploadMeasurement(boxId, sensComId, message));
+        executor.execute(new CatchingRunnable(LOG, () -> uploadMeasurement(boxId, sensComId, message)));
     }
 
     private String getMeteoPrefix(SensorData data) {
@@ -128,8 +129,6 @@ public final class OpenSenseUploader {
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());
-        } catch (Exception e) {
-            LOG.error("Caught exception: ", e);
         }
     }
 

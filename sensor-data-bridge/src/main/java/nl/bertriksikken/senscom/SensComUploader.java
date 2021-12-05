@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,11 +30,12 @@ public final class SensComUploader {
     private static final Logger LOG = LoggerFactory.getLogger(SensComUploader.class);
     private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
 
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ObjectMapper mapper = new ObjectMapper();
     private final ISensComApi restClient;
-    private final ExecutorService executor;
+
     // map from device id to sensor.community id
-    private final Map<AppDeviceId, String> sensComIds = new ConcurrentHashMap<>();
+    private final Map<AppDeviceId, String> sensComIds = new HashMap<>();
 
     /**
      * Constructor.
@@ -44,7 +44,6 @@ public final class SensComUploader {
      */
     SensComUploader(ISensComApi restClient) {
         this.restClient = restClient;
-        this.executor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -61,33 +60,22 @@ public final class SensComUploader {
         return new SensComUploader(restClient);
     }
 
-    private void uploadMeasurement(String sensorId, String pin, SensComMessage message) {
-        try {
-            LOG.info("Sending for {} to pin {}: '{}'", sensorId, pin, mapper.writeValueAsString(message));
-            Response<String> response = restClient.pushSensorData(pin, sensorId, message).execute();
-            if (response.isSuccessful()) {
-                LOG.info("Result success: {}", response.body());
-            } else {
-                LOG.warn("Request failed: {}", response.message());
-            }
-        } catch (Exception e) {
-            LOG.trace("Caught exception", e);
-            LOG.warn("Caught exception: {}", e.getMessage());
-        }
+    public void start() {
+        LOG.info("Starting sensor.community uploader");
     }
 
-    private void scheduleUpload(String sensorId, String pin, SensComMessage message) {
-        executor.execute(() -> uploadMeasurement(sensorId, pin, message));
+    public void stop() {
+        LOG.info("Stopping sensor.community uploader");
+        executor.shutdown();
     }
 
-    private void addSimpleItem(SensorData data, SensComMessage message, ESensorItem item, String name) {
-        if (data.hasValue(item)) {
-            double value = data.getValue(item);
-            message.addItem(name, value);
-        }
-    }
-
+    // schedules an upload to all pins
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
+        executor.execute(() -> performUpload(appDeviceId, data));
+    }
+
+    // uploads to all pins, runs on our executor
+    private void performUpload(AppDeviceId appDeviceId, SensorData data) {
         // look up custom sensor.community id
         String sensorId = sensComIds.getOrDefault(appDeviceId, "");
         if (sensorId.isEmpty()) {
@@ -116,7 +104,7 @@ public final class SensComUploader {
                 p1Message.addItem("TS", String.format(Locale.ROOT, "%.3f", data.getValue(ESensorItem.PM_TPS)));
             }
 
-            scheduleUpload(sensorId, "1", p1Message);
+            uploadMeasurement(sensorId, "1", p1Message);
         }
 
         // pin 3: temperature & pressure, but no humidity
@@ -125,7 +113,7 @@ public final class SensComUploader {
             SensComMessage p3Message = new SensComMessage(SOFTWARE_VERSION);
             p3Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
-            scheduleUpload(sensorId, "3", p3Message);
+            uploadMeasurement(sensorId, "3", p3Message);
         }
 
         // pin 7: temperature & humidity, but no pressure
@@ -134,7 +122,7 @@ public final class SensComUploader {
             SensComMessage p7Message = new SensComMessage(SOFTWARE_VERSION);
             p7Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p7Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
-            scheduleUpload(sensorId, "7", p7Message);
+            uploadMeasurement(sensorId, "7", p7Message);
         }
 
         // pin 9: position
@@ -145,7 +133,7 @@ public final class SensComUploader {
             if (data.hasValue(ESensorItem.POS_ALT)) {
                 p9Message.addItem("altitude", data.getValue(ESensorItem.POS_ALT));
             }
-            scheduleUpload(sensorId, "9", p9Message);
+            uploadMeasurement(sensorId, "9", p9Message);
         }
 
         // pin 11: temperature & humidity & pressure
@@ -154,7 +142,7 @@ public final class SensComUploader {
             p11Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p11Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
             p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
-            scheduleUpload(sensorId, "11", p11Message);
+            uploadMeasurement(sensorId, "11", p11Message);
         }
 
         // pin 13: only temperature
@@ -162,7 +150,7 @@ public final class SensComUploader {
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p13Message = new SensComMessage(SOFTWARE_VERSION);
             p13Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
-            scheduleUpload(sensorId, "13", p13Message);
+            uploadMeasurement(sensorId, "13", p13Message);
         }
 
         // pin 15: sound
@@ -175,27 +163,42 @@ public final class SensComUploader {
                     String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MIN)));
             p15Message.addItem("noise_LA_max",
                     String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MAX)));
-            scheduleUpload(sensorId, "15", p15Message);
+            uploadMeasurement(sensorId, "15", p15Message);
         }
 
         // pin 17: NO2 not implemented
         // pin 19: radiation not implemented
     }
 
-    public void start() {
-        LOG.info("Starting sensor.community uploader");
+    private void uploadMeasurement(String sensorId, String pin, SensComMessage message) {
+        try {
+            LOG.info("Sending for {} to pin {}: '{}'", sensorId, pin, mapper.writeValueAsString(message));
+            Response<String> response = restClient.pushSensorData(pin, sensorId, message).execute();
+            if (response.isSuccessful()) {
+                LOG.info("Result success: {}", response.body());
+            } else {
+                LOG.warn("Request failed: {}", response.message());
+            }
+        } catch (Exception e) {
+            LOG.trace("Caught exception", e);
+            LOG.warn("Caught exception: {}", e.getMessage());
+        }
     }
 
-    public void stop() {
-        LOG.info("Stopping sensor.community uploader");
-        executor.shutdown();
+    private void addSimpleItem(SensorData data, SensComMessage message, ESensorItem item, String name) {
+        if (data.hasValue(item)) {
+            double value = data.getValue(item);
+            message.addItem(name, value);
+        }
     }
 
-    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
-        Map<AppDeviceId, String> map = new HashMap<>();
-        attributes.forEach((dev, attr) -> processDeviceAttributes(map, dev, attr));
+    public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        executor.execute(() -> processAttributes(attributes));
+    }
+
+    private void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
         sensComIds.clear();
-        sensComIds.putAll(map);
+        attributes.forEach((dev, attr) -> processDeviceAttributes(sensComIds, dev, attr));
         sensComIds.forEach((key, value) -> LOG.info("SensCom mapping: {} -> {}", key, value));
     }
 

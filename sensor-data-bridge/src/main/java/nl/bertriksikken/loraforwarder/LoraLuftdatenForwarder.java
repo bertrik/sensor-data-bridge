@@ -255,7 +255,7 @@ public final class LoraLuftdatenForwarder {
         // notify all uploaders
         openSenseUploader.processAttributes(attributes);
         myDevicesUploader.processAttributes(attributes);
-        sensComUploader.processAttributes(attributes);
+        sensComUploader.scheduleProcessAttributes(attributes);
     }
 
     /**

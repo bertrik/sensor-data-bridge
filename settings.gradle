@@ -1,6 +1,6 @@
-include 'LoraLuftdatenForwarder'
+include 'sensor-data-bridge'
 include 'cayenne'
 
 // Here we set the overall project name. All other projects are seen as 'sub project' of this root project.
-rootProject.name = 'LoraLuftdatenForwarder'
+rootProject.name = 'sensor-data-bridge'
 

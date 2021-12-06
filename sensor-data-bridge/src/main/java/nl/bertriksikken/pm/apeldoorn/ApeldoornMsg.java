@@ -1,4 +1,4 @@
-package nl.bertriksikken.apeldoorn;
+package nl.bertriksikken.pm.apeldoorn;
 
 import java.io.IOException;
 

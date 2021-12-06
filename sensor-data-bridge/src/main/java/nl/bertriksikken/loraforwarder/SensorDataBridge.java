@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import nl.bertriksikken.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
@@ -31,6 +30,7 @@ import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
+import nl.bertriksikken.pm.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
 import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;

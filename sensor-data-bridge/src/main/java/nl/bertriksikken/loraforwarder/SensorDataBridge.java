@@ -44,9 +44,9 @@ import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
 
-public final class LoraLuftdatenForwarder {
+public final class SensorDataBridge {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoraLuftdatenForwarder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SensorDataBridge.class);
     private static final String CONFIG_FILE = "sensor-data-bridge.yaml";
 
     private final NbIotReceiver nbIotReceiver;
@@ -62,13 +62,13 @@ public final class LoraLuftdatenForwarder {
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
 
-        LoraForwarderConfig config = readConfig(new File(CONFIG_FILE));
-        LoraLuftdatenForwarder app = new LoraLuftdatenForwarder(config);
+        SensorDataBridgeConfig config = readConfig(new File(CONFIG_FILE));
+        SensorDataBridge app = new SensorDataBridge(config);
         app.start();
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
     }
 
-    private LoraLuftdatenForwarder(LoraForwarderConfig config) throws IOException {
+    private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
         SensComConfig sensComConfig = config.getSensComConfig();
@@ -277,13 +277,13 @@ public final class LoraLuftdatenForwarder {
         LOG.info("Stopped LoraLuftdatenForwarder application");
     }
 
-    private static LoraForwarderConfig readConfig(File file) throws IOException {
+    private static SensorDataBridgeConfig readConfig(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try (FileInputStream fis = new FileInputStream(file)) {
-            return mapper.readValue(fis, LoraForwarderConfig.class);
+            return mapper.readValue(fis, SensorDataBridgeConfig.class);
         } catch (IOException e) {
             LOG.warn("Failed to load config {}, writing defaults", file.getAbsoluteFile());
-            LoraForwarderConfig config = new LoraForwarderConfig();
+            SensorDataBridgeConfig config = new SensorDataBridgeConfig();
             mapper.writeValue(file, config);
             return config;
         }

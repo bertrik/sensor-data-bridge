@@ -12,7 +12,7 @@ import nl.bertriksikken.ttn.TtnConfig;
 /**
  * Configuration class.
  */
-public final class LoraForwarderConfig {
+public final class SensorDataBridgeConfig {
 
     @JsonProperty("ttn")
     private TtnConfig ttnConfig = new TtnConfig();

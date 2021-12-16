@@ -182,7 +182,7 @@ public final class SensComUploader {
                 LOG.warn("Request failed: {}", response.message());
             }
         } catch (IOException e) {
-            LOG.warn("Caught IOException", e.getMessage());
+            LOG.warn("Caught IOException: {}", e.getMessage());
         }
     }
 

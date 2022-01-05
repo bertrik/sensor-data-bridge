@@ -55,6 +55,15 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
+    public EndDevice getNsEndDevice(String deviceId, List<String> fields) throws IOException {
+        String fieldMask = String.join(",", fields);
+        Response<EndDevice> response = restApi.getNsEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
+        if (!response.isSuccessful()) {
+            LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
+        }
+        return response.body();
+    }
+
     public List<EndDevice> listEndDevices() throws IOException {
         String fields = String.join(",", IEndDeviceRegistryRestApi.FIELD_IDS,
                 IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES);

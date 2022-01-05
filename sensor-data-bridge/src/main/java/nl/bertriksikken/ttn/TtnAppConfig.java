@@ -9,7 +9,7 @@ public final class TtnAppConfig {
     private String name = "particulatematter";
 
     @JsonProperty("key")
-    private String key = "NNSXS.LHD22PFZMI3B7WF6FDWIK45N4244U7DWRVWZASI.XXXXXX";
+    private String key = "NNSXS.7TC4U3WRNZ765GEEUMHUKUOJ4KTCFLP5ZW3XHFY.YRCQKPSFO636OS4CRALMH5JOPS3F4SO7OPKIY3YOGA37JDKWBFTA";
 
     @JsonProperty("encoding")
     private EPayloadEncoding encoding = EPayloadEncoding.CAYENNE;

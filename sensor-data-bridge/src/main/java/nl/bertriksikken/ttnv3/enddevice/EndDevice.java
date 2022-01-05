@@ -1,11 +1,16 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import nl.bertriksikken.ttnv3.dto.UplinkMessage;
 
 /**
  * Representation of<br>
@@ -16,7 +21,7 @@ public final class EndDevice {
 
     public static final String LOCATION_USER = "user";
 
-    @JsonProperty
+    @JsonProperty("ids")
     private DeviceIds ids = new DeviceIds();
 
     @JsonProperty("attributes")
@@ -24,6 +29,9 @@ public final class EndDevice {
 
     @JsonProperty("locations")
     private final Map<String, Location> locations = new HashMap<>();
+    
+    @JsonProperty("mac_state")
+    private final MACState macState = new MACState();
 
     private EndDevice() {
         // jackson constructor
@@ -54,6 +62,10 @@ public final class EndDevice {
         return new HashMap<>(locations);
     }
 
+    public MACState getMACState() {
+        return macState;
+    }
+    
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "{%s,%s}", ids, attributes);
@@ -91,6 +103,16 @@ public final class EndDevice {
         @Override
         public String toString() {
             return String.format(Locale.ROOT, "{%s,%s}", deviceId, devEui);
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static final class MACState {
+        @JsonProperty("recent_uplinks")
+        private List<UplinkMessage> recentUplinks = new ArrayList<>();
+    
+        public List<UplinkMessage> getRecentUplinks() {
+            return Collections.unmodifiableList(recentUplinks);
         }
     }
 

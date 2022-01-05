@@ -1,8 +1,5 @@
 package nl.bertriksikken.ttnv3.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,27 +32,6 @@ public final class Ttnv3UplinkMessage {
                 .orElse(Double.NaN);
         message.setRadioParams(rssi, snr, sf);
         return message;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static final class UplinkMessage {
-        @JsonProperty("f_port")
-        private int fport;
-
-        @JsonProperty("f_cnt")
-        private int fcnt;
-
-        @JsonProperty("frm_payload")
-        private byte[] frmPayload = new byte[0];
-
-        @JsonProperty("decoded_payload")
-        private JsonNode decodedPayload;
-
-        @JsonProperty("rx_metadata")
-        private List<JsonNode> rxMetadata = new ArrayList<>();
-
-        @JsonProperty("settings")
-        private JsonNode settings;
     }
 
 }

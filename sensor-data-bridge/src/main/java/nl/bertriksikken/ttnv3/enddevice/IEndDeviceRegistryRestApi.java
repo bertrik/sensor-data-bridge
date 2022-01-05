@@ -20,6 +20,7 @@ public interface IEndDeviceRegistryRestApi {
     public static final String FIELD_ATTRIBUTES = "attributes";
     public static final String FIELD_VERSION_IDS = "version_ids";
 
+    // end device registry
     @GET("/api/v3/applications/{application_id}/devices")
     Call<EndDevices> listEndDevices(@Header("Authorization") String authToken,
             @Path("application_id") String applicationId, @Query("field_mask") String fieldMask);
@@ -28,10 +29,16 @@ public interface IEndDeviceRegistryRestApi {
     Call<EndDevice> getEndDevice(@Header("Authorization") String authToken,
             @Path("application_id") String applicationId, @Path("device_id") String deviceId,
             @Query("field_mask") String fieldMask);
-    
+
     @PUT("/api/v3/applications/{application_id}/devices/{device_id}")
     Call<EndDevice> updateEndDevice(@Header("Authorization") String authToken,
             @Path("application_id") String applicationId, @Path("device_id") String deviceId,
             @Body UpdateEndDeviceRequest request);
+
+    // name server device registry
+    @GET("/api/v3/ns/applications/{application_id}/devices/{device_id}")
+    Call<EndDevice> getNsEndDevice(@Header("Authorization") String authToken,
+            @Path("application_id") String applicationId, @Path("device_id") String deviceId,
+            @Query("field_mask") String fieldMask);
     
 }

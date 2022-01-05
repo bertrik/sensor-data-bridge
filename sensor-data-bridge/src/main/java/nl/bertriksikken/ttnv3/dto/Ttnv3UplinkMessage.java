@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import nl.bertriksikken.ttn.TtnUplinkMessage;
 
+/**
+ * https://www.thethingsindustries.com/docs/reference/data-formats/#uplink-messages
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class Ttnv3UplinkMessage {
 

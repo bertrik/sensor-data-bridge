@@ -5,6 +5,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Field mask structure.<br>
+ * <br>
+ * https://www.thethingsindustries.com/docs/reference/api/field-mask/
+ */
 public final class FieldMask {
 
     @JsonProperty("paths")

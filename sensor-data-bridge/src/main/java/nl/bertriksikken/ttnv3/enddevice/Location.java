@@ -5,6 +5,9 @@ import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * https://www.thethingsindustries.com/docs/reference/api/end_device/#message:Location
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class Location {
 

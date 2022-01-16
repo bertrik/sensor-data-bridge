@@ -43,6 +43,7 @@ import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
+import nl.bertriksikken.ttnv3.enddevice.IEndDeviceRegistryRestApi;
 
 public final class SensorDataBridge {
 
@@ -243,7 +244,8 @@ public final class SensorDataBridge {
             EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
             try {
-                for (EndDevice device : registry.listEndDevices()) {
+                for (EndDevice device : registry.listEndDevices(IEndDeviceRegistryRestApi.FIELD_IDS,
+                        IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES)) {
                     AppDeviceId appDeviceId = new AppDeviceId(applicationId, device.getDeviceId());
                     attributes.put(appDeviceId, new AttributeMap(device.getAttributes()));
                 }

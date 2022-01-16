@@ -2,7 +2,6 @@ package nl.bertriksikken.ttnv3.enddevice;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ public final class RunEndDeviceTest {
         // check last update time of first device
         String deviceId = endDevices.get(0).getDeviceId();
         
-        EndDevice endDevice = registry.getNsEndDevice(deviceId, Arrays.asList("mac_state.recent_uplinks"));
+        EndDevice endDevice = registry.getNsEndDevice(deviceId, "mac_state.recent_uplinks");
         Instant lastUpdate = findLastUpdated(endDevice);
         LOG.info("Last update: {}", lastUpdate);
     }

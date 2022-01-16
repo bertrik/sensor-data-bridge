@@ -46,7 +46,7 @@ public final class EndDeviceRegistry {
         return new EndDeviceRegistry(restApi, config.getName(), config.getKey());
     }
 
-    public EndDevice getEndDevice(String deviceId, List<String> fields) throws IOException {
+    public EndDevice getEndDevice(String deviceId, String ... fields) throws IOException {
         String fieldMask = String.join(",", fields);
         Response<EndDevice> response = restApi.getEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
         if (!response.isSuccessful()) {
@@ -55,7 +55,7 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
-    public EndDevice getNsEndDevice(String deviceId, List<String> fields) throws IOException {
+    public EndDevice getNsEndDevice(String deviceId, String ... fields) throws IOException {
         String fieldMask = String.join(",", fields);
         Response<EndDevice> response = restApi.getNsEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
         if (!response.isSuccessful()) {
@@ -64,10 +64,9 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
-    public List<EndDevice> listEndDevices() throws IOException {
-        String fields = String.join(",", IEndDeviceRegistryRestApi.FIELD_IDS,
-                IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES);
-        Response<EndDevices> response = restApi.listEndDevices(authToken, applicationId, fields).execute();
+    public List<EndDevice> listEndDevices(String ... fields) throws IOException {
+        String fieldMask = String.join(",", fields);
+        Response<EndDevices> response = restApi.listEndDevices(authToken, applicationId, fieldMask).execute();
         if (!response.isSuccessful()) {
             LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
         }

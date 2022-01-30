@@ -16,9 +16,9 @@ public final class JsonDecoderConfig extends ArrayList<JsonDecoderItem> {
         add(new JsonDecoderItem("/temp", ESensorItem.TEMP));
 
         // default well-known values from "LoraNoiseKit"
-        add(new JsonDecoderItem("/lc/min", ESensorItem.NOISE_LA_MIN));
-        add(new JsonDecoderItem("/lc/avg", ESensorItem.NOISE_LA_EQ));
-        add(new JsonDecoderItem("/lc/max", ESensorItem.NOISE_LA_MAX));
+        add(new JsonDecoderItem("/la/min", ESensorItem.NOISE_LA_MIN));
+        add(new JsonDecoderItem("/la/avg", ESensorItem.NOISE_LA_EQ));
+        add(new JsonDecoderItem("/la/max", ESensorItem.NOISE_LA_MAX));
     }
 
     public JsonDecoderConfig(ArrayList<JsonDecoderItem> items) {

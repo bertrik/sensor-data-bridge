@@ -73,7 +73,7 @@ public final class SensorDataBridge {
 
     private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
         jsonDecoder = new JsonDecoder(config.getJsonDecoderConfig());
-        
+
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
         SensComConfig sensComConfig = config.getSensComConfig();
@@ -92,7 +92,8 @@ public final class SensorDataBridge {
             // add listener for each app
             EPayloadEncoding encoding = appConfig.getEncoding();
             LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", appConfig.getName(), encoding);
-            MqttListener listener = new MqttListener(ttnConfig, appConfig, uplink -> messageReceived(appConfig, uplink));
+            MqttListener listener = new MqttListener(ttnConfig, appConfig,
+                    uplink -> messageReceived(appConfig, uplink));
             mqttListeners.add(listener);
 
             // for each app, create a device registry client so we can look up attributes
@@ -226,7 +227,7 @@ public final class SensorDataBridge {
      */
     private void start() throws MqttException, IOException {
         LOG.info("Starting LoraLuftdatenForwarder application");
-        
+
         nbIotReceiver.start();
 
         // schedule task to fetch opensense ids

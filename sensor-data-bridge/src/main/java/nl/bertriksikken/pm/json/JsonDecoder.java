@@ -8,7 +8,8 @@ import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
 
 /**
- * Decodes a JSON payload, according to a configuration of JSON path and data items (assuming double).
+ * Decodes a JSON payload, according to a configuration of JSON path and data
+ * items (assuming double).
  */
 public final class JsonDecoder {
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import nl.bertriksikken.pm.ESensorItem;
 
 public final class JsonDecoderConfig extends ArrayList<JsonDecoderItem> {
-    
+
     private static final long serialVersionUID = 1L;
 
     public JsonDecoderConfig() {
@@ -24,5 +24,5 @@ public final class JsonDecoderConfig extends ArrayList<JsonDecoderItem> {
     public JsonDecoderConfig(ArrayList<JsonDecoderItem> items) {
         addAll(items);
     }
-    
+
 }

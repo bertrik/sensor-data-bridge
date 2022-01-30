@@ -21,15 +21,15 @@ public final class SensorDataBridgeConfig {
 
     @JsonProperty("nbiot")
     private NbIotConfig nbIotConfig = new NbIotConfig();
-    
+
     // decoders
     @JsonProperty("json")
     private JsonDecoderConfig jsonDecoderConfig = new JsonDecoderConfig();
-    
+
     // output modules
     @JsonProperty("senscom")
     private SensComConfig sensComConfig = new SensComConfig();
-    
+
     @JsonProperty("opensense")
     private OpenSenseConfig openSenseConfig = new OpenSenseConfig();
 
@@ -39,7 +39,7 @@ public final class SensorDataBridgeConfig {
     // miscellaneous
     @JsonProperty("geolocation")
     private GeoLocationConfig geoLocationConfig = new GeoLocationConfig();
-    
+
     public TtnConfig getTtnConfig() {
         return ttnConfig;
     }
@@ -47,11 +47,11 @@ public final class SensorDataBridgeConfig {
     public NbIotConfig getNbIotConfig() {
         return nbIotConfig;
     }
-    
+
     public JsonDecoderConfig getJsonDecoderConfig() {
         return new JsonDecoderConfig(jsonDecoderConfig);
     }
-    
+
     public SensComConfig getSensComConfig() {
         return sensComConfig;
     }

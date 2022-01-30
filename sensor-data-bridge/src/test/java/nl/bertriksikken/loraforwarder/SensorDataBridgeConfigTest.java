@@ -9,12 +9,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 public final class SensorDataBridgeConfigTest {
 
     private final ObjectMapper mapper = new YAMLMapper();
-    
+
     @Test
     public void testDefaults() throws JsonProcessingException {
         SensorDataBridgeConfig config = new SensorDataBridgeConfig();
         String text = mapper.writeValueAsString(config);
         System.out.println(text);
     }
-    
+
 }

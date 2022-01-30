@@ -25,12 +25,12 @@ public final class JsonDecoderItem {
         // no-arg jackson constructor
         this("", null);
     }
-    
+
     JsonDecoderItem(String path, ESensorItem item) {
         this.path = path;
         this.item = item;
     }
-    
+
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "{path=%s,item=%s}", path, item);

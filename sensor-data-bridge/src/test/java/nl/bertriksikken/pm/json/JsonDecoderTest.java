@@ -26,7 +26,7 @@ public final class JsonDecoderTest {
         SensorData sensorData = new SensorData();
         decoder.parse(json, sensorData);
 
-        Assert.assertEquals(46.0, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
+        Assert.assertEquals(35.5, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
     }
 
 }

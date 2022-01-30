@@ -1,6 +1,6 @@
 package nl.bertriksikken.pm;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -9,7 +9,7 @@ import java.util.Map;
 public final class SensorData {
 
     // start with a simple map containing one Double value per item
-    private final Map<ESensorItem, Double> items = new HashMap<>();
+    private final Map<ESensorItem, Double> items = new LinkedHashMap<>();
 
     public void addValue(ESensorItem item, Double value) {
         items.put(item, value);

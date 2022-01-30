@@ -5,7 +5,8 @@ public enum EPayloadEncoding {
     TTN_ULM("ttnulm"),
     CAYENNE("cayenne"),
     APELDOORN("apeldoorn"),
-    SOUNDKIT("soundkit");
+    SOUNDKIT("soundkit"), 
+    JSON("json");
 	
 	private final String id;
 

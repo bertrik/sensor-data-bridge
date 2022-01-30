@@ -32,6 +32,7 @@ import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.pm.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
+import nl.bertriksikken.pm.json.JsonDecoder;
 import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.senscom.SensComConfig;
@@ -59,6 +60,7 @@ public final class SensorDataBridge {
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
     private final Map<String, CommandHandler> commandHandlers = new HashMap<>();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final JsonDecoder jsonDecoder;
 
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
@@ -70,6 +72,8 @@ public final class SensorDataBridge {
     }
 
     private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
+        jsonDecoder = new JsonDecoder(config.getJsonDecoderConfig());
+        
         nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
         SensComConfig sensComConfig = config.getSensComConfig();
@@ -118,6 +122,7 @@ public final class SensorDataBridge {
 
             // decode and upload telemetry message
             SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
+            LOG.info("Decoded: '{}'", sensorData);
             sensComUploader.scheduleUpload(appDeviceId, sensorData);
             openSenseUploader.scheduleUpload(appDeviceId, sensorData);
             myDevicesUploader.scheduleUpload(appDeviceId, sensorData);
@@ -204,6 +209,9 @@ public final class SensorDataBridge {
             NoiseMsg soundKitMsg = NoiseMsg.parse(uplink.getDecodedFields());
             soundKitMsg.getSensorData(sensorData);
             break;
+        case JSON:
+            jsonDecoder.parse(uplink.getDecodedFields(), sensorData);
+            break;
         default:
             throw new IllegalStateException("Unhandled encoding: " + encoding);
         }
@@ -218,7 +226,7 @@ public final class SensorDataBridge {
      */
     private void start() throws MqttException, IOException {
         LOG.info("Starting LoraLuftdatenForwarder application");
-
+        
         nbIotReceiver.start();
 
         // schedule task to fetch opensense ids

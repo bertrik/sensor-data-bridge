@@ -226,7 +226,7 @@ public final class SensorDataBridge {
      * @throws IOException
      */
     private void start() throws MqttException, IOException {
-        LOG.info("Starting LoraLuftdatenForwarder application");
+        LOG.info("Starting sensor-data-bridge application");
 
         nbIotReceiver.start();
 
@@ -241,7 +241,7 @@ public final class SensorDataBridge {
             listener.start();
         }
 
-        LOG.info("Started LoraLuftdatenForwarder application");
+        LOG.info("Started sensor-data-bridge application");
     }
 
     // retrieves application attributes and notifies each interested components
@@ -276,7 +276,7 @@ public final class SensorDataBridge {
      * @throws MqttException
      */
     private void stop() {
-        LOG.info("Stopping LoraLuftdatenForwarder application");
+        LOG.info("Stopping sensor-data-bridge application");
 
         executor.shutdownNow();
         mqttListeners.forEach(MqttListener::stop);
@@ -285,7 +285,7 @@ public final class SensorDataBridge {
         sensComUploader.stop();
         nbIotReceiver.stop();
 
-        LOG.info("Stopped LoraLuftdatenForwarder application");
+        LOG.info("Stopped sensor-data-bridge application");
     }
 
     private static SensorDataBridgeConfig readConfig(File file) throws IOException {

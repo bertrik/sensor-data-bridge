@@ -37,9 +37,9 @@ public final class EndDeviceRegistry {
         return new EndDevice(applicationId, deviceId);
     }
 
-    public static EndDeviceRegistry create(String url, int timeout, TtnAppConfig config) {
+    public static EndDeviceRegistry create(String url, Duration timeout, TtnAppConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(timeout)).build();
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
         IEndDeviceRegistryRestApi restApi = retrofit.create(IEndDeviceRegistryRestApi.class);

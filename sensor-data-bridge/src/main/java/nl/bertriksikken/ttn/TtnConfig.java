@@ -1,11 +1,15 @@
 package nl.bertriksikken.ttn;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
+@JsonAutoDetect(getterVisibility = Visibility.NONE)
 public final class TtnConfig {
 
     @JsonProperty("mqtt_url")
@@ -15,7 +19,7 @@ public final class TtnConfig {
     private String identityServerUrl = "https://eu1.cloud.thethings.network";
     
     @JsonProperty("identity_server_timeout")
-    private int identityServerTimeout = 20;
+    private int identityServerTimeout = 30;
     
     @JsonProperty("apps")
     private List<TtnAppConfig> apps = Arrays.asList(new TtnAppConfig());
@@ -28,8 +32,8 @@ public final class TtnConfig {
         return identityServerUrl;
     }
     
-    public int getIdentityServerTimeout() {
-        return identityServerTimeout;
+    public Duration getIdentityServerTimeout() {
+        return Duration.ofSeconds(identityServerTimeout);
     }
     public List<TtnAppConfig> getApps() {
         return Collections.unmodifiableList(apps);

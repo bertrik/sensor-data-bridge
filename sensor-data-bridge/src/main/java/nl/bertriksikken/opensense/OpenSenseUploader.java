@@ -1,7 +1,6 @@
 package nl.bertriksikken.opensense;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,8 +39,7 @@ public final class OpenSenseUploader {
     public static OpenSenseUploader create(OpenSenseConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeoutSec());
 
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeoutSec()))
-                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(config.getTimeoutSec()).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();

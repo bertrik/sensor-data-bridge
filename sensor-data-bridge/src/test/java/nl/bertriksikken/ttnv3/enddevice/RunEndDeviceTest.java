@@ -1,6 +1,7 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -19,22 +20,23 @@ public final class RunEndDeviceTest {
         RunEndDeviceTest test = new RunEndDeviceTest();
         test.testListEndDevices();
     }
-    
+
     private void testListEndDevices() throws IOException {
         TtnConfig ttnConfig = new TtnConfig();
         TtnAppConfig appConfig = new TtnAppConfig();
-        EndDeviceRegistry registry = EndDeviceRegistry.create(ttnConfig.getIdentityServerUrl(), 10, appConfig);
+        EndDeviceRegistry registry = EndDeviceRegistry.create(ttnConfig.getIdentityServerUrl(), Duration.ofSeconds(10),
+                appConfig);
         List<EndDevice> endDevices = registry.listEndDevices();
         LOG.info("Found {} end devices", endDevices.size());
-        
+
         // check last update time of first device
         String deviceId = endDevices.get(0).getDeviceId();
-        
+
         EndDevice endDevice = registry.getNsEndDevice(deviceId, "mac_state.recent_uplinks");
         Instant lastUpdate = findLastUpdated(endDevice);
         LOG.info("Last update: {}", lastUpdate);
     }
-    
+
     private Instant findLastUpdated(EndDevice endDevice) {
         Instant mostRecent = null;
         for (UplinkMessage uplink : endDevice.getMACState().getRecentUplinks()) {
@@ -45,5 +47,5 @@ public final class RunEndDeviceTest {
         }
         return mostRecent;
     }
-    
+
 }

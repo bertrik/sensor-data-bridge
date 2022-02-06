@@ -1,21 +1,26 @@
 package nl.bertriksikken.opensense;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.Duration;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
+@JsonAutoDetect(getterVisibility = Visibility.NONE)
 public final class OpenSenseConfig {
 
     @JsonProperty("url")
     private String url = "https://api.opensensemap.org";
     
     @JsonProperty("timeout")
-    private int timeoutSec = 20;
+    private int timeoutSec = 30;
     
     public String getUrl() {
         return url;
     }
 
-    public int getTimeoutSec() {
-        return timeoutSec;
+    public Duration getTimeoutSec() {
+        return Duration.ofSeconds(timeoutSec);
     }
 
 }

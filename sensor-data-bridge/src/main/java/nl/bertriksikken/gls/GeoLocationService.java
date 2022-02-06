@@ -1,7 +1,6 @@
 package nl.bertriksikken.gls;
 
 import java.io.IOException;
-import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,7 @@ public final class GeoLocationService {
      * Factory method.
      */
     public static GeoLocationService create(GeoLocationConfig config) {
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(Duration.ofSeconds(config.getTimeout()))
-                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(config.getTimeout()).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();

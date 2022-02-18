@@ -30,14 +30,12 @@ import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
-import nl.bertriksikken.pm.apeldoorn.ApeldoornMsg;
 import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
 import nl.bertriksikken.pm.json.JsonDecoder;
 import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.senscom.SensComConfig;
 import nl.bertriksikken.senscom.SensComUploader;
-import nl.bertriksikken.soundkit.NoiseMsg;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
@@ -201,14 +199,6 @@ public final class SensorDataBridge {
                 sensorData.addValue(ESensorItem.POS_LON, position[1]);
                 sensorData.addValue(ESensorItem.POS_ALT, position[2]);
             }
-            break;
-        case APELDOORN:
-            ApeldoornMsg apeldoornMsg = ApeldoornMsg.parse(uplink.getDecodedFields());
-            apeldoornMsg.getSensorData(sensorData);
-            break;
-        case SOUNDKIT:
-            NoiseMsg soundKitMsg = NoiseMsg.parse(uplink.getDecodedFields());
-            soundKitMsg.getSensorData(sensorData);
             break;
         case JSON:
             jsonDecoder.parse(uplink.getDecodedFields(), sensorData);

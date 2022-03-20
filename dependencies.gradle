@@ -1,9 +1,10 @@
 ext {
     libraries = [:]
 
-    jacksonVersion = '2.13.1'
+    jacksonVersion = '2.13.2'
     retrofitVersion = '2.9.0'
     slf4jVersion = '1.7.36'
+    jerseyVersion = '2.34'
 }
 
 libraries.slf4j = "org.slf4j:slf4j-api:${slf4jVersion}"
@@ -21,13 +22,13 @@ libraries.retrofit = [
 ]
 
 libraries.jersey_server = [
-    'org.glassfish.jersey.core:jersey-server:2.34',
-    'org.glassfish.jersey.media:jersey-media-json-jackson:2.34',
-    'org.glassfish.jersey.containers:jersey-container-servlet:2.34',
-    'org.glassfish.jersey.inject:jersey-hk2:2.34',
+    "org.glassfish.jersey.core:jersey-server:${jerseyVersion}",
+    "org.glassfish.jersey.media:jersey-media-json-jackson:${jerseyVersion}",
+    "org.glassfish.jersey.containers:jersey-container-servlet:${jerseyVersion}",
+    "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}",
 
-    'org.eclipse.jetty:jetty-server:9.4.40.v20210413',
-    'org.eclipse.jetty:jetty-servlet:9.4.40.v20210413'
+    "org.eclipse.jetty:jetty-server:9.4.40.v20210413",
+    "org.eclipse.jetty:jetty-servlet:9.4.40.v20210413"
 ]
 
 libraries.jaxwsrs_api = 'javax.ws.rs:javax.ws.rs-api:2.1.1'
@@ -36,8 +37,8 @@ libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 // test libraries
 libraries.retrofit_mock = "com.squareup.retrofit2:retrofit-mock:${retrofitVersion}"
 libraries.junit = 'junit:junit:4.13.2'
-libraries.mockito = 'org.mockito:mockito-core:4.3.1'
+libraries.mockito = 'org.mockito:mockito-core:4.4.0'
 
 // check libraries
-libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.5.3'
+libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.6.0'
 

@@ -1,16 +1,11 @@
+version: "3"
 services:
   java:
     build: .
-    image: sensor-data-bridge
+    image: ghcr.io/bertrik/sensor-data-bridge
     restart: always
     volumes:
-      - type: bind
-        source: ./sensor-data-bridge.yaml
-        target: /opt/sensor-data-bridge/sensor-data-bridge.yaml
-      - type: bind
-        source: ./log4j.properties
-        target: /opt/sensor-data-bridge/log4j.properties
-      - type: bind
-        source: ./log/
-        target: /opt/sensor-data-bridge/log
+      - "./sensor-data-bridge.yaml:/opt/sensor-data-bridge/sensor-data-bridge.yaml:ro"
+      - "./log4j.properties:/opt/sensor-data-bridge/log4j.properties:ro"
+      - "./log:/opt/sensor-data-bridge/log:rw"
         

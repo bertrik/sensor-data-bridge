@@ -1,0 +1,16 @@
+services:
+  java:
+    build: .
+    image: sensor-data-bridge
+    restart: always
+    volumes:
+      - type: bind
+        source: ./sensor-data-bridge.yaml
+        target: /opt/sensor-data-bridge/sensor-data-bridge.yaml
+      - type: bind
+        source: ./log4j.properties
+        target: /opt/sensor-data-bridge/log4j.properties
+      - type: bind
+        source: ./log/
+        target: /opt/sensor-data-bridge/log
+        

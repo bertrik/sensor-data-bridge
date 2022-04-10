@@ -1,0 +1,19 @@
+---
+ttn:
+  mqtt_url: "tcp://eu1.cloud.thethings.network"
+  identity_server_url: "https://eu1.cloud.thethings.network"
+  identity_server_timeout: 20
+  apps:
+  - name: "particulatematter"
+    key: "NNSXS.LHD22PFZMI3B7WF6FDWIK45N4244U7DWRVWZASI.secret"
+    encoding: "CAYENNE"
+senscom:
+  url: "https://api.sensor.community"
+  timeout: 30
+opensense:
+  url: "https://api.opensensemap.org"
+  timeout: 30
+mydevices:
+  url: "https://api.mydevices.com"
+  timeout: 30
+

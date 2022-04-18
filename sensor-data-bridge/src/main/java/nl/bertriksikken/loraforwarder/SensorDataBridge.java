@@ -24,7 +24,6 @@ import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
-import nl.bertriksikken.nbiot.NbIotReceiver;
 import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
@@ -49,7 +48,6 @@ public final class SensorDataBridge {
     private static final Logger LOG = LoggerFactory.getLogger(SensorDataBridge.class);
     private static final String CONFIG_FILE = "sensor-data-bridge.yaml";
 
-    private final NbIotReceiver nbIotReceiver;
     private final List<MqttListener> mqttListeners = new ArrayList<>();
     private final SensComUploader sensComUploader;
     private final OpenSenseUploader openSenseUploader;
@@ -71,8 +69,6 @@ public final class SensorDataBridge {
 
     private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
         jsonDecoder = new JsonDecoder(config.getJsonDecoderConfig());
-
-        nbIotReceiver = new NbIotReceiver(config.getNbIotConfig());
 
         SensComConfig sensComConfig = config.getSensComConfig();
         sensComUploader = SensComUploader.create(sensComConfig);
@@ -218,8 +214,6 @@ public final class SensorDataBridge {
     private void start() throws MqttException, IOException {
         LOG.info("Starting sensor-data-bridge application");
 
-        nbIotReceiver.start();
-
         // schedule task to fetch opensense ids
         executor.scheduleAtFixedRate(new CatchingRunnable(LOG, this::updateAttributes), 0, 60, TimeUnit.MINUTES);
 
@@ -273,7 +267,6 @@ public final class SensorDataBridge {
         commandHandlers.values().forEach(CommandHandler::stop);
         openSenseUploader.stop();
         sensComUploader.stop();
-        nbIotReceiver.stop();
 
         LOG.info("Stopped sensor-data-bridge application");
     }

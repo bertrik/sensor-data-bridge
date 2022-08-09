@@ -15,7 +15,7 @@ Restart=on-failure
 RestartSec=10s
 TimeoutStopSec=15s
 User=bertrik
-Environment="LORA_SENSOR_DATA_BRIDGE_OPTS=-Xmx64M"
+Environment="SENSOR_DATA_BRIDGE_OPTS=-Xmx64M"
 
 [Install]
 WantedBy=multi-user.target

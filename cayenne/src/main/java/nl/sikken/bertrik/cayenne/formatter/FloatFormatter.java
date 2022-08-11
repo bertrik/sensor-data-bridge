@@ -1,5 +1,6 @@
 package nl.sikken.bertrik.cayenne.formatter;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
@@ -31,10 +32,7 @@ public final class FloatFormatter extends BaseFormatter {
     }
     
     private String createFormatString(double scale) {
-        int decimals = 0;
-        for (double d = scale; d < 1.0; d *= 10) {
-            decimals++;
-        }
+        int decimals = BigDecimal.valueOf(scale).scale();
         return String.format(Locale.ROOT, "%%.%df", decimals);
     }
     

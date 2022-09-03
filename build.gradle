@@ -39,7 +39,6 @@ subprojects {
     dependencies {
         testImplementation libraries.junit
         testImplementation libraries.mockito
-        testImplementation libraries.slf4jlog4j
 
         implementation libraries.slf4j
     }

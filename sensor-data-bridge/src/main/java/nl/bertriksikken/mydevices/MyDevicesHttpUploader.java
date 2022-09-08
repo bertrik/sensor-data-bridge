@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.IUploader;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.mydevices.dto.MyDevicesMessage;
 import nl.bertriksikken.pm.SensorData;
@@ -26,7 +27,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * See https://developers.mydevices.com/cayenne/docs/cayenne-mqtt-api/
  * #cayenne-mqtt-api-overview-using-mqtt-with-cayenne-option-3-use-http-to-push-mqtt-data
  */
-public final class MyDevicesHttpUploader {
+public final class MyDevicesHttpUploader implements IUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyDevicesHttpUploader.class);
 
@@ -43,6 +44,17 @@ public final class MyDevicesHttpUploader {
         this.restApi = restApi;
     }
 
+    @Override
+    public void start() {
+        LOG.info("Starting MyDevices uploader");
+    }
+
+    @Override
+    public void stop() {
+        LOG.info("Stopping MyDevices uploader");
+        executor.shutdown();
+    }
+
     public static MyDevicesHttpUploader create(MyDevicesConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeoutSec());
 
@@ -54,6 +66,7 @@ public final class MyDevicesHttpUploader {
         return new MyDevicesHttpUploader(restApi);
     }
 
+    @Override
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData sensorData) {
         MyDevicesCredentials credentials = credentialMap.get(appDeviceId);
         if (credentials != null) {
@@ -81,11 +94,14 @@ public final class MyDevicesHttpUploader {
         }
     }
 
-    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
-        Map<AppDeviceId, MyDevicesCredentials> map = new HashMap<>();
-        attributes.forEach((dev, attr) -> processDeviceAttributes(map, dev, attr));
+    @Override
+    public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        executor.execute(new CatchingRunnable(LOG, () -> processAttributes(attributes)));
+    }
+
+    private void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
         credentialMap.clear();
-        credentialMap.putAll(map);
+        attributes.forEach((dev, attr) -> processDeviceAttributes(credentialMap, dev, attr));
         credentialMap.forEach((device, c) -> LOG.info("myDevices mapping: {} -> {}", device, c.clientId));
     }
 

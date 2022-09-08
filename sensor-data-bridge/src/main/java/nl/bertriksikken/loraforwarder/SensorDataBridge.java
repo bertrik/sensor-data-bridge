@@ -22,9 +22,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
-import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
-import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
@@ -33,7 +31,6 @@ import nl.bertriksikken.pm.cayenne.TtnCayenneMessage;
 import nl.bertriksikken.pm.json.JsonDecoder;
 import nl.bertriksikken.pm.sps30.Sps30Message;
 import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
-import nl.bertriksikken.senscom.SensComConfig;
 import nl.bertriksikken.senscom.SensComUploader;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
@@ -49,9 +46,7 @@ public final class SensorDataBridge {
     private static final String CONFIG_FILE = "sensor-data-bridge.yaml";
 
     private final List<MqttListener> mqttListeners = new ArrayList<>();
-    private final SensComUploader sensComUploader;
-    private final OpenSenseUploader openSenseUploader;
-    private final MyDevicesHttpUploader myDevicesUploader;
+    private final List<IUploader> uploaders = new ArrayList<>();
     private final GeoLocationService geoLocationService;
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
     private final Map<String, CommandHandler> commandHandlers = new HashMap<>();
@@ -70,14 +65,9 @@ public final class SensorDataBridge {
     private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
         jsonDecoder = new JsonDecoder(config.getJsonDecoderConfig());
 
-        SensComConfig sensComConfig = config.getSensComConfig();
-        sensComUploader = SensComUploader.create(sensComConfig);
-
-        OpenSenseConfig openSenseConfig = config.getOpenSenseConfig();
-        openSenseUploader = OpenSenseUploader.create(openSenseConfig);
-
-        MyDevicesConfig myDevicesConfig = config.getMyDevicesConfig();
-        myDevicesUploader = MyDevicesHttpUploader.create(myDevicesConfig);
+        uploaders.add(SensComUploader.create(config.getSensComConfig()));
+        uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
+        uploaders.add(MyDevicesHttpUploader.create(config.getMyDevicesConfig()));
 
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
 
@@ -118,9 +108,7 @@ public final class SensorDataBridge {
             // decode and upload telemetry message
             SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
             LOG.info("Decoded: '{}'", sensorData);
-            sensComUploader.scheduleUpload(appDeviceId, sensorData);
-            openSenseUploader.scheduleUpload(appDeviceId, sensorData);
-            myDevicesUploader.scheduleUpload(appDeviceId, sensorData);
+            uploaders.forEach(uploader -> uploader.scheduleUpload(appDeviceId, sensorData));
         } catch (PayloadParseException e) {
             LOG.warn("Could not parse '{}' payload from: '{}", appConfig.getEncoding(), uplink.getRawPayload());
         }
@@ -217,10 +205,10 @@ public final class SensorDataBridge {
         // schedule task to fetch opensense ids
         executor.scheduleAtFixedRate(new CatchingRunnable(LOG, this::updateAttributes), 0, 60, TimeUnit.MINUTES);
 
-        // start opensense uploader
-        openSenseUploader.start();
+        // start uploaders
+        uploaders.forEach(IUploader::start);
 
-        sensComUploader.start();
+        // start listeners
         for (MqttListener listener : mqttListeners) {
             listener.start();
         }
@@ -249,9 +237,7 @@ public final class SensorDataBridge {
         LOG.info("Fetching TTNv3 application attributes done");
 
         // notify all uploaders
-        openSenseUploader.processAttributes(attributes);
-        myDevicesUploader.processAttributes(attributes);
-        sensComUploader.scheduleProcessAttributes(attributes);
+        uploaders.forEach(uploader -> uploader.scheduleProcessAttributes(attributes));
     }
 
     /**
@@ -265,8 +251,7 @@ public final class SensorDataBridge {
         executor.shutdownNow();
         mqttListeners.forEach(MqttListener::stop);
         commandHandlers.values().forEach(CommandHandler::stop);
-        openSenseUploader.stop();
-        sensComUploader.stop();
+        uploaders.forEach(IUploader::stop);
 
         LOG.info("Stopped sensor-data-bridge application");
     }

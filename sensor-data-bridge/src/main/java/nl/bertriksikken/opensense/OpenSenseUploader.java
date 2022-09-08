@@ -1,7 +1,6 @@
 package nl.bertriksikken.opensense;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.IUploader;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -23,7 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public final class OpenSenseUploader {
+public final class OpenSenseUploader implements IUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenSenseUploader.class);
     private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
@@ -47,15 +47,18 @@ public final class OpenSenseUploader {
         return new OpenSenseUploader(restClient);
     }
 
+    @Override
     public void start() {
-        LOG.info("Starting OpenSenseUploader");
+        LOG.info("Starting OpenSense uploader");
     }
 
+    @Override
     public void stop() {
-        LOG.info("Stopping OpenSenseUploader");
+        LOG.info("Stopping OpenSense uploader");
         executor.shutdown();
     }
 
+    @Override
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
         String boxId = boxIds.getOrDefault(appDeviceId, "");
         if (boxId.isEmpty()) {
@@ -130,11 +133,14 @@ public final class OpenSenseUploader {
         }
     }
 
-    public void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
-        Map<AppDeviceId, String> newBoxIds = new HashMap<>();
-        attributes.forEach((appDevId, attr) -> processDeviceAttributes(newBoxIds, appDevId, attr));
+    @Override
+    public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+        executor.execute(new CatchingRunnable(LOG, () -> processAttributes(attributes)));
+    }
+
+    private void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
         boxIds.clear();
-        boxIds.putAll(newBoxIds);
+        attributes.forEach((appDevId, attr) -> processDeviceAttributes(boxIds, appDevId, attr));
         boxIds.forEach((device, id) -> LOG.info("Opensense mapping: {} -> {}", device, id));
     }
 

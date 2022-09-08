@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
+import nl.bertriksikken.loraforwarder.IUploader;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
@@ -26,7 +27,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 /**
  * Uploader for sensor.community
  */
-public final class SensComUploader {
+public final class SensComUploader implements IUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(SensComUploader.class);
     private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
@@ -60,16 +61,19 @@ public final class SensComUploader {
         return new SensComUploader(restClient);
     }
 
+    @Override
     public void start() {
         LOG.info("Starting sensor.community uploader");
     }
 
+    @Override
     public void stop() {
         LOG.info("Stopping sensor.community uploader");
         executor.shutdown();
     }
 
     // schedules an upload to all pins
+    @Override
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
         executor.execute(new CatchingRunnable(LOG, () -> performUpload(appDeviceId, data)));
     }
@@ -191,6 +195,7 @@ public final class SensComUploader {
         }
     }
 
+    @Override
     public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
         executor.execute(new CatchingRunnable(LOG, () -> processAttributes(attributes)));
     }

@@ -1,7 +1,7 @@
 ext {
     libraries = [:]
 
-    jacksonVersion = '2.13.3'
+    jacksonVersion = '2.13.4'
     retrofitVersion = '2.9.0'
     slf4jVersion = '2.0.0'
     jerseyVersion = '2.34'
@@ -37,8 +37,8 @@ libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 // test libraries
 libraries.retrofit_mock = "com.squareup.retrofit2:retrofit-mock:${retrofitVersion}"
 libraries.junit = 'junit:junit:4.13.2'
-libraries.mockito = 'org.mockito:mockito-core:4.7.0'
+libraries.mockito = 'org.mockito:mockito-core:4.8.0'
 
 // check libraries
-libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.7.1'
+libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.7.2'
 

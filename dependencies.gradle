@@ -3,9 +3,9 @@ ext {
 
     jacksonVersion = '2.13.4'
     retrofitVersion = '2.9.0'
-    slf4jVersion = '2.0.2'
-    jerseyVersion = '2.36'
-    jettyVersion = '9.4.48.v20220622'
+    slf4jVersion = '2.0.3'
+    jerseyVersion = '2.37'
+    jettyVersion = '9.4.49.v20220914'
 }
 
 libraries.slf4j = "org.slf4j:slf4j-api:${slf4jVersion}"
@@ -41,5 +41,5 @@ libraries.junit = 'junit:junit:4.13.2'
 libraries.mockito = 'org.mockito:mockito-core:4.8.0'
 
 // check libraries
-libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.7.2'
+libraries.spotbugs_annotations = 'com.github.spotbugs:spotbugs-annotations:4.7.3'
 

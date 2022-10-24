@@ -4,8 +4,8 @@ ext {
     jacksonVersion = '2.13.4'
     retrofitVersion = '2.9.0'
     slf4jVersion = '2.0.3'
-    jerseyVersion = '2.37'
-    jettyVersion = '9.4.49.v20220914'
+    jerseyVersion = '3.0.8'
+    jettyVersion = '11.0.12'
 }
 
 libraries.slf4j = "org.slf4j:slf4j-api:${slf4jVersion}"
@@ -23,16 +23,17 @@ libraries.retrofit = [
 ]
 
 libraries.jersey_server = [
+    "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0",
+
     "org.glassfish.jersey.core:jersey-server:${jerseyVersion}",
     "org.glassfish.jersey.media:jersey-media-json-jackson:${jerseyVersion}",
-    "org.glassfish.jersey.containers:jersey-container-servlet:${jerseyVersion}",
+    "org.glassfish.jersey.containers:jersey-container-jetty-http:${jerseyVersion}",
     "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}",
 
     "org.eclipse.jetty:jetty-server:${jettyVersion}",
     "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 ]
 
-libraries.jaxwsrs_api = 'javax.ws.rs:javax.ws.rs-api:2.1.1'
 libraries.mqtt_client = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5' 
 
 // test libraries

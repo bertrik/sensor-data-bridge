@@ -1,25 +1,26 @@
 package nl.bertriksikken.nbiot;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.server.ServerProperties;
-import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.ws.rs.core.UriBuilder;
+
 public final class NbIotReceiver {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(NbIotReceiver.class);
 
     private final Server server;
-    
+
     public NbIotReceiver(NbIotConfig config) {
-        this.server = createRestServer(config.getPort(), config.getPath(), CdpRestApi.class);
+        this.server = createRestServer(config.getPort(), CdpRestApi.class);
     }
-    
+
     public void start() throws IOException {
         LOG.info("Starting NB-IOT server");
         try {
@@ -28,7 +29,7 @@ public final class NbIotReceiver {
             throw new IOException(e);
         }
     }
-    
+
     public void stop() {
         LOG.info("Stopping NB-IOT server");
         try {
@@ -39,21 +40,10 @@ public final class NbIotReceiver {
         }
     }
 
-    private Server createRestServer(int port, String contextPath, Class<?> clazz) {
-        Server server = new Server(port);
-
-        // setup context
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-        
-        // setup web services container
-        ServletHolder sh = new ServletHolder(ServletContainer.class);
-        sh.setInitParameter(ServerProperties.PROVIDER_CLASSNAMES, clazz.getCanonicalName());
-        context.addServlet(sh, contextPath + "/*");
-        server.setHandler(context);
-        
-        return server;
+    private Server createRestServer(int port, Class<?> clazz) {
+        URI uri = UriBuilder.fromUri("http://localhost").port(port).build();
+        ResourceConfig config = new ResourceConfig(clazz);
+        return JettyHttpContainerFactory.createServer(uri, config);
     }
-
-
 
 }

@@ -7,15 +7,8 @@ public final class NbIotConfig {
     @JsonProperty("port")
     private int port = 9000;
 
-    @JsonProperty("path")
-    private String path = "";
-
     public int getPort() {
         return port;
-    }
-
-    public String getPath() {
-        return path;
     }
 
 }

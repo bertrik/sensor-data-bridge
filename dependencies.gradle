@@ -1,10 +1,10 @@
 ext {
     libraries = [:]
 
-    jacksonVersion = '2.13.4'
+    jacksonVersion = '2.14.0'
     retrofitVersion = '2.9.0'
     slf4jVersion = '2.0.3'
-    jerseyVersion = '3.0.8'
+    jerseyVersion = '3.1.0'
     jettyVersion = '11.0.12'
 }
 

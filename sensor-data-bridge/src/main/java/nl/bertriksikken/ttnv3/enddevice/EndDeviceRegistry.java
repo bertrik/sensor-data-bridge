@@ -2,6 +2,7 @@ package nl.bertriksikken.ttnv3.enddevice;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public final class EndDeviceRegistry {
         Response<EndDevices> response = restApi.listEndDevices(authToken, applicationId, fieldMask).execute();
         if (!response.isSuccessful()) {
             LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
+            return Collections.emptyList();
         }
         EndDevices endDevices = response.body();
         return endDevices.getEndDevices();

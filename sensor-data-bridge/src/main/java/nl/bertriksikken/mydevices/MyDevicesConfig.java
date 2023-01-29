@@ -19,7 +19,7 @@ public final class MyDevicesConfig {
         return url;
     }
 
-    public Duration getTimeoutSec() {
+    public Duration getTimeout() {
         return Duration.ofSeconds(timeoutSec);
     }
 

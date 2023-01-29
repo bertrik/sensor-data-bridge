@@ -1,6 +1,7 @@
 package nl.bertriksikken.senscom;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -53,7 +54,9 @@ public final class SensComUploader implements IUploader {
      */
     public static SensComUploader create(SensComConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeout());
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(config.getTimeout()).build();
+        Duration timeout = config.getTimeout();
+        OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(timeout).readTimeout(timeout)
+                .writeTimeout(timeout).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();

@@ -40,14 +40,15 @@ public final class EndDeviceRegistry {
 
     public static EndDeviceRegistry create(String url, Duration timeout, TtnAppConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", url, timeout);
-        OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout).build();
+        OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(timeout).readTimeout(timeout)
+                .writeTimeout(timeout).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(url).addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
         IEndDeviceRegistryRestApi restApi = retrofit.create(IEndDeviceRegistryRestApi.class);
         return new EndDeviceRegistry(restApi, config.getName(), config.getKey());
     }
 
-    public EndDevice getEndDevice(String deviceId, String ... fields) throws IOException {
+    public EndDevice getEndDevice(String deviceId, String... fields) throws IOException {
         String fieldMask = String.join(",", fields);
         Response<EndDevice> response = restApi.getEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
         if (!response.isSuccessful()) {
@@ -56,7 +57,7 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
-    public EndDevice getNsEndDevice(String deviceId, String ... fields) throws IOException {
+    public EndDevice getNsEndDevice(String deviceId, String... fields) throws IOException {
         String fieldMask = String.join(",", fields);
         Response<EndDevice> response = restApi.getNsEndDevice(authToken, applicationId, deviceId, fieldMask).execute();
         if (!response.isSuccessful()) {
@@ -65,7 +66,7 @@ public final class EndDeviceRegistry {
         return response.body();
     }
 
-    public List<EndDevice> listEndDevices(String ... fields) throws IOException {
+    public List<EndDevice> listEndDevices(String... fields) throws IOException {
         String fieldMask = String.join(",", fields);
         Response<EndDevices> response = restApi.listEndDevices(authToken, applicationId, fieldMask).execute();
         if (!response.isSuccessful()) {

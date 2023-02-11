@@ -1,11 +1,11 @@
 version: "3"
 services:
   java:
-    build: ..
     image: ghcr.io/bertrik/sensor-data-bridge
+    build: ..
     restart: always
     volumes:
       - "./sensor-data-bridge.yaml:/opt/sensor-data-bridge/sensor-data-bridge.yaml:ro"
       - "./log4j.properties:/opt/sensor-data-bridge/log4j.properties:ro"
       - "./log:/opt/sensor-data-bridge/log:rw"
-        
+

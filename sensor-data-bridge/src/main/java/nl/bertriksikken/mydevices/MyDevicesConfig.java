@@ -1,26 +1,12 @@
 package nl.bertriksikken.mydevices;
 
-import java.time.Duration;
+import nl.bertriksikken.rest.RestApiConfig;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+public final class MyDevicesConfig extends RestApiConfig {
 
-@JsonAutoDetect(getterVisibility = Visibility.NONE)
-public final class MyDevicesConfig {
-
-    @JsonProperty("url")
-    private String url = "https://api.mydevices.com";
-
-    @JsonProperty("timeout")
-    private int timeoutSec = 30;
-    
-    public String getUrl() {
-        return url;
-    }
-
-    public Duration getTimeout() {
-        return Duration.ofSeconds(timeoutSec);
+    // jackson no-arg constructor
+    public MyDevicesConfig() {
+        super("https://api.mydevices.com", 30);
     }
 
 }

@@ -1,31 +1,22 @@
 package nl.bertriksikken.gls;
 
-import java.time.Duration;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import nl.bertriksikken.rest.RestApiConfig;
+
 @JsonAutoDetect(getterVisibility = Visibility.NONE)
-public final class GeoLocationConfig {
-
-    @JsonProperty("url")
-    private String url = "https://location.services.mozilla.com";
-
-    @JsonProperty("timeout")
-    private int timeout = 30;
+public final class GeoLocationConfig extends RestApiConfig {
 
     @JsonProperty("apikey")
     private String apiKey = "test";
 
-    public String getUrl() {
-        return url;
+    // jackson no-arg constructor
+    public GeoLocationConfig() {
+        super("https://location.services.mozilla.com", 30);
     }
     
-    public Duration getTimeout() {
-        return Duration.ofSeconds(timeout);
-    }
-
     public String getApiKey() {
         return apiKey;
     }

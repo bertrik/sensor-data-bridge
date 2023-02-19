@@ -1,7 +1,6 @@
 package nl.bertriksikken.ttnv3.enddevice;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -112,7 +111,7 @@ public final class EndDevice {
         private List<UplinkMessage> recentUplinks = new ArrayList<>();
     
         public List<UplinkMessage> getRecentUplinks() {
-            return Collections.unmodifiableList(recentUplinks);
+            return List.copyOf(recentUplinks);
         }
     }
 

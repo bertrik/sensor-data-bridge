@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -91,7 +90,7 @@ public final class CayenneMessage {
      *         raw data
      */
     public List<CayenneItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return List.copyOf(items);
     }
 
     /**

@@ -4,9 +4,18 @@ ttn:
   identity_server_url: "https://eu1.cloud.thethings.network"
   identity_server_timeout: 20
   apps:
-  - name: "particulatematter"
-    key: "NNSXS.LHD22PFZMI3B7WF6FDWIK45N4244U7DWRVWZASI.secret"
-    encoding: "CAYENNE"
+  - name: "ttn-application-name"
+    key: "ttn-api-key"
+    encoding: "JSON"
+json:
+  - path: "/humidity"
+    item: "HUMI"
+  - path: "/temperature"
+    item: "TEMP"
+  - path: "/pm10"
+    item: "PM10"
+  - path: "/pm2_5"
+    item: "PM2_5"
 senscom:
   url: "https://api.sensor.community"
   timeout: 30

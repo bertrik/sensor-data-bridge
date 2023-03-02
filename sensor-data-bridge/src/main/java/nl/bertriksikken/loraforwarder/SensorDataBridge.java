@@ -258,14 +258,18 @@ public final class SensorDataBridge {
 
     private static SensorDataBridgeConfig readConfig(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try (FileInputStream fis = new FileInputStream(file)) {
-            return mapper.readValue(fis, SensorDataBridgeConfig.class);
-        } catch (IOException e) {
-            LOG.warn("Failed to load config {}, writing defaults", file.getAbsoluteFile());
-            SensorDataBridgeConfig config = new SensorDataBridgeConfig();
+        SensorDataBridgeConfig config = new SensorDataBridgeConfig();
+        if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                return mapper.readValue(fis, SensorDataBridgeConfig.class);
+            } catch (IOException e) {
+                LOG.warn("Failed to load config {}, using defaults", file.getAbsoluteFile());
+            }
+        } else {
+            LOG.warn("No config found, writing default configuration {}", file.getAbsoluteFile());
             mapper.writeValue(file, config);
-            return config;
         }
+        return config;
     }
 
 }

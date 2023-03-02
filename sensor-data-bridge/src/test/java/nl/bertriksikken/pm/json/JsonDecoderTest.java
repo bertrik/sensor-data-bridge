@@ -6,7 +6,9 @@ import java.net.URL;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.POJONode;
 
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
@@ -21,10 +23,13 @@ public final class JsonDecoderTest {
         URL url = this.getClass().getResource("/decoded_fields.json");
         String json = mapper.readTree(url).toPrettyString();
 
-        JsonDecoderConfig config = new JsonDecoderConfig();
-        JsonDecoder decoder = new JsonDecoder(config);
+        JsonDecoder decoder = new JsonDecoder();
         SensorData sensorData = new SensorData();
-        decoder.parse(json, sensorData);
+
+        JsonDecoderConfig config = new JsonDecoderConfig();
+        config.add(new JsonDecoderItem("/la/avg", ESensorItem.NOISE_LA_EQ));
+        JsonNode configNode = new POJONode(config);
+        decoder.parse(configNode, json, sensorData);
 
         Assert.assertEquals(35.5, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
     }

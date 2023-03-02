@@ -26,7 +26,7 @@ public final class JsonDecoderItem {
         this("", null);
     }
 
-    JsonDecoderItem(String path, ESensorItem item) {
+    public JsonDecoderItem(String path, ESensorItem item) {
         this.path = path;
         this.item = item;
     }

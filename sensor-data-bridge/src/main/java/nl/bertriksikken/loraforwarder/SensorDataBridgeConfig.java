@@ -41,7 +41,12 @@ public final class SensorDataBridgeConfig {
     private GeoLocationConfig geoLocationConfig = new GeoLocationConfig();
 
     public TtnConfig getTtnConfig() {
-        return ttnConfig;
+        return new TtnConfig(ttnConfig);
+    }
+
+    // package-private visible for test
+    void setTtnConfig(TtnConfig ttnConfig) {
+        this.ttnConfig = ttnConfig;
     }
 
     public NbIotConfig getNbIotConfig() {

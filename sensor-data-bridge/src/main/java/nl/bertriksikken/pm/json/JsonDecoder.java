@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
 
 /**
@@ -13,23 +12,17 @@ import nl.bertriksikken.pm.SensorData;
  */
 public final class JsonDecoder {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final JsonDecoderConfig config;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public JsonDecoder(JsonDecoderConfig config) {
-        this.config = new JsonDecoderConfig(config);
-    }
+    public void parse(JsonNode config, String json, SensorData data) throws JsonProcessingException {
+        // convert JsonNode into JsonDecoderConfig object
+        JsonDecoderConfig jsonDecoderConfig = OBJECT_MAPPER.treeToValue(config, JsonDecoderConfig.class);
 
-    public void parse(String json, SensorData data) throws PayloadParseException {
         // parse JSON into generic structure
-        JsonNode node;
-        try {
-            node = mapper.readTree(json);
-        } catch (JsonProcessingException e) {
-            throw new PayloadParseException(e);
-        }
+        JsonNode node = OBJECT_MAPPER.readTree(json);
+
         // extract measurement items
-        for (JsonDecoderItem item : config) {
+        for (JsonDecoderItem item : jsonDecoderConfig) {
             JsonNode field = node.at(item.path);
             double value = field.asDouble(Double.NaN);
             if (Double.isFinite(value)) {

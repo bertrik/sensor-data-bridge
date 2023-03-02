@@ -17,6 +17,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -34,6 +35,7 @@ import nl.bertriksikken.pm.ttnulm.TtnUlmMessage;
 import nl.bertriksikken.senscom.SensComUploader;
 import nl.bertriksikken.ttn.MqttListener;
 import nl.bertriksikken.ttn.TtnAppConfig;
+import nl.bertriksikken.ttn.TtnAppConfig.DecoderConfig;
 import nl.bertriksikken.ttn.TtnConfig;
 import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
@@ -51,7 +53,7 @@ public final class SensorDataBridge {
     private final Map<String, EndDeviceRegistry> deviceRegistries = new HashMap<>();
     private final Map<String, CommandHandler> commandHandlers = new HashMap<>();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private final JsonDecoder jsonDecoder;
+    private final JsonDecoder jsonDecoder = new JsonDecoder();
 
     public static void main(String[] args) throws IOException, MqttException {
         PropertyConfigurator.configure("log4j.properties");
@@ -63,8 +65,6 @@ public final class SensorDataBridge {
     }
 
     private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
-        jsonDecoder = new JsonDecoder(config.getJsonDecoderConfig());
-
         uploaders.add(SensComUploader.create(config.getSensComConfig()));
         uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
         uploaders.add(MyDevicesHttpUploader.create(config.getMyDevicesConfig()));
@@ -73,8 +73,8 @@ public final class SensorDataBridge {
 
         TtnConfig ttnConfig = config.getTtnConfig();
         for (TtnAppConfig appConfig : config.getTtnConfig().getApps()) {
+            EPayloadEncoding encoding = appConfig.getDecoder().getEncoding();
             // add listener for each app
-            EPayloadEncoding encoding = appConfig.getEncoding();
             LOG.info("Adding MQTT listener for TTN application '{}' with encoding '{}'", appConfig.getName(), encoding);
             MqttListener listener = new MqttListener(ttnConfig, appConfig,
                     uplink -> messageReceived(appConfig, uplink));
@@ -106,16 +106,16 @@ public final class SensorDataBridge {
             AppDeviceId appDeviceId = new AppDeviceId(uplink.getAppId(), uplink.getDevId());
 
             // decode and upload telemetry message
-            SensorData sensorData = decodeTtnMessage(appConfig.getEncoding(), uplink);
+            SensorData sensorData = decodeTtnMessage(appConfig.getDecoder(), uplink);
             LOG.info("Decoded: '{}'", sensorData);
             uploaders.forEach(uploader -> uploader.scheduleUpload(appDeviceId, sensorData));
         } catch (PayloadParseException e) {
-            LOG.warn("Could not parse '{}' payload from: '{}", appConfig.getEncoding(), uplink.getRawPayload());
+            LOG.warn("Could not parse payload from: '{}", uplink.getRawPayload());
         }
     }
 
     // package-private to allow testing
-    SensorData decodeTtnMessage(EPayloadEncoding encoding, TtnUplinkMessage uplink) throws PayloadParseException {
+    SensorData decodeTtnMessage(DecoderConfig config, TtnUplinkMessage uplink) throws PayloadParseException {
         SensorData sensorData = new SensorData();
 
         // common fields
@@ -146,7 +146,7 @@ public final class SensorDataBridge {
         }
 
         // specific fields
-        switch (encoding) {
+        switch (config.getEncoding()) {
         case TTN_ULM:
             TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
@@ -185,10 +185,14 @@ public final class SensorDataBridge {
             }
             break;
         case JSON:
-            jsonDecoder.parse(uplink.getDecodedFields(), sensorData);
+            try {
+                jsonDecoder.parse(config.getProperties(), uplink.getDecodedFields(), sensorData);
+            } catch (JsonProcessingException e) {
+                throw new PayloadParseException(e);
+            }
             break;
         default:
-            throw new IllegalStateException("Unhandled encoding: " + encoding);
+            throw new IllegalStateException("Unhandled encoding: " + config.getEncoding());
         }
         return sensorData;
     }

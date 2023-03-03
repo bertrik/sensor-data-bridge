@@ -12,5 +12,5 @@ public interface IGeoLocationRestApi {
 
     @POST("/v1/geolocate")
     public Call<GeoLocationResponse> geoLocate(@Query("key") String key, @Body GeoLocationRequest request);
-    
+
 }

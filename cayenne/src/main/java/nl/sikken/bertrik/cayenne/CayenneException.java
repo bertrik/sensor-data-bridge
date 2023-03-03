@@ -9,7 +9,7 @@ public class CayenneException extends Exception {
 
     /**
      * Constructor.
-     * 
+     *
      * @param message the exception message
      */
     public CayenneException(String message) {
@@ -18,7 +18,7 @@ public class CayenneException extends Exception {
 
     /**
      * Constructor.
-     * 
+     *
      * @param e the throwable
      */
     public CayenneException(Throwable e) {

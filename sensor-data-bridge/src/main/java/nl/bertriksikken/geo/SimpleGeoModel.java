@@ -6,11 +6,12 @@ package nl.bertriksikken.geo;
 public final class SimpleGeoModel {
 
     private static final double CIRCUMFERENCE = 40075e3;
-    
+
     /**
      * Calculates approximate distance between two locations on earth.
      * 
-     * Probably does not work around the poles, around the date line, on long distances.
+     * Probably does not work around the poles, around the date line, on long
+     * distances.
      * 
      * @param p1 (lat,lon) pair (degrees)
      * @param p2 (lat,lon) pair (degrees)

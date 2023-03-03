@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class GeoLocationResponse {
-    
+
     @JsonProperty("location")
     private final GeoLocation location = new GeoLocation();
-    
+
     @JsonProperty("accuracy")
     private double accuracy = Double.NaN;
 
@@ -28,25 +28,25 @@ public final class GeoLocationResponse {
     public double getAccuracy() {
         return accuracy;
     }
-    
+
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "{location=%s,accuracy=%.0f}", location, accuracy);
     }
-    
+
     private static final class GeoLocation {
-        
+
         @JsonProperty("lat")
         private double latitude = Double.NaN;
-        
+
         @JsonProperty("lng")
         private double longitude = Double.NaN;
-        
+
         @Override
         public String toString() {
             return String.format(Locale.ROOT, "{lat=%f,lon=%f}", latitude, longitude);
         }
-        
+
     }
-    
+
 }

@@ -18,9 +18,11 @@ public final class FloatFormatter extends BaseFormatter {
     /**
      * Constructor.
      * 
-     * @param length number of elements in the return vector (e.g. 3 for a gyro reading)
-     * @param size the number of bytes in each element
-     * @param scale scale factor to apply, this determines the number of significant digits when formatting
+     * @param length number of elements in the return vector (e.g. 3 for a gyro
+     *               reading)
+     * @param size   the number of bytes in each element
+     * @param scale  scale factor to apply, this determines the number of
+     *               significant digits when formatting
      * @param signed whether the number should be interpreted as signed or unsigned
      */
     public FloatFormatter(int length, int size, double scale, boolean signed) {
@@ -30,12 +32,12 @@ public final class FloatFormatter extends BaseFormatter {
         this.signed = signed;
         this.formatString = createFormatString(scale);
     }
-    
+
     private String createFormatString(double scale) {
         int decimals = BigDecimal.valueOf(scale).scale();
         return String.format(Locale.ROOT, "%%.%df", decimals);
     }
-    
+
     @Override
     public Double[] parse(ByteBuffer bb) {
         Double[] values = new Double[length];
@@ -44,7 +46,7 @@ public final class FloatFormatter extends BaseFormatter {
         }
         return values;
     }
-    
+
     @Override
     public String[] format(Number[] values) {
         String[] formatted = new String[length];
@@ -57,7 +59,7 @@ public final class FloatFormatter extends BaseFormatter {
     @Override
     public void encode(ByteBuffer bb, Number[] values) {
         for (int i = 0; i < length; i++) {
-            putValue(bb, size, (int)Math.round(values[i].doubleValue() / scale));
+            putValue(bb, size, (int) Math.round(values[i].doubleValue() / scale));
         }
     }
 

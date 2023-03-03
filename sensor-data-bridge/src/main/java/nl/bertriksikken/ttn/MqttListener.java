@@ -34,18 +34,19 @@ public final class MqttListener {
     /**
      * Constructor.
      * 
-     * @param config the global TTN configuration
+     * @param config    the global TTN configuration
      * @param appConfig the application-specific configuration
-     * @param callback callback for message notification
+     * @param callback  callback for message notification
      */
     public MqttListener(TtnConfig config, TtnAppConfig appConfig, IMessageReceived callback) {
         LOG.info("Creating MQTT client for app '{}'", appConfig.getName());
         try {
-            this.mqttClient = new MqttClient(config.getMqttUrl(), MqttClient.generateClientId(), new MemoryPersistence());
+            this.mqttClient = new MqttClient(config.getMqttUrl(), MqttClient.generateClientId(),
+                    new MemoryPersistence());
         } catch (MqttException e) {
             throw new IllegalArgumentException(e);
         }
-        
+
         mqttClient.setCallback(new MqttCallbackHandler(mqttClient, "v3/+/devices/+/up", callback));
 
         // create connect options
@@ -109,7 +110,7 @@ public final class MqttListener {
                 // parse device EUI and payload
                 Ttnv3UplinkMessage uplinkV3 = mapper.readValue(message, Ttnv3UplinkMessage.class);
                 TtnUplinkMessage uplink = uplinkV3.toTtnUplinkMessage();
-                
+
                 // notify listener
                 if (uplink.getRawPayload().length > 0) {
                     listener.messageReceived(uplink);

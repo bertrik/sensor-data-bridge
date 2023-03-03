@@ -19,9 +19,9 @@ public final class GeoLocationRequest {
     }
 
     /**
-     * @param mac the 6-byte mac address of the access point
+     * @param mac            the 6-byte mac address of the access point
      * @param signalStrength signal strength in dBm
-     * @param channel the WiFi channel
+     * @param channel        the WiFi channel
      */
     public void add(byte[] mac, int signalStrength, int channel) {
         List<String> bytes = new ArrayList<>();

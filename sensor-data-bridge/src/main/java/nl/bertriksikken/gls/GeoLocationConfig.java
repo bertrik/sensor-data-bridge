@@ -16,7 +16,7 @@ public final class GeoLocationConfig extends RestApiConfig {
     public GeoLocationConfig() {
         super("https://location.services.mozilla.com", 30);
     }
-    
+
     public String getApiKey() {
         return apiKey;
     }

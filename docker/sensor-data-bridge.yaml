@@ -2,20 +2,23 @@
 ttn:
   mqtt_url: "tcp://eu1.cloud.thethings.network"
   identity_server_url: "https://eu1.cloud.thethings.network"
-  identity_server_timeout: 20
+  identity_server_timeout: 30
   apps:
-  - name: "ttn-application-name"
-    key: "ttn-api-key"
-    encoding: "JSON"
-json:
-  - path: "/humidity"
-    item: "HUMI"
-  - path: "/temperature"
-    item: "TEMP"
-  - path: "/pm10"
-    item: "PM10"
-  - path: "/pm2_5"
-    item: "PM2_5"
+  - name: "meet-je-stad"
+    key: "secret"
+    decoder:
+      encoding: "JSON"
+      properties:
+      - path: "/temperature"
+        item: "TEMP"
+      - path: "/humidity"
+        item: "HUMI"
+      - path: "/pm10"
+        item: "PM10"
+      - path: "/pm2_5"
+        item: "PM2_5"
+nbiot:
+  port: 9000
 senscom:
   url: "https://api.sensor.community"
   timeout: 30
@@ -25,4 +28,9 @@ opensense:
 mydevices:
   url: "https://api.mydevices.com"
   timeout: 30
+geolocation:
+  url: "https://location.services.mozilla.com"
+  timeout: 30
+  apikey: "test"
+
 

@@ -6,7 +6,6 @@ import nl.bertriksikken.gls.GeoLocationConfig;
 import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.nbiot.NbIotConfig;
 import nl.bertriksikken.opensense.OpenSenseConfig;
-import nl.bertriksikken.pm.json.JsonDecoderConfig;
 import nl.bertriksikken.senscom.SensComConfig;
 import nl.bertriksikken.ttn.TtnConfig;
 
@@ -21,10 +20,6 @@ public final class SensorDataBridgeConfig {
 
     @JsonProperty("nbiot")
     private NbIotConfig nbIotConfig = new NbIotConfig();
-
-    // decoders
-    @JsonProperty("json")
-    private JsonDecoderConfig jsonDecoderConfig = new JsonDecoderConfig();
 
     // output modules
     @JsonProperty("senscom")
@@ -51,10 +46,6 @@ public final class SensorDataBridgeConfig {
 
     public NbIotConfig getNbIotConfig() {
         return nbIotConfig;
-    }
-
-    public JsonDecoderConfig getJsonDecoderConfig() {
-        return new JsonDecoderConfig(jsonDecoderConfig);
     }
 
     public SensComConfig getSensComConfig() {

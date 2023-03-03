@@ -4,10 +4,6 @@ import java.util.ArrayList;
 
 public final class JsonDecoderConfig extends ArrayList<JsonDecoderItem> {
 
-    public JsonDecoderConfig(JsonDecoderConfig config) {
-        super(config);
-    }
-
     public JsonDecoderConfig() {
         super();
     }

@@ -2,7 +2,18 @@
 Bridge software for receiving airborne particulate matter data from TheThingsNetwork
 and forwarding it to sensor.community, opensense, cayenne.mydevices.com
 
-Several data encodings are possible, currently supported:
+Forwarding to sensor.community and other dashboards is controlled through TTN device attributes,
+which can be configured for each device in the TheThingsNetwork console: 
+* sensor.community
+  *   attribute 'senscom-id' contains the sensor.community hardware id
+* cayenne.mydevices.com
+  *   attribute 'mydevices-username'
+  *   attribute 'mydevices-password'
+  *   attribute 'mydevices-clientid'
+* opensense.org
+  *   attribute 'opensense-id'
+
+Several data encodings are supported:
 * Cayenne encoding, PM is encoded as analog data, PM10 in channel 1, PM2.5 in channel 2, PM4.0 in channel 4 and PM1.0 in channel 0.
 * JSON encoding, the configuration file specifies how JSON fields map to measurement properties
 * SPS30 encoding, a custom encoding for SPS30 sensors, includes the particle count

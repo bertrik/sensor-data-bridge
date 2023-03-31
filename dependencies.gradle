@@ -13,7 +13,8 @@ libraries.reload4j = "org.slf4j:slf4j-reload4j:${slf4jVersion}"
 
 libraries.jackson = [
     "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
-    "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}",
+    "org.yaml:snakeyaml:2.0"
 ]
 
 libraries.retrofit = [

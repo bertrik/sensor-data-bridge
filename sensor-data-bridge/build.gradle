@@ -5,20 +5,21 @@ mainClassName = 'nl.bertriksikken.loraforwarder.SensorDataBridge'
 dependencies {
     implementation project(":cayenne")
 
-    implementation libraries.slf4j
-    implementation libraries.reload4j
+    implementation libs.slf4j.api
+    implementation libs.slf4j.reload4j
 
-    implementation libraries.mqtt_client
-    implementation libraries.jackson
+    implementation libs.paho.client.mqttv3
+    implementation libs.bundles.jackson
     
     // REST server
-    implementation libraries.jersey_server
+    implementation libs.bundles.jersey
+    implementation libs.bundles.jetty
     // REST client
-    implementation libraries.retrofit
+    implementation libs.bundles.retrofit
     
-    compileOnly libraries.spotbugs_annotations
+    compileOnly libs.spotbugs.annotations
     
-    testImplementation libraries.retrofit_mock
+    testImplementation libs.retrofit.mock
 }
 
 // fix scripts executable bit and line endings

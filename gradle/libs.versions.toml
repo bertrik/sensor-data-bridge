@@ -1,0 +1,46 @@
+[versions]
+slf4j = "2.0.7"
+jackson = "2.15.1"
+spotbugs = "4.7.3"
+retrofit = "2.9.0"
+jetty = "11.0.15"
+jersey = "3.1.2"
+
+[libraries]
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref="slf4j" }
+slf4j-reload4j = { module = "org.slf4j:slf4j-reload4j", version.ref="slf4j" }
+
+jackson-databind = {module = "com.fasterxml.jackson.core:jackson-databind", version.ref="jackson" }
+jackson-dataformat-yaml = {module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref="jackson" }
+
+spotbugs = { module = "com.github.spotbugs:spotbugs", version.ref = "spotbugs" }
+spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version.ref = "spotbugs" }
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
+retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
+retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
+
+junit = "junit:junit:4.13.2"
+
+paho-client-mqttv3 = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5"
+
+jakarta-ws-rs-api = "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"
+
+jersey-jetty = { module = "org.glassfish.jersey.containers:jersey-container-jetty-http", version.ref="jersey" }
+jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref="jersey" }
+jersey-inject = { module = "org.glassfish.jersey.inject:jersey-hk2", version.ref="jersey" }
+jersey-jackson = { module = "org.glassfish.jersey.media:jersey-media-json-jackson", version.ref="jersey" }
+
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
+
+mockito-core = "org.mockito:mockito-core:5.3.1"
+
+[bundles]
+jackson = ["jackson-databind", "jackson-dataformat-yaml"]
+retrofit = ["retrofit", "retrofit-converter-jackson", "retrofit-converter-scalars"]
+jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject", "jersey-jackson"]
+jetty = ["jetty-server", "jetty-servlet"]
+
+

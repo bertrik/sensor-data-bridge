@@ -1,6 +1,8 @@
 apply plugin: "application"
 
-mainClassName = 'nl.bertriksikken.loraforwarder.SensorDataBridge'
+application {
+    mainClass = 'nl.bertriksikken.loraforwarder.SensorDataBridge'
+}
 
 dependencies {
     implementation project(":cayenne")

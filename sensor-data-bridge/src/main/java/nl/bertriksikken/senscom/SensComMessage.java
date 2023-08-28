@@ -7,7 +7,7 @@ import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Sensor.community message as uploaded through a POST.
+ * Sensor.community message as uploaded through a POST, suitable for JSON serialization by Jackson.
  */
 public final class SensComMessage {
 
@@ -39,6 +39,46 @@ public final class SensComMessage {
     @Override
     public String toString() {
         return String.format(Locale.ROOT, "{softwareVersion=%s,items=%s}", softwareVersion, items);
+    }
+    
+    final static class SensComItem {
+
+        @JsonProperty("value_type")
+        private String name;
+        @JsonProperty("value")
+        private String value;
+
+        private SensComItem() {
+            // jackson constructor
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param name  the item name
+         * @param value the item value
+         */
+        SensComItem(String name, String value) {
+            this();
+            this.name = name;
+            this.value = value;
+        }
+
+        /**
+         * Convenience constructor.
+         * 
+         * @param name the item name
+         * @param value the item value as double, it will be rounded to 1 decimal
+         */
+        public SensComItem(String name, Double value) {
+            this(name, String.format(Locale.ROOT, "%.1f", value));
+        }
+
+        @Override
+        public String toString() {
+            return String.format(Locale.ROOT, "{name=%s,value=%s}", name, value);
+        }
+
     }
 
 }

@@ -1,8 +1,6 @@
 package nl.sikken.bertrik.cayenne;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * See https://community.mydevices.com/t/cayenne-lpp-2-0/7510
@@ -28,14 +26,8 @@ public enum ECayennePayloadFormat {
         return port;
     }
 
-    private static Map<Integer, ECayennePayloadFormat> MAP = new HashMap<>();
-
-    static {
-        Arrays.stream(values()).forEach(v -> MAP.put(v.port, v));
-    }
-
     static ECayennePayloadFormat fromPort(int port) {
-        return MAP.get(port);
+        return Stream.of(values()).filter(v -> v.port == port).findFirst().orElse(null);
     }
 
 }

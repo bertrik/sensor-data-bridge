@@ -64,7 +64,7 @@ public final class SensorDataBridge {
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
     }
 
-    private SensorDataBridge(SensorDataBridgeConfig config) throws IOException {
+    private SensorDataBridge(SensorDataBridgeConfig config) {
         uploaders.add(SensComUploader.create(config.getSensComConfig()));
         uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
         uploaders.add(MyDevicesHttpUploader.create(config.getMyDevicesConfig()));
@@ -203,7 +203,7 @@ public final class SensorDataBridge {
      * @throws MqttException in case of a problem starting MQTT client
      * @throws IOException
      */
-    private void start() throws MqttException, IOException {
+    private void start() throws MqttException {
         LOG.info("Starting sensor-data-bridge application");
 
         // schedule task to fetch opensense ids

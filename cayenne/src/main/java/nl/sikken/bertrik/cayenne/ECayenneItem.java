@@ -32,7 +32,7 @@ public enum ECayenneItem {
     private final IFormatter formatter;
 
     // reverse lookup table
-    private static final Map<Integer, ECayenneItem> LOOKUP = new HashMap<Integer, ECayenneItem>();
+    private static final Map<Integer, ECayenneItem> LOOKUP = new HashMap<>();
     static {
         Stream.of(values()).forEach((e) -> LOOKUP.put(e.getType(), e));
     }

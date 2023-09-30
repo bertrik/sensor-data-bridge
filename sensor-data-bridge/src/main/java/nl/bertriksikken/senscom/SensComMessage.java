@@ -41,7 +41,7 @@ public final class SensComMessage {
         return String.format(Locale.ROOT, "{softwareVersion=%s,items=%s}", softwareVersion, items);
     }
     
-    final static class SensComItem {
+    static final class SensComItem {
 
         @JsonProperty("value_type")
         private String name;

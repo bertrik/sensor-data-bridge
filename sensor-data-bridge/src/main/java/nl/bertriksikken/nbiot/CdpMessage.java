@@ -21,7 +21,7 @@ public final class CdpMessage {
         return String.format(Locale.ROOT, "%s", reports);
     }
 
-    public final static class Report {
+    public static final class Report {
 
         @JsonProperty("serialNumber")
         public String serialNumber = "";

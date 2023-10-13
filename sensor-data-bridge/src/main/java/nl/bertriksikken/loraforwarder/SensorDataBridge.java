@@ -23,7 +23,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
-import nl.bertriksikken.mydevices.MyDevicesHttpUploader;
 import nl.bertriksikken.opensense.OpenSenseUploader;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.PayloadParseException;
@@ -67,7 +66,6 @@ public final class SensorDataBridge {
     private SensorDataBridge(SensorDataBridgeConfig config) {
         uploaders.add(SensComUploader.create(config.getSensComConfig()));
         uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
-        uploaders.add(MyDevicesHttpUploader.create(config.getMyDevicesConfig()));
 
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
 

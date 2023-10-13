@@ -3,7 +3,6 @@ package nl.bertriksikken.loraforwarder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import nl.bertriksikken.gls.GeoLocationConfig;
-import nl.bertriksikken.mydevices.MyDevicesConfig;
 import nl.bertriksikken.nbiot.NbIotConfig;
 import nl.bertriksikken.opensense.OpenSenseConfig;
 import nl.bertriksikken.senscom.SensComConfig;
@@ -28,9 +27,6 @@ public final class SensorDataBridgeConfig {
     @JsonProperty("opensense")
     private OpenSenseConfig openSenseConfig = new OpenSenseConfig();
 
-    @JsonProperty("mydevices")
-    private MyDevicesConfig myDevicesConfig = new MyDevicesConfig();
-
     // miscellaneous
     @JsonProperty("geolocation")
     private GeoLocationConfig geoLocationConfig = new GeoLocationConfig();
@@ -54,10 +50,6 @@ public final class SensorDataBridgeConfig {
 
     public OpenSenseConfig getOpenSenseConfig() {
         return openSenseConfig;
-    }
-
-    public MyDevicesConfig getMyDevicesConfig() {
-        return myDevicesConfig;
     }
 
     public GeoLocationConfig getGeoLocationConfig() {

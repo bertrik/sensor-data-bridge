@@ -1,15 +1,11 @@
 # sensor-data-bridge
 Bridge software for receiving airborne particulate matter data from TheThingsNetwork
-and forwarding it to sensor.community, opensense, cayenne.mydevices.com
+and forwarding it to sensor.community, opensense
 
 Forwarding to sensor.community and other dashboards is controlled through TTN device attributes,
 which can be configured for each device in the TheThingsNetwork console: 
 * sensor.community
   *   attribute 'senscom-id' contains the sensor.community hardware id
-* cayenne.mydevices.com
-  *   attribute 'mydevices-username'
-  *   attribute 'mydevices-password'
-  *   attribute 'mydevices-clientid'
 * opensense.org
   *   attribute 'opensense-id'
 
@@ -65,9 +61,6 @@ senscom:
   timeout: 30
 opensense:
   url: "https://api.opensensemap.org"
-  timeout: 30
-mydevices:
-  url: "https://api.mydevices.com"
   timeout: 30
 geolocation:
   url: "https://location.services.mozilla.com"

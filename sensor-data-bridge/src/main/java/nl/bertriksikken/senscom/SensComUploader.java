@@ -111,7 +111,7 @@ public final class SensComUploader implements IUploader {
                 p1Message.addItem("TS", String.format(Locale.ROOT, "%.3f", data.getValue(ESensorItem.PM_TPS)));
             }
 
-            uploadMeasurement(sensorId, "1", p1Message);
+            uploadMeasurement(ESensComPin.PARTICULATE_MATTER, sensorId, p1Message);
         }
 
         // pin 3: temperature & pressure, but no humidity
@@ -120,7 +120,7 @@ public final class SensComUploader implements IUploader {
             SensComMessage p3Message = new SensComMessage(SOFTWARE_VERSION);
             p3Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
-            uploadMeasurement(sensorId, "3", p3Message);
+            uploadMeasurement(ESensComPin.TEMPERATURE_PRESSURE, sensorId, p3Message);
         }
 
         // pin 7: temperature & humidity, but no pressure
@@ -129,7 +129,7 @@ public final class SensComUploader implements IUploader {
             SensComMessage p7Message = new SensComMessage(SOFTWARE_VERSION);
             p7Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p7Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
-            uploadMeasurement(sensorId, "7", p7Message);
+            uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY, sensorId, p7Message);
         }
 
         // pin 9: position
@@ -140,7 +140,7 @@ public final class SensComUploader implements IUploader {
             if (data.hasValue(ESensorItem.POS_ALT)) {
                 p9Message.addItem("altitude", data.getValue(ESensorItem.POS_ALT));
             }
-            uploadMeasurement(sensorId, "9", p9Message);
+            uploadMeasurement(ESensComPin.POSITION, sensorId, p9Message);
         }
 
         // pin 11: temperature & humidity & pressure
@@ -149,7 +149,7 @@ public final class SensComUploader implements IUploader {
             p11Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
             p11Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
             p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
-            uploadMeasurement(sensorId, "11", p11Message);
+            uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY_PRESSURE, sensorId, p11Message);
         }
 
         // pin 13: only temperature
@@ -157,10 +157,10 @@ public final class SensComUploader implements IUploader {
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p13Message = new SensComMessage(SOFTWARE_VERSION);
             p13Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
-            uploadMeasurement(sensorId, "13", p13Message);
+            uploadMeasurement(ESensComPin.TEMPERATURE, sensorId, p13Message);
         }
 
-        // pin 15: sound
+        // pin 15: noise
         if (data.hasValue(ESensorItem.NOISE_LA_MIN) && data.hasValue(ESensorItem.NOISE_LA_EQ)
                 && data.hasValue(ESensorItem.NOISE_LA_MAX)) {
             SensComMessage p15Message = new SensComMessage(SOFTWARE_VERSION);
@@ -170,17 +170,14 @@ public final class SensComUploader implements IUploader {
                     String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MIN)));
             p15Message.addItem("noise_LA_max",
                     String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MAX)));
-            uploadMeasurement(sensorId, "15", p15Message);
+            uploadMeasurement(ESensComPin.NOISE, sensorId, p15Message);
         }
-
-        // pin 17: NO2 not implemented
-        // pin 19: radiation not implemented
     }
 
-    private void uploadMeasurement(String sensorId, String pin, SensComMessage message) {
+    private void uploadMeasurement(ESensComPin pin, String sensorId, SensComMessage message) {
         try {
             LOG.info("Sending for {} to pin {}: '{}'", sensorId, pin, mapper.writeValueAsString(message));
-            Response<String> response = restClient.pushSensorData(pin, sensorId, message).execute();
+            Response<String> response = restClient.pushSensorData(pin.getPin(), sensorId, message).execute();
             if (response.isSuccessful()) {
                 LOG.info("Result success: {}", response.body());
             } else {

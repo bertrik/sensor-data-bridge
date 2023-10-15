@@ -7,7 +7,7 @@ public final class AttributeMap extends HashMap<String, String> {
     
     private static final long serialVersionUID = 1L;
 
-    AttributeMap(Map<String, String> map) {
+    public AttributeMap(Map<String, String> map) {
         super(map);
     }
     

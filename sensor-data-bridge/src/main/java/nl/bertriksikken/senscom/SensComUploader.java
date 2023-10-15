@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +20,9 @@ import nl.bertriksikken.loraforwarder.IUploader;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
+import okhttp3.Interceptor.Chain;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -31,7 +34,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public final class SensComUploader implements IUploader {
 
     private static final Logger LOG = LoggerFactory.getLogger(SensComUploader.class);
-    private static final String SOFTWARE_VERSION = "https://github.com/bertrik/sensor-data-bridge";
+    private static final String USER_AGENT = "github.com/bertrik/sensor-data-bridge";
+    private static final String SOFTWARE_VERSION = "20231015";
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -46,7 +50,7 @@ public final class SensComUploader implements IUploader {
      * @param restClient the REST client
      */
     SensComUploader(ISensComApi restClient) {
-        this.restClient = restClient;
+        this.restClient = Objects.requireNonNull(restClient);
     }
 
     /**
@@ -55,13 +59,18 @@ public final class SensComUploader implements IUploader {
     public static SensComUploader create(SensComConfig config) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeout());
         Duration timeout = config.getTimeout();
-        OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(timeout).readTimeout(timeout)
-                .writeTimeout(timeout).build();
+        OkHttpClient client = new OkHttpClient().newBuilder().addInterceptor(SensComUploader::addUserAgent)
+                .connectTimeout(timeout).readTimeout(timeout).writeTimeout(timeout).build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(config.getUrl())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
         ISensComApi restClient = retrofit.create(ISensComApi.class);
         return new SensComUploader(restClient);
+    }
+
+    private static okhttp3.Response addUserAgent(Chain chain) throws IOException {
+        Request userAgentRequest = chain.request().newBuilder().header("User-Agent", USER_AGENT).build();
+        return chain.proceed(userAgentRequest);
     }
 
     @Override

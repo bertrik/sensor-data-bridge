@@ -190,7 +190,7 @@ public final class SensComUploader implements IUploader {
             if (response.isSuccessful()) {
                 LOG.info("Result success: {}", response.body());
             } else {
-                LOG.warn("Request failed: {}", response.message());
+                LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());

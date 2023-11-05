@@ -3,6 +3,7 @@ package nl.bertriksikken.loraforwarder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.Manifest;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -59,12 +61,15 @@ public final class SensorDataBridge {
 
         SensorDataBridgeConfig config = readConfig(new File(CONFIG_FILE));
         SensorDataBridge app = new SensorDataBridge(config);
-        app.start();
         Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
+        app.start();
     }
 
     private SensorDataBridge(SensorDataBridgeConfig config) {
-        uploaders.add(SensComUploader.create(config.getSensComConfig()));
+        String version = getVersion();
+        LOG.info("Initializing SensorDataBridge application, version '{}'", version);
+
+        uploaders.add(SensComUploader.create(config.getSensComConfig(), version));
         uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
 
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
@@ -256,6 +261,18 @@ public final class SensorDataBridge {
         uploaders.forEach(IUploader::stop);
 
         LOG.info("Stopped sensor-data-bridge application");
+    }
+
+    private String getVersion() {
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+        try {
+            Manifest manifest = new Manifest(stream);
+            String version = manifest.getMainAttributes().getValue("Implementation-Version");
+            return version != null ? version : "unspecified";
+        } catch (IOException e) {
+            LOG.warn("Could not read version from manifest", e);
+            return "unknown";
+        }
     }
 
     private static SensorDataBridgeConfig readConfig(File file) throws IOException {

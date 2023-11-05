@@ -1,7 +1,15 @@
 apply plugin: "application"
+apply plugin: "com.palantir.git-version"
 
 application {
     mainClass = 'nl.bertriksikken.loraforwarder.SensorDataBridge'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'sensor-data-bridge'
+        attributes 'Implementation-Version': gitVersion()
+    }
 }
 
 dependencies {

@@ -2,6 +2,7 @@ plugins {
     alias libs.plugins.spotbugs
     alias libs.plugins.versions
     alias libs.plugins.dependencycheck
+    alias libs.plugins.git.version
 }
 
 def isNonStable = { String version ->

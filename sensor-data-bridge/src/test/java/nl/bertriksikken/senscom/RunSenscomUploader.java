@@ -24,7 +24,7 @@ public final class RunSenscomUploader {
 
     private void run() {
         SensComConfig config = new SensComConfig("http://localhost:8080", 10);
-        SensComUploader uploader = SensComUploader.create(config);
+        SensComUploader uploader = SensComUploader.create(config, "test");
         uploader.start();
 
         AppDeviceId id = new AppDeviceId("app", "device");

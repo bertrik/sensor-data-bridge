@@ -39,24 +39,21 @@ public final class SensComUploader implements IUploader {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final String softwareVersion;
     private final ISensComApi restClient;
 
     // map from device id to sensor.community id
     private final Map<AppDeviceId, String> sensComIds = new HashMap<>();
 
-    /**
-     * Constructor.
-     * 
-     * @param restClient the REST client
-     */
-    SensComUploader(ISensComApi restClient) {
+    SensComUploader(ISensComApi restClient, String softwareVersion) {
+        this.softwareVersion = softwareVersion;
         this.restClient = Objects.requireNonNull(restClient);
     }
 
     /**
      * Creates a new sensor.community REST client.
      */
-    public static SensComUploader create(SensComConfig config) {
+    public static SensComUploader create(SensComConfig config, String version) {
         LOG.info("Creating new REST client for '{}' with timeout {}", config.getUrl(), config.getTimeout());
         Duration timeout = config.getTimeout();
         OkHttpClient client = new OkHttpClient().newBuilder().addInterceptor(SensComUploader::addUserAgent)
@@ -65,7 +62,7 @@ public final class SensComUploader implements IUploader {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create()).client(client).build();
         ISensComApi restClient = retrofit.create(ISensComApi.class);
-        return new SensComUploader(restClient);
+        return new SensComUploader(restClient, version);
     }
 
     private static okhttp3.Response addUserAgent(Chain chain) throws IOException {
@@ -102,7 +99,7 @@ public final class SensComUploader implements IUploader {
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
                 || data.hasValue(ESensorItem.PM4_0)) {
-            SensComMessage p1Message = new SensComMessage(SOFTWARE_VERSION);
+            SensComMessage p1Message = new SensComMessage(softwareVersion);
 
             addSimpleItem(data, p1Message, ESensorItem.PM10, "P1");
             addSimpleItem(data, p1Message, ESensorItem.PM4_0, "P4");

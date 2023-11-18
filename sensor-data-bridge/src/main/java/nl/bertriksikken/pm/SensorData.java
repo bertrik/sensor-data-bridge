@@ -8,11 +8,11 @@ import java.util.Map;
  */
 public final class SensorData {
 
-    // start with a simple map containing one Double value per item
-    private final Map<ESensorItem, Double> items = new LinkedHashMap<>();
+    // start with a simple map containing one Number value per item
+    private final Map<ESensorItem, Number> items = new LinkedHashMap<>();
 
-    public boolean addValue(ESensorItem item, Double value) {
-        if (!item.inRange(value)) {
+    public boolean addValue(ESensorItem item, Number value) {
+        if ((value instanceof Double) && !item.inRange(value.doubleValue())) {
             return false;
         }
         items.put(item, value);
@@ -24,6 +24,10 @@ public final class SensorData {
     }
 
     public Double getValue(ESensorItem item) {
+        return items.get(item).doubleValue();
+    }
+
+    public Number get(ESensorItem item) {
         return items.get(item);
     }
 

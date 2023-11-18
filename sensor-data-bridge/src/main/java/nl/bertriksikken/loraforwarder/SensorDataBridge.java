@@ -69,9 +69,13 @@ public final class SensorDataBridge {
         String version = getVersion();
         LOG.info("Initializing SensorDataBridge application, version '{}'", version);
 
-        uploaders.add(SensComUploader.create(config.getSensComConfig(), version));
-        uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
-
+        if (!config.getSensComConfig().getUrl().isEmpty()) {
+            uploaders.add(SensComUploader.create(config.getSensComConfig(), version));
+        }
+        if (!config.getOpenSenseConfig().getUrl().isEmpty()) {
+            uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
+        }
+            
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
 
         TtnConfig ttnConfig = config.getTtnConfig();
@@ -129,7 +133,7 @@ public final class SensorDataBridge {
             sensorData.addValue(ESensorItem.LORA_SNR, uplink.getSNR());
         }
         if (uplink.getSF() > 0) {
-            sensorData.addValue(ESensorItem.LORA_SF, (double) uplink.getSF());
+            sensorData.addValue(ESensorItem.LORA_SF, uplink.getSF());
         }
 
         // SPS30 specific decoding

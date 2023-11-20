@@ -128,8 +128,8 @@ public final class OpenSenseUploader implements IUploader {
                 String result = response.body();
                 LOG.info("Upload for {} to opensense box {} success: {}", sensComId, boxId, result);
             } else {
-                LOG.warn("Upload for {} to opensense box {} failure: {}", sensComId, boxId,
-                        response.errorBody().string());
+                LOG.warn("Upload for {} to opensense box {} failure: {} - {}", sensComId, boxId,
+                        response.code(), response.errorBody().string());
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());

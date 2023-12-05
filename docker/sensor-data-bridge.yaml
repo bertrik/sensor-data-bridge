@@ -25,12 +25,8 @@ senscom:
 opensense:
   url: "https://api.opensensemap.org"
   timeout: 30
-mydevices:
-  url: "https://api.mydevices.com"
-  timeout: 30
 geolocation:
   url: "https://location.services.mozilla.com"
   timeout: 30
   apikey: "test"
-
 

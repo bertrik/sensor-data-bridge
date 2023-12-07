@@ -15,7 +15,6 @@ jar {
 dependencies {
     implementation project(":cayenne")
 
-    implementation libs.slf4j.api
     implementation libs.slf4j.reload4j
 
     implementation libs.paho.client.mqttv3

@@ -51,8 +51,8 @@ public final class SensorDataBridgeConfigTest {
         JsonDecoderConfig jsonConfig = new JsonDecoderConfig();
         jsonConfig.add(new JsonDecoderItem("/pm10", ESensorItem.PM10));
         jsonConfig.add(new JsonDecoderItem("/pm2p5", ESensorItem.PM2_5));
-        jsonConfig.add(new JsonDecoderItem("/rh", ESensorItem.HUMI));
-        jsonConfig.add(new JsonDecoderItem("/temp", ESensorItem.TEMP));
+        jsonConfig.add(new JsonDecoderItem("/rh", ESensorItem.HUMIDITY));
+        jsonConfig.add(new JsonDecoderItem("/temp", ESensorItem.TEMPERATURE));
         return new DecoderConfig(EPayloadEncoding.JSON, new POJONode(jsonConfig));
     }
 
@@ -66,8 +66,8 @@ public final class SensorDataBridgeConfigTest {
 
     private DecoderConfig createMjsDecoder() {
         JsonDecoderConfig jsonConfig = new JsonDecoderConfig();
-        jsonConfig.add(new JsonDecoderItem("/temperature", ESensorItem.TEMP));
-        jsonConfig.add(new JsonDecoderItem("/humidity", ESensorItem.HUMI));
+        jsonConfig.add(new JsonDecoderItem("/temperature", ESensorItem.TEMPERATURE));
+        jsonConfig.add(new JsonDecoderItem("/humidity", ESensorItem.HUMIDITY));
         jsonConfig.add(new JsonDecoderItem("/pm10", ESensorItem.PM10));
         jsonConfig.add(new JsonDecoderItem("/pm2_5", ESensorItem.PM2_5));
         return new DecoderConfig(EPayloadEncoding.JSON, new POJONode(jsonConfig));

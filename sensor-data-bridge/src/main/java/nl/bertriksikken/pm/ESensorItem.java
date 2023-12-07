@@ -15,8 +15,8 @@ public enum ESensorItem {
     
     PM_TPS("Typical particle size, in um"),
 
-    HUMI("Relative humidity, in percent", 0, 100),
-    TEMP("Temperature, in degrees Celcius", -100, 100),
+    HUMIDITY("Relative humidity, in percent", 0, 100),
+    TEMPERATURE("Temperature, in degrees Celcius", -100, 100),
     PRESSURE("Atmospheric pressure, in Pa", 0, 1E6),
 
     POS_LAT("Latitude in degrees", -90, 90),

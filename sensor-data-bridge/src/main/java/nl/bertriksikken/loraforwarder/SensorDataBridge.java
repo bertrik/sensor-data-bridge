@@ -158,8 +158,8 @@ public final class SensorDataBridge {
             TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
             sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
             sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
-            sensorData.addValue(ESensorItem.HUMI, ulmMessage.getRhPerc());
-            sensorData.addValue(ESensorItem.TEMP, ulmMessage.getTempC());
+            sensorData.addValue(ESensorItem.HUMIDITY, ulmMessage.getRhPerc());
+            sensorData.addValue(ESensorItem.TEMPERATURE, ulmMessage.getTempC());
             break;
         case CAYENNE:
             TtnCayenneMessage cayenne = TtnCayenneMessage.parse(uplink.getRawPayload());
@@ -176,10 +176,10 @@ public final class SensorDataBridge {
                 sensorData.addValue(ESensorItem.PM1_0, cayenne.getPm1_0());
             }
             if (cayenne.hasRhPerc()) {
-                sensorData.addValue(ESensorItem.HUMI, cayenne.getRhPerc());
+                sensorData.addValue(ESensorItem.HUMIDITY, cayenne.getRhPerc());
             }
             if (cayenne.hasTempC()) {
-                sensorData.addValue(ESensorItem.TEMP, cayenne.getTempC());
+                sensorData.addValue(ESensorItem.TEMPERATURE, cayenne.getTempC());
             }
             if (cayenne.hasPressureMillibar()) {
                 sensorData.addValue(ESensorItem.PRESSURE, 100.0 * cayenne.getPressureMillibar());

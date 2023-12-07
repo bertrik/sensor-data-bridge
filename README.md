@@ -40,9 +40,9 @@ ttn:
       - path: "/pm2p5"
         item: "PM2_5"
       - path: "/rh"
-        item: "HUMI"
+        item: "HUMIDITY"
       - path: "/temp"
-        item: "TEMP"
+        item: "TEMPERATURE"
   - name: "ttn-soundkit"
     key: "secret"
     decoder:

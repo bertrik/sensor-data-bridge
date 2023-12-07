@@ -87,11 +87,11 @@ public final class OpenSenseUploader implements IUploader {
 
         // humidity/temperature/pressure
         String meteoPrefix = getMeteoPrefix(data);
-        if (data.hasValue(ESensorItem.HUMI)) {
-            message.addItem(meteoPrefix + "humidity", data.getValue(ESensorItem.HUMI));
+        if (data.hasValue(ESensorItem.HUMIDITY)) {
+            message.addItem(meteoPrefix + "humidity", data.getValue(ESensorItem.HUMIDITY));
         }
-        if (data.hasValue(ESensorItem.TEMP)) {
-            message.addItem(meteoPrefix + "temperature", data.getValue(ESensorItem.TEMP));
+        if (data.hasValue(ESensorItem.TEMPERATURE)) {
+            message.addItem(meteoPrefix + "temperature", data.getValue(ESensorItem.TEMPERATURE));
         }
         if (data.hasValue(ESensorItem.PRESSURE)) {
             message.addItem(meteoPrefix + "pressure", data.getValue(ESensorItem.PRESSURE));
@@ -103,7 +103,8 @@ public final class OpenSenseUploader implements IUploader {
     }
 
     private String getMeteoPrefix(SensorData data) {
-        if (data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)) {
+        if (data.hasValue(ESensorItem.HUMIDITY) && data.hasValue(ESensorItem.TEMPERATURE)
+                && data.hasValue(ESensorItem.PRESSURE)) {
             return "BME280_";
         }
         return "";
@@ -128,8 +129,8 @@ public final class OpenSenseUploader implements IUploader {
                 String result = response.body();
                 LOG.info("Upload for {} to opensense box {} success: {}", sensComId, boxId, result);
             } else {
-                LOG.warn("Upload for {} to opensense box {} failure: {} - {}", sensComId, boxId,
-                        response.code(), response.errorBody().string());
+                LOG.warn("Upload for {} to opensense box {} failure: {} - {}", sensComId, boxId, response.code(),
+                        response.errorBody().string());
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException: {}", e.getMessage());

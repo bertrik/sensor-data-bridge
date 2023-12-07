@@ -120,20 +120,20 @@ public final class SensComUploader implements IUploader {
         }
 
         // pin 3: temperature & pressure, but no humidity
-        if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.PRESSURE)
-                && !data.hasValue(ESensorItem.HUMI)) {
+        if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.PRESSURE)
+                && !data.hasValue(ESensorItem.HUMIDITY)) {
             SensComMessage p3Message = new SensComMessage(softwareVersion);
-            p3Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
+            p3Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
             p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
             uploadMeasurement(ESensComPin.TEMPERATURE_PRESSURE, sensorId, p3Message);
         }
 
         // pin 7: temperature & humidity, but no pressure
-        if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI)
+        if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.HUMIDITY)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p7Message = new SensComMessage(softwareVersion);
-            p7Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
-            p7Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
+            p7Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
+            p7Message.addItem("humidity", data.getValue(ESensorItem.HUMIDITY));
             uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY, sensorId, p7Message);
         }
 
@@ -149,19 +149,20 @@ public final class SensComUploader implements IUploader {
         }
 
         // pin 11: temperature & humidity & pressure
-        if (data.hasValue(ESensorItem.TEMP) && data.hasValue(ESensorItem.HUMI) && data.hasValue(ESensorItem.PRESSURE)) {
+        if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.HUMIDITY)
+                && data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p11Message = new SensComMessage(softwareVersion);
-            p11Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
-            p11Message.addItem("humidity", data.getValue(ESensorItem.HUMI));
+            p11Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
+            p11Message.addItem("humidity", data.getValue(ESensorItem.HUMIDITY));
             p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
             uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY_PRESSURE, sensorId, p11Message);
         }
 
         // pin 13: only temperature
-        if (data.hasValue(ESensorItem.TEMP) && !data.hasValue(ESensorItem.HUMI)
+        if (data.hasValue(ESensorItem.TEMPERATURE) && !data.hasValue(ESensorItem.HUMIDITY)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p13Message = new SensComMessage(softwareVersion);
-            p13Message.addItem("temperature", data.getValue(ESensorItem.TEMP));
+            p13Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
             uploadMeasurement(ESensComPin.TEMPERATURE, sensorId, p13Message);
         }
 

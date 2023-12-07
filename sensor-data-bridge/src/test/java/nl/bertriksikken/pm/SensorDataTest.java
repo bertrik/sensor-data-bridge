@@ -10,9 +10,9 @@ public final class SensorDataTest {
         SensorData sensorData = new SensorData();
 
         // value in range
-        Assert.assertTrue(sensorData.addValue(ESensorItem.HUMI, 100.0));
-        Assert.assertTrue(sensorData.hasValue(ESensorItem.HUMI));
-        Assert.assertEquals(100.0, sensorData.getValue(ESensorItem.HUMI), 0.1);
+        Assert.assertTrue(sensorData.addValue(ESensorItem.HUMIDITY, 100.0));
+        Assert.assertTrue(sensorData.hasValue(ESensorItem.HUMIDITY));
+        Assert.assertEquals(100.0, sensorData.getValue(ESensorItem.HUMIDITY), 0.1);
 
         // value out of range
         Assert.assertFalse(sensorData.addValue(ESensorItem.PM10, -1.0));

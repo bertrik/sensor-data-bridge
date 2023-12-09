@@ -1,6 +1,6 @@
 [versions]
 jackson = "2.16.0"
-jersey = "3.1.4"
+jersey = "3.1.3"
 retrofit = "2.9.0"
 slf4j = "2.0.9"
 spotbugs = "4.8.2"

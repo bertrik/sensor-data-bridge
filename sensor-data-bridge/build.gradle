@@ -22,7 +22,6 @@ dependencies {
     
     // REST server
     implementation libs.bundles.jersey
-    implementation libs.bundles.jetty
     // REST client
     implementation libs.bundles.retrofit
     

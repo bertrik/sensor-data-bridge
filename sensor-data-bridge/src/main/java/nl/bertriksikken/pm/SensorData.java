@@ -2,6 +2,7 @@ package nl.bertriksikken.pm;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Collection of measurement items.
@@ -33,7 +34,8 @@ public final class SensorData {
 
     @Override
     public String toString() {
-        return items.toString();
+        return items.entrySet().stream().map(entry -> entry.getKey().format(entry.getValue()))
+                .collect(Collectors.joining(",", "{", "}"));
     }
 
 }

@@ -28,6 +28,12 @@ public final class SensorDataTest {
         SensorData sensorData = new SensorData();
         String s = sensorData.toString();
         Assert.assertEquals("{}", s);
+
+        // value in range
+        sensorData.addValue(ESensorItem.PM2_5, 2.5);
+        sensorData.addValue(ESensorItem.PM10, 10.0);
+        sensorData.addValue(ESensorItem.HUMIDITY, 12.3);
+        Assert.assertEquals("{PM2_5=2.5ug/m3,PM10=10.0ug/m3,HUMIDITY=12.3%}", sensorData.toString());
     }
 
 }

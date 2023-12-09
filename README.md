@@ -16,6 +16,16 @@ Several data encodings are supported:
 
 Experimental support for Helium LoRaWAN, NB-IOT. Possible future support for Sigfox.
 
+## Configuration
+
+### TheThingsNetwork configuration
+The application requires an API key with the following rights
+
+![TTN API key](ttn-api-key.png)
+
+Make sure to copy/save it to another place immediately after creating in on the TTN console.
+
+### Application configuration
 Application example config file (YAML):
 
 ~~~~

@@ -34,4 +34,21 @@ public final class JsonDecoderTest {
         Assert.assertEquals(35.5, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
     }
 
+    @Test
+    public void testDecodeJsonPayload() throws IOException {
+        String json = mapper.readTree(getClass().getResource("/json_payload.json")).toPrettyString();
+
+        JsonDecoder decoder = new JsonDecoder();
+        JsonDecoderConfig config = new JsonDecoderConfig();
+        config.add(new JsonDecoderItem("/airpressure", ESensorItem.PRESSURE, 100.0));
+        config.add(new JsonDecoderItem("/temperature", ESensorItem.TEMPERATURE));
+        JsonNode configNode = new POJONode(config);
+
+        SensorData sensorData = new SensorData();
+        decoder.parse(configNode, json, sensorData);
+
+        Assert.assertEquals(99700, sensorData.getValue(ESensorItem.PRESSURE), 0.1);
+        Assert.assertEquals(10.1, sensorData.getValue(ESensorItem.TEMPERATURE), 0.1);
+    }
+
 }

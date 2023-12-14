@@ -1,0 +1,17 @@
+{
+    "airpressure": 997,
+    "altitude": 0.77,
+    "aqi": 0,
+    "battRemain": 90,
+    "dust": "sps30",
+    "humidity": 90.2,
+    "latitude": 5.8603,
+    "longitude": 51.6919,
+    "meteo": "bme680",
+    "pm1": 2.2,
+    "pm10": 3.7,
+    "pm25": 3,
+    "temperature": 10.1,
+    "tvoc": -8806,
+    "version": 0
+}

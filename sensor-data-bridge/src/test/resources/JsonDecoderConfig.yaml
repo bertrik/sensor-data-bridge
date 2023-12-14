@@ -1,0 +1,6 @@
+---
+- path: "/temperature"
+  item: "TEMPERATURE"
+- path: "/pressure"
+  item: "PRESSURE"
+  unit: 100.0

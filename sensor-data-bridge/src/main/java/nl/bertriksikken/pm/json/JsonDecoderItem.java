@@ -20,20 +20,29 @@ public final class JsonDecoderItem {
     @JsonProperty("item")
     ESensorItem item;
 
+    // the unit of the item, e.g. 100 for hectopascal (mbar)
+    @JsonProperty("unit")
+    double unit = 1.0;
+
     @SuppressWarnings("unused")
     private JsonDecoderItem() {
         // no-arg jackson constructor
-        this("", null);
+        this("", null, 1.0);
+    }
+
+    public JsonDecoderItem(String path, ESensorItem item, double unit) {
+        this.path = path;
+        this.item = item;
+        this.unit = unit;
     }
 
     public JsonDecoderItem(String path, ESensorItem item) {
-        this.path = path;
-        this.item = item;
+        this(path, item, 1.0);
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "{path=%s,item=%s}", path, item);
+        return String.format(Locale.ROOT, "{path=%s,item=%s,unit=%f}", path, item, unit);
     }
 
 }

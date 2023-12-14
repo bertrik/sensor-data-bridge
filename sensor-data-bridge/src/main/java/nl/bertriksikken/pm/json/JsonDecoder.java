@@ -19,12 +19,12 @@ public final class JsonDecoder {
         JsonDecoderConfig jsonDecoderConfig = OBJECT_MAPPER.treeToValue(config, JsonDecoderConfig.class);
 
         // parse JSON into generic structure
-        JsonNode node = OBJECT_MAPPER.readTree(json);
+        JsonNode tree = OBJECT_MAPPER.readTree(json);
 
         // extract measurement items
         for (JsonDecoderItem item : jsonDecoderConfig) {
-            JsonNode field = node.at(item.path);
-            double value = field.asDouble(Double.NaN);
+            JsonNode node = tree.at(item.path);
+            double value = node.asDouble(Double.NaN) * item.unit;
             if (item.item.inRange(value)) {
                 data.addValue(item.item, value);
             }

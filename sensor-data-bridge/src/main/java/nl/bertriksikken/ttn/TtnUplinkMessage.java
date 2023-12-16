@@ -55,7 +55,7 @@ public final class TtnUplinkMessage {
     public String getDecodedFields() {
         return decodedFields;
     }
-    
+
     public int getPort() {
         return port;
     }
@@ -74,8 +74,8 @@ public final class TtnUplinkMessage {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "EUI %s, data %s, port %d, SF %d", devEui, HexConverter.toString(rawPayload),
-                port, sf);
+        return String.format(Locale.ROOT, "%s/%s: {data:'%s', fields:'%s'}", appId, devId,
+                HexConverter.toString(rawPayload), decodedFields);
     }
 
 }

@@ -19,7 +19,11 @@ Experimental support for Helium LoRaWAN, NB-IOT. Possible future support for Sig
 ## Configuration
 
 ### TheThingsNetwork configuration
-The application requires an API key with the following rights
+The application requires an application API key with the following individual rights:
+
+* View devices in application
+* View application information
+* Read application traffic (uplink and downlink)
 
 ![TTN API key](ttn-api-key.png)
 

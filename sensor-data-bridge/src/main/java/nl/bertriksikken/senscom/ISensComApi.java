@@ -7,6 +7,8 @@ import retrofit2.http.POST;
 
 /**
  * REST API for sensor.community
+ * 
+ * @see https://github.com/opendata-stuttgart/meta/wiki/EN-APIs#api-sensorcommnunity
  */
 public interface ISensComApi {
 

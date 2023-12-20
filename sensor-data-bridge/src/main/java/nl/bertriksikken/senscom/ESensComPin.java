@@ -2,9 +2,6 @@ package nl.bertriksikken.senscom;
 
 import java.util.Locale;
 
-/**
- * @see https://github.com/opendata-stuttgart/meta/wiki/EN-APIs#api-sensorcommnunity
- */
 public enum ESensComPin {
     PARTICULATE_MATTER(1), // dust sensors, e.g. SDS011, PMS1003, PMS7003
     TEMPERATURE_PRESSURE(3), // temperature & pressure, but no humidity, e.g. BMP180

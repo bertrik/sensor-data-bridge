@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.21_9-jre-alpine
+FROM eclipse-temurin:11.0.22_7-jre-alpine
 
 LABEL maintainer="Bertrik Sikken bertrik@gmail.com"
 

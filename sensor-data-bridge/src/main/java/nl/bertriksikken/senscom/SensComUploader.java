@@ -182,15 +182,15 @@ public final class SensComUploader implements IUploader {
 
     private void uploadMeasurement(ESensComPin pin, String sensorId, SensComMessage message) {
         try {
-            LOG.info("Sending for {} to pin {}: '{}'", sensorId, pin, mapper.writeValueAsString(message));
+            LOG.info("Uploading for {} to pin {}: '{}'", sensorId, pin, mapper.writeValueAsString(message));
             Response<String> response = restClient.pushSensorData(pin.getPin(), sensorId, message).execute();
             if (response.isSuccessful()) {
-                LOG.info("Result success: {}", response.body());
+                LOG.info("Upload success for {}: {}", sensorId, response.body());
             } else {
-                LOG.warn("Request failed: {} - {}", response.message(), response.errorBody().string());
+                LOG.warn("Upload failed for {}: {} - {}", sensorId, response.message(), response.errorBody().string());
             }
         } catch (IOException e) {
-            LOG.warn("Caught IOException: {}", e.getMessage());
+            LOG.warn("Caught IOException for {}: {}", sensorId, e.getMessage());
         }
     }
 

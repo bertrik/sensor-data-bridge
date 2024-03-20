@@ -18,6 +18,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -176,9 +177,11 @@ final class SensComWorker {
     private void uploadMeasurement(ESensComPin pin, String sensorId, SensComMessage message) {
         try {
             LOG.info("Uploading for {} ({}) to pin {}: '{}'", appId, sensorId, pin, mapper.writeValueAsString(message));
+            Instant startTime = Instant.now();
             Response<String> response = restClient.pushSensorData(pin.getPin(), sensorId, message).execute();
+            long millis = Duration.between(startTime, Instant.now()).toMillis();
             if (response.isSuccessful()) {
-                LOG.info("Upload success for {}: {}", sensorId, response.body());
+                LOG.info("Upload success for {} in {} ms: {}", sensorId, millis, response.body());
             } else {
                 LOG.warn("Upload failed for {}: {} - {}", sensorId, response.message(), response.errorBody().string());
             }

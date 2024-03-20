@@ -27,14 +27,14 @@ public final class RunSenscomUploader {
         SensComUploader uploader = SensComUploader.create(config, "test");
         uploader.start();
 
-        AppDeviceId id = new AppDeviceId("app", "device");
-        Map<AppDeviceId, AttributeMap> attributes = new HashMap<>();
-        attributes.put(id, new AttributeMap(Map.of("senscom-id", "sensor")));
-        uploader.scheduleProcessAttributes(attributes);
+        Map<String, AttributeMap> attributes = new HashMap<>();
+        AppDeviceId appDeviceId = new AppDeviceId("app", "dev");
+        attributes.put(appDeviceId.getDeviceId(), new AttributeMap(Map.of("senscom-id", "sensor")));
+        uploader.scheduleProcessAttributes(appDeviceId.getAppName(), attributes);
 
         SensorData sensorData = new SensorData();
         sensorData.addValue(ESensorItem.TEMPERATURE, 12.34);
-        uploader.scheduleUpload(id, sensorData);
+        uploader.scheduleUpload(appDeviceId, sensorData);
     }
 
 }

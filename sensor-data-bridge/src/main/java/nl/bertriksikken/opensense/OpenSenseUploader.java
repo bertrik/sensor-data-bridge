@@ -1,16 +1,5 @@
 package nl.bertriksikken.opensense;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.loraforwarder.IUploader;
@@ -19,10 +8,20 @@ import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
 import nl.bertriksikken.senscom.SensComMessage;
 import okhttp3.OkHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class OpenSenseUploader implements IUploader {
 
@@ -138,20 +137,21 @@ public final class OpenSenseUploader implements IUploader {
     }
 
     @Override
-    public void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes) {
-        executor.execute(new CatchingRunnable(LOG, () -> processAttributes(attributes)));
+    public void scheduleProcessAttributes(String appId, Map<String, AttributeMap> attributes) {
+        executor.execute(new CatchingRunnable(LOG, () -> processAttributes(appId, attributes)));
     }
 
-    private void processAttributes(Map<AppDeviceId, AttributeMap> attributes) {
+    private void processAttributes(String appId, Map<String, AttributeMap> attributes) {
         boxIds.clear();
-        attributes.forEach((appDevId, attr) -> processDeviceAttributes(boxIds, appDevId, attr));
+        attributes.forEach((devId, attr) -> processDeviceAttributes(appId, devId, attr));
         boxIds.forEach((device, id) -> LOG.info("Opensense mapping: {} -> {}", device, id));
     }
 
-    private void processDeviceAttributes(Map<AppDeviceId, String> map, AppDeviceId device, AttributeMap attributes) {
+    private void processDeviceAttributes(String appId, String devId, AttributeMap attributes) {
         String opensenseId = attributes.getOrDefault("opensense-id", "").trim();
         if (!opensenseId.isEmpty()) {
-            map.put(device, opensenseId);
+            AppDeviceId appDeviceId = new AppDeviceId(appId, devId);
+            boxIds.put(appDeviceId, opensenseId);
         }
     }
 

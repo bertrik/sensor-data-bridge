@@ -1,28 +1,8 @@
 package nl.bertriksikken.loraforwarder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.jar.Manifest;
-
-import org.apache.log4j.PropertyConfigurator;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.opensense.OpenSenseUploader;
@@ -42,6 +22,24 @@ import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttnv3.enddevice.EndDevice;
 import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
 import nl.bertriksikken.ttnv3.enddevice.IEndDeviceRegistryRestApi;
+import org.apache.log4j.PropertyConfigurator;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.jar.Manifest;
 
 public final class SensorDataBridge {
 
@@ -75,7 +73,7 @@ public final class SensorDataBridge {
         if (!config.getOpenSenseConfig().getUrl().isEmpty()) {
             uploaders.add(OpenSenseUploader.create(config.getOpenSenseConfig()));
         }
-            
+
         geoLocationService = GeoLocationService.create(config.getGeoLocationConfig());
 
         TtnConfig ttnConfig = config.getTtnConfig();
@@ -87,7 +85,7 @@ public final class SensorDataBridge {
                     uplink -> messageReceived(appConfig, uplink));
             mqttListeners.add(listener);
 
-            // for each app, create a device registry client so we can look up attributes
+            // for each app, create a device registry client, so we can look up attributes
             EndDeviceRegistry deviceRegistry = EndDeviceRegistry.create(ttnConfig.getIdentityServerUrl(),
                     ttnConfig.getIdentityServerTimeout(), appConfig);
             deviceRegistries.put(appConfig.getName(), deviceRegistry);
@@ -154,61 +152,60 @@ public final class SensorDataBridge {
 
         // specific fields
         switch (config.getEncoding()) {
-        case TTN_ULM:
-            TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
-            sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
-            sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
-            sensorData.addValue(ESensorItem.HUMIDITY, ulmMessage.getRhPerc());
-            sensorData.addValue(ESensorItem.TEMPERATURE, ulmMessage.getTempC());
-            break;
-        case CAYENNE:
-            TtnCayenneMessage cayenne = TtnCayenneMessage.parse(uplink.getRawPayload());
-            if (cayenne.hasPm10()) {
-                sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
-            }
-            if (cayenne.hasPm4()) {
-                sensorData.addValue(ESensorItem.PM4_0, cayenne.getPm4());
-            }
-            if (cayenne.hasPm2_5()) {
-                sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
-            }
-            if (cayenne.hasPm1_0()) {
-                sensorData.addValue(ESensorItem.PM1_0, cayenne.getPm1_0());
-            }
-            if (cayenne.hasRhPerc()) {
-                sensorData.addValue(ESensorItem.HUMIDITY, cayenne.getRhPerc());
-            }
-            if (cayenne.hasTempC()) {
-                sensorData.addValue(ESensorItem.TEMPERATURE, cayenne.getTempC());
-            }
-            if (cayenne.hasPressureMillibar()) {
-                sensorData.addValue(ESensorItem.PRESSURE, 100.0 * cayenne.getPressureMillibar());
-            }
-            if (cayenne.hasPosition()) {
-                double[] position = cayenne.getPosition();
-                sensorData.addValue(ESensorItem.POS_LAT, position[0]);
-                sensorData.addValue(ESensorItem.POS_LON, position[1]);
-                sensorData.addValue(ESensorItem.POS_ALT, position[2]);
-            }
-            break;
-        case JSON:
-            try {
-                jsonDecoder.parse(config.getProperties(), uplink.getDecodedFields(), sensorData);
-            } catch (JsonProcessingException e) {
-                throw new PayloadParseException(e);
-            }
-            break;
-        default:
-            throw new IllegalStateException("Unhandled encoding: " + config.getEncoding());
+            case TTN_ULM:
+                TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
+                sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
+                sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
+                sensorData.addValue(ESensorItem.HUMIDITY, ulmMessage.getRhPerc());
+                sensorData.addValue(ESensorItem.TEMPERATURE, ulmMessage.getTempC());
+                break;
+            case CAYENNE:
+                TtnCayenneMessage cayenne = TtnCayenneMessage.parse(uplink.getRawPayload());
+                if (cayenne.hasPm10()) {
+                    sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
+                }
+                if (cayenne.hasPm4()) {
+                    sensorData.addValue(ESensorItem.PM4_0, cayenne.getPm4());
+                }
+                if (cayenne.hasPm2_5()) {
+                    sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
+                }
+                if (cayenne.hasPm1_0()) {
+                    sensorData.addValue(ESensorItem.PM1_0, cayenne.getPm1_0());
+                }
+                if (cayenne.hasRhPerc()) {
+                    sensorData.addValue(ESensorItem.HUMIDITY, cayenne.getRhPerc());
+                }
+                if (cayenne.hasTempC()) {
+                    sensorData.addValue(ESensorItem.TEMPERATURE, cayenne.getTempC());
+                }
+                if (cayenne.hasPressureMillibar()) {
+                    sensorData.addValue(ESensorItem.PRESSURE, 100.0 * cayenne.getPressureMillibar());
+                }
+                if (cayenne.hasPosition()) {
+                    double[] position = cayenne.getPosition();
+                    sensorData.addValue(ESensorItem.POS_LAT, position[0]);
+                    sensorData.addValue(ESensorItem.POS_LON, position[1]);
+                    sensorData.addValue(ESensorItem.POS_ALT, position[2]);
+                }
+                break;
+            case JSON:
+                try {
+                    jsonDecoder.parse(config.getProperties(), uplink.getDecodedFields(), sensorData);
+                } catch (JsonProcessingException e) {
+                    throw new PayloadParseException(e);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unhandled encoding: " + config.getEncoding());
         }
         return sensorData;
     }
 
     /**
      * Starts the application.
-     * 
+     *
      * @throws MqttException in case of a problem starting MQTT client
-     * @throws IOException
      */
     private void start() throws MqttException {
         LOG.info("Starting sensor-data-bridge application");
@@ -230,31 +227,27 @@ public final class SensorDataBridge {
     // retrieves application attributes and notifies each interested components
     private void updateAttributes() {
         // fetch all attributes
-        Map<AppDeviceId, AttributeMap> attributes = new HashMap<>();
         for (Entry<String, EndDeviceRegistry> entry : deviceRegistries.entrySet()) {
             String applicationId = entry.getKey();
             EndDeviceRegistry registry = entry.getValue();
             LOG.info("Fetching TTNv3 application attributes for '{}'", applicationId);
+            Map<String, AttributeMap> map = new HashMap<>();
             try {
                 for (EndDevice device : registry.listEndDevices(IEndDeviceRegistryRestApi.FIELD_IDS,
                         IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES)) {
-                    AppDeviceId appDeviceId = new AppDeviceId(applicationId, device.getDeviceId());
-                    attributes.put(appDeviceId, new AttributeMap(device.getAttributes()));
+                    map.put(device.getDeviceId(), new AttributeMap((device.getAttributes())));
                 }
             } catch (IOException e) {
-                LOG.warn("Error getting opensense map ids for {}", e.getMessage());
+                LOG.warn("Error getting attributes for {}", applicationId, e);
             }
+            // notify all uploaders
+            uploaders.forEach(uploader -> uploader.scheduleProcessAttributes(applicationId, map));
         }
         LOG.info("Fetching TTNv3 application attributes done");
-
-        // notify all uploaders
-        uploaders.forEach(uploader -> uploader.scheduleProcessAttributes(attributes));
     }
 
     /**
      * Stops the application.
-     * 
-     * @throws MqttException
      */
     private void stop() {
         LOG.info("Stopping sensor-data-bridge application");

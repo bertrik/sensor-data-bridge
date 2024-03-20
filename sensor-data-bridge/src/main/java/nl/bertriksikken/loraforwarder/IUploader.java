@@ -10,7 +10,7 @@ public interface IUploader {
 
     void stop();
 
-    void scheduleProcessAttributes(Map<AppDeviceId, AttributeMap> attributes);
+    void scheduleProcessAttributes(String applicationId, Map<String, AttributeMap> deviceAttributes);
 
     void scheduleUpload(AppDeviceId appDeviceId, SensorData data);
 

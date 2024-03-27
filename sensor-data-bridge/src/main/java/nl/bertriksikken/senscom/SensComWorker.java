@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -94,20 +93,20 @@ final class SensComWorker {
                 || data.hasValue(ESensorItem.PM4_0)) {
             SensComMessage p1Message = new SensComMessage(softwareVersion);
 
-            addSimpleItem(data, p1Message, ESensorItem.PM10, "P1");
-            addSimpleItem(data, p1Message, ESensorItem.PM4_0, "P4");
-            addSimpleItem(data, p1Message, ESensorItem.PM2_5, "P2");
-            addSimpleItem(data, p1Message, ESensorItem.PM1_0, "P0");
+            addItem(p1Message, data, ESensComItem.PM10);
+            addItem(p1Message, data, ESensComItem.PM4);
+            addItem(p1Message, data, ESensComItem.PM2_5);
+            addItem(p1Message, data, ESensComItem.PM1_0);
 
-            addSimpleItem(data, p1Message, ESensorItem.PM10_N, "N10");
-            addSimpleItem(data, p1Message, ESensorItem.PM4_0_N, "N4");
-            addSimpleItem(data, p1Message, ESensorItem.PM2_5_N, "N25");
-            addSimpleItem(data, p1Message, ESensorItem.PM1_0_N, "N1");
-            addSimpleItem(data, p1Message, ESensorItem.PM0_5_N, "N05");
+            addItem(p1Message, data, ESensComItem.PM10_N);
+            addItem(p1Message, data, ESensComItem.PM4_0_N);
+            addItem(p1Message, data, ESensComItem.PM2_5_N);
+            addItem(p1Message, data, ESensComItem.PM1_0_N);
+            addItem(p1Message, data, ESensComItem.PM0_5_N);
 
             // encode particle size with 3 decimals
             if (data.hasValue(ESensorItem.PM_TPS)) {
-                p1Message.addItem("TS", String.format(Locale.ROOT, "%.3f", data.getValue(ESensorItem.PM_TPS)));
+                addItem(p1Message, data, ESensComItem.PM_TPS);
             }
 
             uploadMeasurement(ESensComPin.PARTICULATE_MATTER, sensorId, p1Message);
@@ -117,8 +116,8 @@ final class SensComWorker {
         if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.PRESSURE)
                 && !data.hasValue(ESensorItem.HUMIDITY)) {
             SensComMessage p3Message = new SensComMessage(softwareVersion);
-            p3Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
-            p3Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
+            addItem(p3Message, data, ESensComItem.TEMPERATURE);
+            addItem(p3Message, data, ESensComItem.PRESSURE);
             uploadMeasurement(ESensComPin.TEMPERATURE_PRESSURE, sensorId, p3Message);
         }
 
@@ -126,18 +125,18 @@ final class SensComWorker {
         if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.HUMIDITY)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p7Message = new SensComMessage(softwareVersion);
-            p7Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
-            p7Message.addItem("humidity", data.getValue(ESensorItem.HUMIDITY));
+            addItem(p7Message, data, ESensComItem.TEMPERATURE);
+            addItem(p7Message, data, ESensComItem.HUMIDITY);
             uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY, sensorId, p7Message);
         }
 
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
             SensComMessage p9Message = new SensComMessage(softwareVersion);
-            p9Message.addItem("latitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LAT)));
-            p9Message.addItem("longitude", String.format(Locale.ROOT, "%.4f", data.getValue(ESensorItem.POS_LON)));
+            addItem(p9Message, data, ESensComItem.LATITUDE);
+            addItem(p9Message, data, ESensComItem.LONGITUDE);
             if (data.hasValue(ESensorItem.POS_ALT)) {
-                p9Message.addItem("altitude", data.getValue(ESensorItem.POS_ALT));
+                addItem(p9Message, data, ESensComItem.ALTITUDE);
             }
             uploadMeasurement(ESensComPin.POSITION, sensorId, p9Message);
         }
@@ -146,9 +145,9 @@ final class SensComWorker {
         if (data.hasValue(ESensorItem.TEMPERATURE) && data.hasValue(ESensorItem.HUMIDITY)
                 && data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p11Message = new SensComMessage(softwareVersion);
-            p11Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
-            p11Message.addItem("humidity", data.getValue(ESensorItem.HUMIDITY));
-            p11Message.addItem("pressure", data.getValue(ESensorItem.PRESSURE));
+            addItem(p11Message, data, ESensComItem.TEMPERATURE);
+            addItem(p11Message, data, ESensComItem.HUMIDITY);
+            addItem(p11Message, data, ESensComItem.PRESSURE);
             uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY_PRESSURE, sensorId, p11Message);
         }
 
@@ -156,7 +155,7 @@ final class SensComWorker {
         if (data.hasValue(ESensorItem.TEMPERATURE) && !data.hasValue(ESensorItem.HUMIDITY)
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p13Message = new SensComMessage(softwareVersion);
-            p13Message.addItem("temperature", data.getValue(ESensorItem.TEMPERATURE));
+            addItem(p13Message, data, ESensComItem.TEMPERATURE);
             uploadMeasurement(ESensComPin.TEMPERATURE, sensorId, p13Message);
         }
 
@@ -164,12 +163,9 @@ final class SensComWorker {
         if (data.hasValue(ESensorItem.NOISE_LA_MIN) && data.hasValue(ESensorItem.NOISE_LA_EQ)
                 && data.hasValue(ESensorItem.NOISE_LA_MAX)) {
             SensComMessage p15Message = new SensComMessage(softwareVersion);
-            p15Message.addItem("noise_LAeq",
-                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_EQ)));
-            p15Message.addItem("noise_LA_min",
-                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MIN)));
-            p15Message.addItem("noise_LA_max",
-                    String.format(Locale.ROOT, "%.1f", data.getValue(ESensorItem.NOISE_LA_MAX)));
+            addItem(p15Message, data, ESensComItem.NOISE_LA_EQ);
+            addItem(p15Message, data, ESensComItem.NOISE_LA_MIN);
+            addItem(p15Message, data, ESensComItem.NOISE_LA_MAX);
             uploadMeasurement(ESensComPin.NOISE, sensorId, p15Message);
         }
     }
@@ -190,10 +186,11 @@ final class SensComWorker {
         }
     }
 
-    private void addSimpleItem(SensorData data, SensComMessage message, ESensorItem item, String name) {
+    private void addItem(SensComMessage message, SensorData data, ESensComItem sensComItem) {
+        ESensorItem item = sensComItem.getItem();
         if (data.hasValue(item)) {
-            double value = data.getValue(item);
-            message.addItem(name, value);
+            String value = sensComItem.format(data.getValue(item));
+            message.addItem(sensComItem.getId(), value);
         }
     }
 

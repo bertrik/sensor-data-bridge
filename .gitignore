@@ -1,9 +1,4 @@
-.settings
-.project
-.classpath
-.lock
-.gradle
-.metadata
+.*
 tmp/
 bin/
 build/

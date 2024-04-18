@@ -30,9 +30,9 @@ public enum ESensComItem {
     PRESSURE(ESensorItem.PRESSURE, "pressure"),
 
     // location
-    LATITUDE(ESensorItem.POS_LAT, "latitude", 4),
-    LONGITUDE(ESensorItem.POS_LON, "longitude", 4),
-    ALTITUDE(ESensorItem.POS_ALT, "altitude");
+    GPS_LAT(ESensorItem.POS_LAT, "lat", 5),
+    GPS_LON(ESensorItem.POS_LON, "lon", 5),
+    GPS_ALT(ESensorItem.POS_ALT, "height");
 
     private final ESensorItem item;
     private final String id;

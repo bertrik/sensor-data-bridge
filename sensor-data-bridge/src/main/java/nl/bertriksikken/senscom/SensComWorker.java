@@ -133,10 +133,10 @@ final class SensComWorker {
         // pin 9: position
         if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
             SensComMessage p9Message = new SensComMessage(softwareVersion);
-            addItem(p9Message, data, ESensComItem.LATITUDE);
-            addItem(p9Message, data, ESensComItem.LONGITUDE);
+            addItem(p9Message, data, ESensComItem.GPS_LAT);
+            addItem(p9Message, data, ESensComItem.GPS_LON);
             if (data.hasValue(ESensorItem.POS_ALT)) {
-                addItem(p9Message, data, ESensComItem.ALTITUDE);
+                addItem(p9Message, data, ESensComItem.GPS_ALT);
             }
             uploadMeasurement(ESensComPin.POSITION, sensorId, p9Message);
         }

@@ -160,12 +160,11 @@ final class SensComWorker {
         }
 
         // pin 15: noise
-        if (data.hasValue(ESensorItem.NOISE_LA_MIN) && data.hasValue(ESensorItem.NOISE_LA_EQ)
-                && data.hasValue(ESensorItem.NOISE_LA_MAX)) {
+        if (data.hasValue(ESensorItem.NOISE_LA_EQ)) {
             SensComMessage p15Message = new SensComMessage(softwareVersion);
             addItem(p15Message, data, ESensComItem.NOISE_LA_EQ);
-            addItem(p15Message, data, ESensComItem.NOISE_LA_MIN);
-            addItem(p15Message, data, ESensComItem.NOISE_LA_MAX);
+            addItem(p15Message, data, ESensComItem.NOISE_LA_MIN); // optional
+            addItem(p15Message, data, ESensComItem.NOISE_LA_MAX); // optional
             uploadMeasurement(ESensComPin.NOISE, sensorId, p15Message);
         }
     }

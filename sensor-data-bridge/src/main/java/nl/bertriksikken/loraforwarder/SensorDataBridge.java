@@ -115,7 +115,7 @@ public final class SensorDataBridge {
             LOG.info("Decoded: '{}'", sensorData);
             uploaders.forEach(uploader -> uploader.scheduleUpload(appDeviceId, sensorData));
         } catch (PayloadParseException e) {
-            LOG.warn("Could not parse payload from: '{}", uplink.getRawPayload());
+            LOG.warn("Could not parse payload from: '{}", uplink.getRawPayload(), e);
         }
     }
 

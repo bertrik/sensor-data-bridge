@@ -184,9 +184,9 @@ public final class SensorDataBridge {
                 }
                 if (cayenne.hasPosition()) {
                     double[] position = cayenne.getPosition();
-                    sensorData.addValue(ESensorItem.POS_LAT, position[0]);
-                    sensorData.addValue(ESensorItem.POS_LON, position[1]);
-                    sensorData.addValue(ESensorItem.POS_ALT, position[2]);
+                    sensorData.addValue(ESensorItem.GPS_LAT, position[0]);
+                    sensorData.addValue(ESensorItem.GPS_LON, position[1]);
+                    sensorData.addValue(ESensorItem.GPS_ALT, position[2]);
                 }
                 break;
             case JSON:

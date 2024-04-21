@@ -20,9 +20,9 @@ public enum ESensorItem {
     TEMPERATURE("Temperature", "degC", -100, 100),
     PRESSURE("Atmospheric pressure", "Pa", 0, 1E6),
 
-    POS_LAT("Latitude", "deg", -90, 90),
-    POS_LON("Longitude", "deg", -180, 180),
-    POS_ALT("Altitude", "m"),
+    GPS_LAT("Latitude", "deg", -90, 90),
+    GPS_LON("Longitude", "deg", -180, 180),
+    GPS_ALT("Altitude", "m"),
     
     NOISE_LA_EQ("Noise avg", "dBA", 0, 200),
     NOISE_LA_MIN("Noise min", "dBA", 0, 200),
@@ -35,23 +35,23 @@ public enum ESensorItem {
     LORA_SNR("Signal-to-noise ratio", "dB"),
     LORA_RSSI("Signal strength", "dBm");
 
-    private String description;
-    private String unit;
-    private double minValue;
-    private double maxValue;
+    private final String description;
+    private final String unit;
+    private final double minValue;
+    private final double maxValue;
 
-    private ESensorItem(String description, String unit, double minValue, double maxValue) {
+    ESensorItem(String description, String unit, double minValue, double maxValue) {
         this.description = description;
         this.unit = unit;
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
 
-    private ESensorItem(String description, String unit, double minValue) {
+    ESensorItem(String description, String unit, double minValue) {
         this(description, unit, minValue, Double.POSITIVE_INFINITY);
     }
 
-    private ESensorItem(String description, String unit) {
+    ESensorItem(String description, String unit) {
         this(description, unit, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 

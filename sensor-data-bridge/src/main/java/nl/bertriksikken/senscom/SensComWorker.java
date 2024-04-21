@@ -131,11 +131,11 @@ final class SensComWorker {
         }
 
         // pin 9: position
-        if (data.hasValue(ESensorItem.POS_LAT) && data.hasValue(ESensorItem.POS_LON)) {
+        if (hasValidGps(data)) {
             SensComMessage p9Message = new SensComMessage(softwareVersion);
             addItem(p9Message, data, ESensComItem.GPS_LAT);
             addItem(p9Message, data, ESensComItem.GPS_LON);
-            if (data.hasValue(ESensorItem.POS_ALT)) {
+            if (data.hasValue(ESensorItem.GPS_ALT)) {
                 addItem(p9Message, data, ESensComItem.GPS_ALT);
             }
             uploadMeasurement(ESensComPin.POSITION, sensorId, p9Message);
@@ -168,6 +168,24 @@ final class SensComWorker {
             addItem(p15Message, data, ESensComItem.NOISE_LA_MAX);
             uploadMeasurement(ESensComPin.NOISE, sensorId, p15Message);
         }
+    }
+
+    private boolean hasValidGps(SensorData data) {
+        // are both latitude and longitude present?
+        if (!data.hasValue(ESensorItem.GPS_LAT) || !data.hasValue(ESensorItem.GPS_LON)) {
+            return false;
+        }
+        // are they in range?
+        double lat = data.getValue(ESensorItem.GPS_LAT);
+        double lon = data.getValue(ESensorItem.GPS_LON);
+        if (!ESensorItem.GPS_LAT.inRange(lat) || !ESensorItem.GPS_LON.inRange(lon)) {
+            return false;
+        }
+        // not equal to 0?
+        if ((Math.abs(lat) < 1E-6) && (Math.abs(lon) < 1E-6)) {
+            return false;
+        }
+        return true;
     }
 
     private void uploadMeasurement(ESensComPin pin, String sensorId, SensComMessage message) {

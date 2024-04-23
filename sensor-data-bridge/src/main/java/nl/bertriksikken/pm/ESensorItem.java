@@ -14,7 +14,7 @@ public enum ESensorItem {
     PM1_0_N("Particulate matter PM1.0", "#/cm3", 0),
     PM0_5_N("Particulate matter PM0.5", "#/cm3", 0),
     
-    PM_TPS("Typical particle size", "um"),
+    PM_TPS("Typical particle size", "um", 0),
 
     HUMIDITY("Relative humidity", "%", 0, 100),
     TEMPERATURE("Temperature", "degC", -100, 100),

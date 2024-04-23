@@ -170,17 +170,13 @@ final class SensComWorker {
     }
 
     private boolean hasValidGps(SensorData data) {
-        // are both latitude and longitude present?
-        if (!data.hasValue(ESensorItem.GPS_LAT) || !data.hasValue(ESensorItem.GPS_LON)) {
-            return false;
-        }
-        // are they in range?
-        double lat = data.getValue(ESensorItem.GPS_LAT);
-        double lon = data.getValue(ESensorItem.GPS_LON);
-        if (!ESensorItem.GPS_LAT.inRange(lat) || !ESensorItem.GPS_LON.inRange(lon)) {
+        // are both latitude and longitude present, with valid values?
+        if (!data.hasValid(ESensorItem.GPS_LAT) || !data.hasValid(ESensorItem.GPS_LON)) {
             return false;
         }
         // not equal to 0?
+        double lat = data.getValue(ESensorItem.GPS_LAT);
+        double lon = data.getValue(ESensorItem.GPS_LON);
         if ((Math.abs(lat) < 1E-6) && (Math.abs(lon) < 1E-6)) {
             return false;
         }
@@ -188,6 +184,11 @@ final class SensComWorker {
     }
 
     private void uploadMeasurement(AppDeviceId appDeviceId, String sensorId, ESensComPin pin, SensComMessage message) {
+        if (message.getItems().isEmpty()) {
+            // avoid sending empty message
+            LOG.info("Skipping upload for {} (id {}, pin {}): empty message", appDeviceId, sensorId, pin);
+            return;
+        }
         try {
             LOG.info("Uploading for {} (id {}, pin {}): '{}'", appDeviceId, sensorId, pin, mapper.writeValueAsString(message));
             Instant startTime = Instant.now();

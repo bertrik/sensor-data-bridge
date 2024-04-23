@@ -109,7 +109,7 @@ final class SensComWorker {
                 addItem(p1Message, data, ESensComItem.PM_TPS);
             }
 
-            uploadMeasurement(ESensComPin.PARTICULATE_MATTER, sensorId, p1Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.PARTICULATE_MATTER, p1Message);
         }
 
         // pin 3: temperature & pressure, but no humidity
@@ -118,7 +118,7 @@ final class SensComWorker {
             SensComMessage p3Message = new SensComMessage(softwareVersion);
             addItem(p3Message, data, ESensComItem.TEMPERATURE);
             addItem(p3Message, data, ESensComItem.PRESSURE);
-            uploadMeasurement(ESensComPin.TEMPERATURE_PRESSURE, sensorId, p3Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.TEMPERATURE_PRESSURE, p3Message);
         }
 
         // pin 7: temperature & humidity, but no pressure
@@ -127,7 +127,7 @@ final class SensComWorker {
             SensComMessage p7Message = new SensComMessage(softwareVersion);
             addItem(p7Message, data, ESensComItem.TEMPERATURE);
             addItem(p7Message, data, ESensComItem.HUMIDITY);
-            uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY, sensorId, p7Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.TEMPERATURE_HUMIDITY, p7Message);
         }
 
         // pin 9: position
@@ -138,7 +138,7 @@ final class SensComWorker {
             if (data.hasValue(ESensorItem.GPS_ALT)) {
                 addItem(p9Message, data, ESensComItem.GPS_ALT);
             }
-            uploadMeasurement(ESensComPin.POSITION, sensorId, p9Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.POSITION, p9Message);
         }
 
         // pin 11: temperature & humidity & pressure
@@ -148,7 +148,7 @@ final class SensComWorker {
             addItem(p11Message, data, ESensComItem.TEMPERATURE);
             addItem(p11Message, data, ESensComItem.HUMIDITY);
             addItem(p11Message, data, ESensComItem.PRESSURE);
-            uploadMeasurement(ESensComPin.TEMPERATURE_HUMIDITY_PRESSURE, sensorId, p11Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.TEMPERATURE_HUMIDITY_PRESSURE, p11Message);
         }
 
         // pin 13: only temperature
@@ -156,7 +156,7 @@ final class SensComWorker {
                 && !data.hasValue(ESensorItem.PRESSURE)) {
             SensComMessage p13Message = new SensComMessage(softwareVersion);
             addItem(p13Message, data, ESensComItem.TEMPERATURE);
-            uploadMeasurement(ESensComPin.TEMPERATURE, sensorId, p13Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.TEMPERATURE, p13Message);
         }
 
         // pin 15: noise
@@ -165,7 +165,7 @@ final class SensComWorker {
             addItem(p15Message, data, ESensComItem.NOISE_LA_EQ);
             addItem(p15Message, data, ESensComItem.NOISE_LA_MIN); // optional
             addItem(p15Message, data, ESensComItem.NOISE_LA_MAX); // optional
-            uploadMeasurement(ESensComPin.NOISE, sensorId, p15Message);
+            uploadMeasurement(appDeviceId, sensorId, ESensComPin.NOISE, p15Message);
         }
     }
 
@@ -187,19 +187,19 @@ final class SensComWorker {
         return true;
     }
 
-    private void uploadMeasurement(ESensComPin pin, String sensorId, SensComMessage message) {
+    private void uploadMeasurement(AppDeviceId appDeviceId, String sensorId, ESensComPin pin, SensComMessage message) {
         try {
-            LOG.info("Uploading for {} ({}) to pin {}: '{}'", appId, sensorId, pin, mapper.writeValueAsString(message));
+            LOG.info("Uploading for {} (id {}, pin {}): '{}'", appDeviceId, sensorId, pin, mapper.writeValueAsString(message));
             Instant startTime = Instant.now();
             Response<String> response = restClient.pushSensorData(pin.getPin(), sensorId, message).execute();
             long millis = Duration.between(startTime, Instant.now()).toMillis();
             if (response.isSuccessful()) {
-                LOG.info("Upload success for {} in {} ms: {}", sensorId, millis, response.body());
+                LOG.info("Upload success for {} in {} ms: {}", appDeviceId, millis, response.body());
             } else {
-                LOG.warn("Upload failed for {}: {} - {}", sensorId, response.message(), response.errorBody().string());
+                LOG.warn("Upload failed for {}: {} - {}", appDeviceId, response.message(), response.errorBody().string());
             }
         } catch (IOException e) {
-            LOG.warn("Caught IOException for {}: {}", sensorId, e.getMessage());
+            LOG.warn("Upload failed for {}: exception '{}'", appDeviceId, e.getMessage());
         }
     }
 

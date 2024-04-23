@@ -206,8 +206,11 @@ final class SensComWorker {
     private void addItem(SensComMessage message, SensorData data, ESensComItem sensComItem) {
         ESensorItem item = sensComItem.getItem();
         if (data.hasValue(item)) {
-            String value = sensComItem.format(data.getValue(item));
-            message.addItem(sensComItem.getId(), value);
+            double value = data.getValue(item);
+            if (item.inRange(value)) {
+                String sensComValue = sensComItem.format(value);
+                message.addItem(sensComItem.getId(), sensComValue);
+            }
         }
     }
 

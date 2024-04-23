@@ -25,7 +25,7 @@ public final class JsonDecoder {
         for (JsonDecoderItem item : jsonDecoderConfig) {
             JsonNode node = tree.at(item.path);
             double value = node.asDouble(Double.NaN) * item.unit;
-            if (item.item.inRange(value)) {
+            if (Double.isFinite(value)) {
                 data.addValue(item.item, value);
             }
         }

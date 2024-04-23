@@ -24,7 +24,7 @@ public final class SensorData {
         return items.containsKey(item);
     }
 
-    public Double getValue(ESensorItem item) {
+    public double getValue(ESensorItem item) {
         return items.get(item).doubleValue();
     }
 

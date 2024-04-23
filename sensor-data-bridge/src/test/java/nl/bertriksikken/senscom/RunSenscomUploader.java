@@ -33,7 +33,7 @@ public final class RunSenscomUploader {
         uploader.scheduleProcessAttributes(appDeviceId.getAppName(), attributes);
 
         SensorData sensorData = new SensorData();
-        sensorData.addValue(ESensorItem.TEMPERATURE, 12.34);
+        sensorData.putValue(ESensorItem.TEMPERATURE, 12.34);
         uploader.scheduleUpload(appDeviceId, sensorData);
     }
 

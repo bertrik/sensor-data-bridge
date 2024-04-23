@@ -125,28 +125,28 @@ public final class SensorDataBridge {
 
         // common fields
         if (Double.isFinite(uplink.getRSSI())) {
-            sensorData.addValue(ESensorItem.LORA_RSSI, uplink.getRSSI());
+            sensorData.putValue(ESensorItem.LORA_RSSI, uplink.getRSSI());
         }
         if (Double.isFinite(uplink.getSNR())) {
-            sensorData.addValue(ESensorItem.LORA_SNR, uplink.getSNR());
+            sensorData.putValue(ESensorItem.LORA_SNR, uplink.getSNR());
         }
         if (uplink.getSF() > 0) {
-            sensorData.addValue(ESensorItem.LORA_SF, uplink.getSF());
+            sensorData.putValue(ESensorItem.LORA_SF, uplink.getSF());
         }
 
         // SPS30 specific decoding
         if (uplink.getPort() == Sps30Message.LORAWAN_PORT) {
             Sps30Message message = Sps30Message.parse(uplink.getRawPayload());
-            sensorData.addValue(ESensorItem.PM1_0, message.getPm1_0());
-            sensorData.addValue(ESensorItem.PM2_5, message.getPm2_5());
-            sensorData.addValue(ESensorItem.PM4_0, message.getPm4_0());
-            sensorData.addValue(ESensorItem.PM10, message.getPm10());
-            sensorData.addValue(ESensorItem.PM0_5_N, message.getN0_5());
-            sensorData.addValue(ESensorItem.PM1_0_N, message.getN1_0());
-            sensorData.addValue(ESensorItem.PM2_5_N, message.getN2_5());
-            sensorData.addValue(ESensorItem.PM4_0_N, message.getN4_0());
-            sensorData.addValue(ESensorItem.PM10_N, message.getN10());
-            sensorData.addValue(ESensorItem.PM_TPS, message.getTps());
+            sensorData.putValue(ESensorItem.PM1_0, message.getPm1_0());
+            sensorData.putValue(ESensorItem.PM2_5, message.getPm2_5());
+            sensorData.putValue(ESensorItem.PM4_0, message.getPm4_0());
+            sensorData.putValue(ESensorItem.PM10, message.getPm10());
+            sensorData.putValue(ESensorItem.PM0_5_N, message.getN0_5());
+            sensorData.putValue(ESensorItem.PM1_0_N, message.getN1_0());
+            sensorData.putValue(ESensorItem.PM2_5_N, message.getN2_5());
+            sensorData.putValue(ESensorItem.PM4_0_N, message.getN4_0());
+            sensorData.putValue(ESensorItem.PM10_N, message.getN10());
+            sensorData.putValue(ESensorItem.PM_TPS, message.getTps());
             return sensorData;
         }
 
@@ -154,39 +154,39 @@ public final class SensorDataBridge {
         switch (config.getEncoding()) {
             case TTN_ULM:
                 TtnUlmMessage ulmMessage = TtnUlmMessage.parse(uplink.getRawPayload());
-                sensorData.addValue(ESensorItem.PM10, ulmMessage.getPm10());
-                sensorData.addValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
-                sensorData.addValue(ESensorItem.HUMIDITY, ulmMessage.getRhPerc());
-                sensorData.addValue(ESensorItem.TEMPERATURE, ulmMessage.getTempC());
+                sensorData.putValue(ESensorItem.PM10, ulmMessage.getPm10());
+                sensorData.putValue(ESensorItem.PM2_5, ulmMessage.getPm2_5());
+                sensorData.putValue(ESensorItem.HUMIDITY, ulmMessage.getRhPerc());
+                sensorData.putValue(ESensorItem.TEMPERATURE, ulmMessage.getTempC());
                 break;
             case CAYENNE:
                 TtnCayenneMessage cayenne = TtnCayenneMessage.parse(uplink.getRawPayload());
                 if (cayenne.hasPm10()) {
-                    sensorData.addValue(ESensorItem.PM10, cayenne.getPm10());
+                    sensorData.putValue(ESensorItem.PM10, cayenne.getPm10());
                 }
                 if (cayenne.hasPm4()) {
-                    sensorData.addValue(ESensorItem.PM4_0, cayenne.getPm4());
+                    sensorData.putValue(ESensorItem.PM4_0, cayenne.getPm4());
                 }
                 if (cayenne.hasPm2_5()) {
-                    sensorData.addValue(ESensorItem.PM2_5, cayenne.getPm2_5());
+                    sensorData.putValue(ESensorItem.PM2_5, cayenne.getPm2_5());
                 }
                 if (cayenne.hasPm1_0()) {
-                    sensorData.addValue(ESensorItem.PM1_0, cayenne.getPm1_0());
+                    sensorData.putValue(ESensorItem.PM1_0, cayenne.getPm1_0());
                 }
                 if (cayenne.hasRhPerc()) {
-                    sensorData.addValue(ESensorItem.HUMIDITY, cayenne.getRhPerc());
+                    sensorData.putValue(ESensorItem.HUMIDITY, cayenne.getRhPerc());
                 }
                 if (cayenne.hasTempC()) {
-                    sensorData.addValue(ESensorItem.TEMPERATURE, cayenne.getTempC());
+                    sensorData.putValue(ESensorItem.TEMPERATURE, cayenne.getTempC());
                 }
                 if (cayenne.hasPressureMillibar()) {
-                    sensorData.addValue(ESensorItem.PRESSURE, 100.0 * cayenne.getPressureMillibar());
+                    sensorData.putValue(ESensorItem.PRESSURE, 100.0 * cayenne.getPressureMillibar());
                 }
                 if (cayenne.hasPosition()) {
                     double[] position = cayenne.getPosition();
-                    sensorData.addValue(ESensorItem.GPS_LAT, position[0]);
-                    sensorData.addValue(ESensorItem.GPS_LON, position[1]);
-                    sensorData.addValue(ESensorItem.GPS_ALT, position[2]);
+                    sensorData.putValue(ESensorItem.GPS_LAT, position[0]);
+                    sensorData.putValue(ESensorItem.GPS_LON, position[1]);
+                    sensorData.putValue(ESensorItem.GPS_ALT, position[2]);
                 }
                 break;
             case JSON:

@@ -1,25 +1,23 @@
 package nl.bertriksikken.pm.json;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.junit.Assert;
-import org.junit.Test;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.POJONode;
-
 import nl.bertriksikken.pm.ESensorItem;
-import nl.bertriksikken.pm.PayloadParseException;
 import nl.bertriksikken.pm.SensorData;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.URL;
 
 public final class JsonDecoderTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testDecode() throws PayloadParseException, IOException {
+    public void testDecode() throws IOException {
         URL url = this.getClass().getResource("/decoded_fields.json");
         String json = mapper.readTree(url).toPrettyString();
 
@@ -49,6 +47,21 @@ public final class JsonDecoderTest {
 
         Assert.assertEquals(99700, sensorData.getValue(ESensorItem.PRESSURE), 0.1);
         Assert.assertEquals(10.1, sensorData.getValue(ESensorItem.TEMPERATURE), 0.1);
+    }
+
+    @Test
+    public void testInvalidHumidity() throws JsonProcessingException {
+        JsonDecoderConfig config = new JsonDecoderConfig();
+        config.add(new JsonDecoderItem("/rh", ESensorItem.HUMIDITY));
+        JsonNode configNode = new POJONode(config);
+
+        JsonDecoder decoder = new JsonDecoder();
+        SensorData sensorData = new SensorData();
+        String json = "{\"rh\":-1}";
+
+        decoder.parse(configNode, json, sensorData);
+        Assert.assertTrue(sensorData.hasValue(ESensorItem.HUMIDITY));
+        Assert.assertFalse(ESensorItem.HUMIDITY.inRange(sensorData.getValue(ESensorItem.HUMIDITY)));
     }
 
 }

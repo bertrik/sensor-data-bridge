@@ -12,24 +12,30 @@ public final class SensorData {
     // start with a simple map containing one Number value per item
     private final Map<ESensorItem, Number> items = new LinkedHashMap<>();
 
-    public boolean addValue(ESensorItem item, Number value) {
-        if ((value instanceof Double) && !item.inRange(value.doubleValue())) {
-            return false;
+    public void putValue(ESensorItem item, Number value) {
+        if (value == null) {
+            return;
+        }
+        if ((value instanceof Double) && !Double.isFinite(value.doubleValue())) {
+            return;
         }
         items.put(item, value);
-        return true;
     }
 
     public boolean hasValue(ESensorItem item) {
         return items.containsKey(item);
     }
 
-    public double getValue(ESensorItem item) {
+    public Double getValue(ESensorItem item) {
         return items.get(item).doubleValue();
     }
 
     public Number get(ESensorItem item) {
         return items.get(item);
+    }
+
+    public boolean hasValid(ESensorItem item) {
+        return items.containsKey(item) && item.inRange(items.get(item).doubleValue());
     }
 
     @Override

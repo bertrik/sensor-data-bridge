@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.bertriksikken.ttnv3.dto.Ttnv3UplinkMessage;
+import nl.bertriksikken.ttn.dto.Ttnv3UplinkMessage;
 
 /**
  * Listener process for receiving data from MQTT.

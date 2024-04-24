@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttnv3.dto;
+package nl.bertriksikken.ttn.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

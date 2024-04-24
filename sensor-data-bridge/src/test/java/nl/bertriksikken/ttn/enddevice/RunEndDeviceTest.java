@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttnv3.enddevice;
+package nl.bertriksikken.ttn.enddevice;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnConfig;
-import nl.bertriksikken.ttnv3.dto.UplinkMessage;
+import nl.bertriksikken.ttn.dto.UplinkMessage;
 
 public final class RunEndDeviceTest {
 

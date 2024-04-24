@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttnv3.enddevice;
+package nl.bertriksikken.ttn.enddevice;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

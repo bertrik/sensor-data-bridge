@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttnv3.enddevice;
+package nl.bertriksikken.ttn.enddevice;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

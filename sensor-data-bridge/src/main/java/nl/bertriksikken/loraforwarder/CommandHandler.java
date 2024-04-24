@@ -15,9 +15,9 @@ import nl.bertriksikken.gls.GeoLocationResponse;
 import nl.bertriksikken.gls.GeoLocationService;
 import nl.bertriksikken.loraforwarder.util.CatchingRunnable;
 import nl.bertriksikken.ttn.TtnUplinkMessage;
-import nl.bertriksikken.ttnv3.enddevice.EndDevice;
-import nl.bertriksikken.ttnv3.enddevice.EndDeviceRegistry;
-import nl.bertriksikken.ttnv3.enddevice.Location;
+import nl.bertriksikken.ttn.enddevice.EndDevice;
+import nl.bertriksikken.ttn.enddevice.EndDeviceRegistry;
+import nl.bertriksikken.ttn.enddevice.Location;
 
 /**
  * Handles commands and response from LoRaWAN devices.

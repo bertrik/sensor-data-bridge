@@ -1,8 +1,9 @@
-package nl.bertriksikken.ttnv3.dto;
+package nl.bertriksikken.ttn.dto;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import nl.bertriksikken.ttn.dto.Ttnv3UplinkMessage;
 import org.junit.Assert;
 import org.junit.Test;
 

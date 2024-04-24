@@ -1,4 +1,4 @@
-package nl.bertriksikken.ttnv3.enddevice;
+package nl.bertriksikken.ttn.enddevice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import nl.bertriksikken.ttnv3.dto.UplinkMessage;
+import nl.bertriksikken.ttn.dto.UplinkMessage;
 
 /**
  * Representation of<br>

@@ -24,7 +24,7 @@ junit = "junit:junit:4.13.2"
 
 paho-client-mqttv3 = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5"
 
-jakarta-ws-rs-api = "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"
+jakarta-ws-rs-api = "jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"
 
 jersey-jetty = { module = "org.glassfish.jersey.containers:jersey-container-jetty-http", version.ref="jersey" }
 jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref="jersey" }
@@ -43,5 +43,5 @@ versions = "com.github.ben-manes.versions:0.51.0"
 spotbugs = "com.github.spotbugs:5.0.14"
 dependencycheck = "org.owasp.dependencycheck:8.4.3"
 version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
-git-version = "com.palantir.git-version:3.0.0"
+git-version = "com.palantir.git-version:3.1.0"
 

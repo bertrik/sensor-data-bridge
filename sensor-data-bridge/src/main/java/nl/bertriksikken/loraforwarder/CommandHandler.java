@@ -1,15 +1,5 @@
 package nl.bertriksikken.loraforwarder;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.bertriksikken.gls.GeoLocationRequest;
 import nl.bertriksikken.gls.GeoLocationResponse;
 import nl.bertriksikken.gls.GeoLocationService;
@@ -18,6 +8,15 @@ import nl.bertriksikken.ttn.TtnUplinkMessage;
 import nl.bertriksikken.ttn.enddevice.EndDevice;
 import nl.bertriksikken.ttn.enddevice.EndDeviceRegistry;
 import nl.bertriksikken.ttn.enddevice.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Handles commands and response from LoRaWAN devices.
@@ -47,20 +46,18 @@ public final class CommandHandler {
 
     /**
      * Test message on port 100: 00 9C 1C 12 F6 EB C0 D3 01 9C 1C 12 F6 F5 42 C9 01
-     * 
-     * @param uplink
      */
     void processResponse(TtnUplinkMessage uplink) {
         ByteBuffer bb = ByteBuffer.wrap(uplink.getRawPayload()).order(ByteOrder.BIG_ENDIAN);
 
         int cmd = bb.get() & 0xFF;
         switch (cmd) {
-        case 0:
-            executor.execute(new CatchingRunnable(LOG, () -> handleWifiLocalisation(bb, uplink.getDevId())));
-            break;
-        default:
-            LOG.warn("Unhandled command {}", cmd);
-            break;
+            case 0:
+                executor.execute(new CatchingRunnable(LOG, () -> handleWifiLocalisation(bb, uplink.getDevId())));
+                break;
+            default:
+                LOG.warn("Unhandled command {}", cmd);
+                break;
         }
     }
 
@@ -80,7 +77,7 @@ public final class CommandHandler {
                 EndDevice endDevice = endDeviceRegistry.buildEndDevice(devId);
                 Location location = new Location(response.getLatitude(), response.getLongitude());
                 endDevice.setLocation(EndDevice.LOCATION_USER, location);
-                endDeviceRegistry.updateEndDevice(endDevice, Arrays.asList("locations"));
+                endDeviceRegistry.updateEndDevice(endDevice, List.of("locations"));
             }
         } catch (IOException e) {
             LOG.warn("Caught IOException", e);

@@ -225,8 +225,6 @@ public final class CayenneMessageTest {
 
     /**
      * Verifies encoding/decoding of a presence value (e.g. number of satellites)
-     * 
-     * @throws CayenneException
      */
     @Test
     public void testPresence() throws CayenneException {

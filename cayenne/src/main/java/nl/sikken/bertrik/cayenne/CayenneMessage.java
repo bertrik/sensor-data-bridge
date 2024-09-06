@@ -25,18 +25,18 @@ public final class CayenneMessage {
      */
     public CayenneMessage(ECayennePayloadFormat format) {
         switch (format) {
-        case DYNAMIC_SENSOR_PAYLOAD:
-        case PACKED_SENSOR_PAYLOAD:
-            break;
-        default:
-            throw new IllegalArgumentException("Payload format not supported: " + format);
+            case DYNAMIC_SENSOR_PAYLOAD:
+            case PACKED_SENSOR_PAYLOAD:
+                break;
+            default:
+                throw new IllegalArgumentException("Payload format not supported: " + format);
         }
         this.format = format;
     }
 
     /**
      * Parses the byte array into a cayenne message.
-     * 
+     *
      * @param data the raw data
      * @throws CayenneException in case of a parsing problem
      */
@@ -46,15 +46,15 @@ public final class CayenneMessage {
         while (bb.hasRemaining()) {
             CayenneItem item;
             switch (format) {
-            case DYNAMIC_SENSOR_PAYLOAD:
-                item = CayenneItem.parse(bb);
-                break;
-            case PACKED_SENSOR_PAYLOAD:
-                item = CayenneItem.parsePacked(bb, channel);
-                channel++;
-                break;
-            default:
-                throw new IllegalStateException("Unsupported cayenne payload: " + format);
+                case DYNAMIC_SENSOR_PAYLOAD:
+                    item = CayenneItem.parse(bb);
+                    break;
+                case PACKED_SENSOR_PAYLOAD:
+                    item = CayenneItem.parsePacked(bb, channel);
+                    channel++;
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported cayenne payload: " + format);
             }
             add(item);
         }
@@ -62,7 +62,7 @@ public final class CayenneMessage {
 
     /**
      * Adds a cayenne measurement item to the message.
-     * 
+     *
      * @param item the item to add
      */
     public void add(CayenneItem item) {
@@ -71,7 +71,7 @@ public final class CayenneMessage {
 
     /**
      * Encodes the cayenne message into a byte array.
-     * 
+     *
      * @param maxSize the maximum size of the cayenne message
      * @return the byte array.
      * @throws CayenneException in case something went wrong during encoding (e.g.
@@ -86,8 +86,7 @@ public final class CayenneMessage {
     }
 
     /**
-     * @return an immutable list of measurement items in the order it appears in the
-     *         raw data
+     * Returns a list of measurement items in the order it appears in the raw data
      */
     public List<CayenneItem> getItems() {
         return List.copyOf(items);
@@ -95,8 +94,8 @@ public final class CayenneMessage {
 
     /**
      * Finds an item by type and channel.
-     * 
-     * @param type the desired type
+     *
+     * @param type    the desired type
      * @param channel the desired channel
      * @return the item, or null if it does not exist
      */
@@ -106,7 +105,7 @@ public final class CayenneMessage {
 
     /**
      * Finds an item by type.
-     * 
+     *
      * @param type the desired type
      * @return the item, or null if it does not exist
      */
@@ -116,7 +115,7 @@ public final class CayenneMessage {
 
     /**
      * Finds an item by channel.
-     * 
+     *
      * @param channel the desired channel
      * @return the item, or null if it does not exist
      */

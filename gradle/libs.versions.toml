@@ -3,17 +3,17 @@ jackson = "2.17.2"
 jersey = "3.1.8"
 retrofit = "2.11.0"
 slf4j = "2.0.16"
-spotbugs = "4.8.6"
+errorprone = "2.31.0"
 
 [libraries]
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref="slf4j" }
-slf4j-reload4j = { module = "org.slf4j:slf4j-reload4j", version.ref="slf4j" }
+errorprone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "errorprone" }
+errorprone_core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 
-jackson-databind = {module = "com.fasterxml.jackson.core:jackson-databind", version.ref="jackson" }
-jackson-dataformat-yaml = {module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref="jackson" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-reload4j = { module = "org.slf4j:slf4j-reload4j", version.ref = "slf4j" }
 
-spotbugs = { module = "com.github.spotbugs:spotbugs", version.ref = "spotbugs" }
-spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version.ref = "spotbugs" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
@@ -26,12 +26,12 @@ paho-client-mqttv3 = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5"
 
 jakarta-ws-rs-api = "jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"
 
-jersey-jetty = { module = "org.glassfish.jersey.containers:jersey-container-jetty-http", version.ref="jersey" }
-jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref="jersey" }
-jersey-inject = { module = "org.glassfish.jersey.inject:jersey-hk2", version.ref="jersey" }
-jersey-jackson = { module = "org.glassfish.jersey.media:jersey-media-json-jackson", version.ref="jersey" }
+jersey-jetty = { module = "org.glassfish.jersey.containers:jersey-container-jetty-http", version.ref = "jersey" }
+jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref = "jersey" }
+jersey-inject = { module = "org.glassfish.jersey.inject:jersey-hk2", version.ref = "jersey" }
+jersey-jackson = { module = "org.glassfish.jersey.media:jersey-media-json-jackson", version.ref = "jersey" }
 
-mockito-core = "org.mockito:mockito-core:5.12.0"
+mockito-core = "org.mockito:mockito-core:5.13.0"
 
 [bundles]
 jackson = ["jackson-databind", "jackson-dataformat-yaml"]
@@ -39,9 +39,8 @@ retrofit = ["retrofit", "retrofit-converter-jackson", "retrofit-converter-scalar
 jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject", "jersey-jackson"]
 
 [plugins]
+errorprone = "net.ltgt.errorprone:4.0.1"
 versions = "com.github.ben-manes.versions:0.51.0"
-spotbugs = "com.github.spotbugs:5.0.14"
 dependencycheck = "org.owasp.dependencycheck:8.4.3"
-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
 git-version = "com.palantir.git-version:3.1.0"
 

@@ -1,15 +1,12 @@
 package nl.bertriksikken.ttn.dto;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import nl.bertriksikken.ttn.dto.Ttnv3UplinkMessage;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.bertriksikken.ttn.TtnUplinkMessage;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import nl.bertriksikken.ttn.TtnUplinkMessage;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Unit tests related to TTN messages.
@@ -18,8 +15,6 @@ public final class TtnV3UplinkMessageTest {
 
     /**
      * Reads an example message and verifies parsing.
-     * 
-     * @throws IOException
      */
     @Test
     public void testDecode() throws IOException {

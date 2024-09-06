@@ -49,7 +49,6 @@ public final class GeoLocationService {
      * 
      * @param request containing the WiFi AP information
      * @return the response with the result
-     * @throws IOException
      */
     public GeoLocationResponse geoLocate(GeoLocationRequest request) throws IOException {
         Response<GeoLocationResponse> response = restClient.geoLocate(key, request).execute();

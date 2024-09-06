@@ -207,6 +207,7 @@ public final class SensorDataBridge {
      *
      * @throws MqttException in case of a problem starting MQTT client
      */
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void start() throws MqttException {
         LOG.info("Starting sensor-data-bridge application");
 
@@ -235,7 +236,7 @@ public final class SensorDataBridge {
             try {
                 for (EndDevice device : registry.listEndDevices(IEndDeviceRegistryRestApi.FIELD_IDS,
                         IEndDeviceRegistryRestApi.FIELD_ATTRIBUTES)) {
-                    map.put(device.getDeviceId(), new AttributeMap((device.getAttributes())));
+                    map.put(device.getDeviceId(), new AttributeMap(device.getAttributes()));
                 }
             } catch (IOException e) {
                 LOG.warn("Error getting attributes for {}", applicationId, e);

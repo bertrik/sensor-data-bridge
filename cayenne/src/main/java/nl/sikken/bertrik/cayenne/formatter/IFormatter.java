@@ -1,11 +1,14 @@
 package nl.sikken.bertrik.cayenne.formatter;
 
+import com.google.errorprone.annotations.Immutable;
+
 import java.nio.ByteBuffer;
 
 /**
  * Interface for cayenne data structures that can be formatted as an array of
  * strings.
  */
+@Immutable
 public interface IFormatter {
 
     /**

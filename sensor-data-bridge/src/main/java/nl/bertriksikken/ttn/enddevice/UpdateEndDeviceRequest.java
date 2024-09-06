@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * https://www.thethingsindustries.com/docs/reference/api/end_device/#message:UpdateEndDeviceRequest
  */
+@SuppressWarnings("UnusedVariable")
 public final class UpdateEndDeviceRequest {
 
     @JsonProperty("end_device")

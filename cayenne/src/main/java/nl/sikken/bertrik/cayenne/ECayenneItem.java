@@ -1,14 +1,14 @@
 package nl.sikken.bertrik.cayenne;
 
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import nl.sikken.bertrik.cayenne.formatter.FloatFormatter;
 import nl.sikken.bertrik.cayenne.formatter.GpsFormatter;
 import nl.sikken.bertrik.cayenne.formatter.IFormatter;
 import nl.sikken.bertrik.cayenne.formatter.IntegerFormatter;
+
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Enumeration of possible Cayenne item types.
@@ -53,7 +53,6 @@ public enum ECayenneItem {
      * 
      * @param type the type code
      * @return the enum, or null if not found
-     * @throws CayenneException
      */
     public static ECayenneItem parse(int type) throws CayenneException {
         ECayenneItem item = LOOKUP.get(type);

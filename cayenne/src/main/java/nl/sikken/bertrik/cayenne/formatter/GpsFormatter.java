@@ -2,6 +2,7 @@ package nl.sikken.bertrik.cayenne.formatter;
 
 import java.nio.ByteBuffer;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 /**
  * Formatter for cayenne items which represent a GPS position.
@@ -16,13 +17,14 @@ public final class GpsFormatter extends BaseFormatter {
         double lat = LAT_LON_SCALE * getValue(bb, 3, true);
         double lon = LAT_LON_SCALE * getValue(bb, 3, true);
         double alt = ALT_SCALE * getValue(bb, 3, true);
-        return new Double[] { lat, lon, alt };
+        return new Double[]{lat, lon, alt};
     }
 
     @Override
-    public String[] format(Number[] values) {
-        return new String[] { String.format(Locale.ROOT, "%.4f", values[0]),
-                String.format(Locale.ROOT, "%.4f", values[1]), String.format(Locale.ROOT, "%.2f", values[2]) };
+    public String[] format(Number[] numbers) {
+        double[] values = Stream.of(numbers).mapToDouble(Number::doubleValue).toArray();
+        return new String[]{String.format(Locale.ROOT, "%.4f", values[0]),
+                String.format(Locale.ROOT, "%.4f", values[1]), String.format(Locale.ROOT, "%.2f", values[2])};
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@SuppressWarnings("UnusedVariable")
 public final class GeoLocationRequest {
 
     @JsonProperty("considerIp")
@@ -19,6 +20,8 @@ public final class GeoLocationRequest {
     }
 
     /**
+     * Adds an SSID.
+     *
      * @param mac            the 6-byte mac address of the access point
      * @param signalStrength signal strength in dBm
      * @param channel        the WiFi channel

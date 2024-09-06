@@ -16,7 +16,7 @@ public enum ECayennePayloadFormat {
     SENSOR_PERIOD_CONFIGURATION(13), //
     SENSOR_ENABLE_CONFIGURATION(14); //
 
-    private int port;
+    private final int port;
 
     ECayennePayloadFormat(int port) {
         this.port = port;

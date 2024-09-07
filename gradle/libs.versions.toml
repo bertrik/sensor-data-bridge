@@ -6,8 +6,8 @@ slf4j = "2.0.16"
 errorprone = "2.31.0"
 
 [libraries]
-errorprone_annotationprocessor = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 errorprone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "errorprone" }
+errorprone_core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-reload4j = { module = "org.slf4j:slf4j-reload4j", version.ref = "slf4j" }

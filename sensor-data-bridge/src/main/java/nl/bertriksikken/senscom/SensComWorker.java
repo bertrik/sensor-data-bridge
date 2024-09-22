@@ -184,7 +184,7 @@ final class SensComWorker {
     }
 
     private void uploadMeasurement(AppDeviceId appDeviceId, String sensorId, ESensComPin pin, SensComMessage message) {
-        if (message.getItems().isEmpty()) {
+        if (message.isEmpty()) {
             // avoid sending empty message
             LOG.info("Skipping upload for {} (id {}, pin {}): empty message", appDeviceId, sensorId, pin);
             return;

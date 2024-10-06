@@ -71,7 +71,7 @@ final class SensComWorker {
 
     void stop() {
         LOG.info("Stopping sensor.community worker '{}'", appId);
-        executor.shutdownNow();
+        executor.shutdown();
     }
 
     // schedules an upload to all pins

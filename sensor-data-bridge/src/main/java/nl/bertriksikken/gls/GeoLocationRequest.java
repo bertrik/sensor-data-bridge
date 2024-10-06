@@ -1,10 +1,10 @@
 package nl.bertriksikken.gls;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @SuppressWarnings("UnusedVariable")
 public final class GeoLocationRequest {
@@ -39,20 +39,8 @@ public final class GeoLocationRequest {
         wifiAccessPoints.add(new WifiAccessPoint(macAddress, signalStrength, channel));
     }
 
-    private static final class WifiAccessPoint {
-        @JsonProperty("macAddress")
-        private final String macAddress;
-
-        @JsonProperty("signalStrength")
-        private final int signalStrength;
-
-        @JsonProperty("channel")
-        private final int channel;
-
-        WifiAccessPoint(String macAddress, int signalStrength, int channel) {
-            this.macAddress = macAddress;
-            this.signalStrength = signalStrength;
-            this.channel = channel;
-        }
+    private record WifiAccessPoint(@JsonProperty("macAddress") String macAddress,
+                                   @JsonProperty("signalStrength") int signalStrength,
+                                   @JsonProperty("channel") int channel) {
     }
 }

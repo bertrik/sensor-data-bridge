@@ -51,7 +51,7 @@ public final class SensComUploader implements IUploader {
 
     @Override
     public void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
-        SensComWorker worker = getOrCreateWorker(appDeviceId.getAppName());
+        SensComWorker worker = getOrCreateWorker(appDeviceId.appName());
         worker.scheduleUpload(appDeviceId, data);
     }
 

@@ -97,7 +97,7 @@ public final class OpenSenseUploader implements IUploader {
         }
 
         // schedule upload
-        String sensComId = "TTN-" + appDeviceId.getDeviceId();
+        String sensComId = "TTN-" + appDeviceId.deviceId();
         executor.execute(new CatchingRunnable(LOG, () -> uploadMeasurement(boxId, sensComId, message)));
     }
 

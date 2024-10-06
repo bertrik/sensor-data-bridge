@@ -1,12 +1,12 @@
 package nl.bertriksikken.senscom;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import nl.bertriksikken.loraforwarder.AppDeviceId;
 import nl.bertriksikken.loraforwarder.AttributeMap;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Runs the SensComUploader to send a basic message to a local server, in order
@@ -24,17 +24,19 @@ public final class RunSenscomUploader {
 
     private void run() {
         SensComConfig config = new SensComConfig("http://localhost:8080", 10);
-        SensComUploader uploader = SensComUploader.create(config, "test");
+        SensComUploader uploader = SensComUploader.create(config, "version");
         uploader.start();
 
         Map<String, AttributeMap> attributes = new HashMap<>();
         AppDeviceId appDeviceId = new AppDeviceId("app", "dev");
-        attributes.put(appDeviceId.getDeviceId(), new AttributeMap(Map.of("senscom-id", "sensor")));
-        uploader.scheduleProcessAttributes(appDeviceId.getAppName(), attributes);
+        attributes.put(appDeviceId.deviceId(), new AttributeMap(Map.of("senscom-id", "sensor")));
+        uploader.scheduleProcessAttributes(appDeviceId.appName(), attributes);
 
         SensorData sensorData = new SensorData();
         sensorData.putValue(ESensorItem.TEMPERATURE, 12.34);
         uploader.scheduleUpload(appDeviceId, sensorData);
+
+        uploader.stop();
     }
 
 }

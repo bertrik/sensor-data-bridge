@@ -1,9 +1,9 @@
 [versions]
 jackson = "2.18.0"
-jersey = "3.1.8"
+jersey = "3.1.9"
 retrofit = "2.11.0"
 slf4j = "2.0.16"
-errorprone = "2.32.0"
+errorprone = "2.33.0"
 
 [libraries]
 errorprone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "errorprone" }
@@ -31,7 +31,7 @@ jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.re
 jersey-inject = { module = "org.glassfish.jersey.inject:jersey-hk2", version.ref = "jersey" }
 jersey-jackson = { module = "org.glassfish.jersey.media:jersey-media-json-jackson", version.ref = "jersey" }
 
-mockito-core = "org.mockito:mockito-core:5.14.0"
+mockito-core = "org.mockito:mockito-core:5.14.1"
 
 [bundles]
 jackson = ["jackson-databind", "jackson-dataformat-yaml"]

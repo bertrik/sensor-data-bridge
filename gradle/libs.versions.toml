@@ -40,7 +40,7 @@ retrofit = ["retrofit", "retrofit-converter-jackson", "retrofit-converter-scalar
 jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject", "jersey-jackson"]
 
 [plugins]
-errorprone = "net.ltgt.errorprone:4.0.1"
+errorprone = "net.ltgt.errorprone:4.1.0"
 versions = "com.github.ben-manes.versions:0.51.0"
 dependencycheck = "org.owasp.dependencycheck:8.4.3"
 git-version = "com.palantir.git-version:3.1.0"

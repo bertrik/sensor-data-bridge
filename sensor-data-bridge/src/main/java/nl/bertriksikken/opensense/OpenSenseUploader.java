@@ -78,7 +78,7 @@ public final class OpenSenseUploader implements IUploader {
             message.addItem(pmPrefix + "P2", data.getValue(ESensorItem.PM2_5));
         }
         if (data.hasValue(ESensorItem.PM1_0)) {
-            message.addItem(pmPrefix + "P0", data.getValue(ESensorItem.PM2_5));
+            message.addItem(pmPrefix + "P0", data.getValue(ESensorItem.PM1_0));
         }
         if (data.hasValue(ESensorItem.PM4_0)) {
             message.addItem(pmPrefix + "P4", data.getValue(ESensorItem.PM4_0));

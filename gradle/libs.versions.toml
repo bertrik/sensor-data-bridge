@@ -2,6 +2,7 @@
 errorprone = "2.36.0"
 jackson = "2.18.1"
 jersey = "3.1.9"
+junit = "5.11.3"
 mockito = "5.14.2"
 retrofit = "2.11.0"
 slf4j = "2.0.16"
@@ -21,7 +22,9 @@ retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackso
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
 
-junit = "junit:junit:4.13.2"
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 
 paho-client-mqttv3 = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5"
 

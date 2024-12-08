@@ -1,10 +1,9 @@
 package nl.bertriksikken.gls;
 
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.junit.jupiter.api.Test;
 
 public final class GeoLocationConfigTest {
 

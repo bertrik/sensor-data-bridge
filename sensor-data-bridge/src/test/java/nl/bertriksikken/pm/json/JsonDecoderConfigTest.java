@@ -1,16 +1,12 @@
 package nl.bertriksikken.pm.json;
 
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
 import nl.bertriksikken.pm.ESensorItem;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 public final class JsonDecoderConfigTest {
 
@@ -26,11 +22,11 @@ public final class JsonDecoderConfigTest {
     }
 
     @Test
-    public void testDeserialize() throws StreamReadException, DatabindException, IOException {
+    public void testDeserialize() throws IOException {
         JsonDecoderConfig config = MAPPER.readValue(getClass().getClassLoader().getResource("JsonDecoderConfig.yaml"),
                 JsonDecoderConfig.class);
-        Assert.assertEquals(1.0, config.get(0).unit, 0.1);
-        Assert.assertEquals(100.0, config.get(1).unit, 0.1);
+        Assertions.assertEquals(1.0, config.get(0).unit, 0.1);
+        Assertions.assertEquals(100.0, config.get(1).unit, 0.1);
     }
 
 }

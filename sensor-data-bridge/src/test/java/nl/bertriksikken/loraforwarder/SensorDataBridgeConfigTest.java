@@ -1,19 +1,17 @@
 package nl.bertriksikken.loraforwarder;
 
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.POJONode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.json.JsonDecoderConfig;
 import nl.bertriksikken.pm.json.JsonDecoderItem;
 import nl.bertriksikken.ttn.TtnAppConfig;
 import nl.bertriksikken.ttn.TtnAppConfig.DecoderConfig;
 import nl.bertriksikken.ttn.TtnConfig;
+import org.junit.jupiter.api.Test;
 
 public final class SensorDataBridgeConfigTest {
 

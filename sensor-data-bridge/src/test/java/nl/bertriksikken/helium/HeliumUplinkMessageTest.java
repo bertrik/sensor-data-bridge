@@ -1,14 +1,12 @@
 package nl.bertriksikken.helium;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.bertriksikken.helium.HeliumUplinkMessage.HotSpot;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import nl.bertriksikken.helium.HeliumUplinkMessage.HotSpot;
 
 public class HeliumUplinkMessageTest {
 
@@ -18,23 +16,23 @@ public class HeliumUplinkMessageTest {
         try (InputStream is = this.getClass().getResourceAsStream("/helium_uplink.json")) {
             ObjectMapper mapper = new ObjectMapper();
             HeliumUplinkMessage uplink = mapper.readValue(is, HeliumUplinkMessage.class);
-            Assert.assertNotNull(uplink);
+            Assertions.assertNotNull(uplink);
 
-            Assert.assertEquals("6081F9D16837130E", uplink.appEui);
-            Assert.assertEquals("5A010048", uplink.devAddr);
-            Assert.assertEquals("0004A30B001F21FA", uplink.devEui);
-            Assert.assertEquals(0, uplink.fcnt);
-            Assert.assertEquals("kissmapper", uplink.name);
-            Assert.assertEquals(1, uplink.port);
-            Assert.assertEquals(1631457565832L, uplink.reportedAt);
-            Assert.assertArrayEquals(new byte[] { 3 }, uplink.payload);
+            Assertions.assertEquals("6081F9D16837130E", uplink.appEui);
+            Assertions.assertEquals("5A010048", uplink.devAddr);
+            Assertions.assertEquals("0004A30B001F21FA", uplink.devEui);
+            Assertions.assertEquals(0, uplink.fcnt);
+            Assertions.assertEquals("kissmapper", uplink.name);
+            Assertions.assertEquals(1, uplink.port);
+            Assertions.assertEquals(1631457565832L, uplink.reportedAt);
+            Assertions.assertArrayEquals(new byte[]{3}, uplink.payload);
 
             HotSpot hotSpot = uplink.hotSpots.get(0);
-            Assert.assertEquals(52.01745, hotSpot.latitude, 0.00001);
-            Assert.assertEquals(4.729876, hotSpot.longitude, 0.00001);
-            Assert.assertEquals("melted-quartz-antelope", hotSpot.name);
-            Assert.assertEquals(-120, hotSpot.rssi, 0.1);
-            Assert.assertEquals(-7.5, hotSpot.snr, 0.1);
+            Assertions.assertEquals(52.01745, hotSpot.latitude, 0.00001);
+            Assertions.assertEquals(4.729876, hotSpot.longitude, 0.00001);
+            Assertions.assertEquals("melted-quartz-antelope", hotSpot.name);
+            Assertions.assertEquals(-120, hotSpot.rssi, 0.1);
+            Assertions.assertEquals(-7.5, hotSpot.snr, 0.1);
         }
 
     }

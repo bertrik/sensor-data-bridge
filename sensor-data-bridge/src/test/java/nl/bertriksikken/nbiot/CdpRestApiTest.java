@@ -1,8 +1,7 @@
 package nl.bertriksikken.nbiot;
 
-import org.junit.Test;
-
 import nl.bertriksikken.nbiot.CdpMessage.Report;
+import org.junit.jupiter.api.Test;
 
 public final class CdpRestApiTest {
 

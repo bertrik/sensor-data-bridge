@@ -120,6 +120,7 @@ public final class SensorDataBridge {
     }
 
     // package-private to allow testing
+    @SuppressWarnings("StatementSwitchToExpressionSwitch")
     SensorData decodeTtnMessage(DecoderConfig config, TtnUplinkMessage uplink) throws PayloadParseException {
         SensorData sensorData = new SensorData();
 

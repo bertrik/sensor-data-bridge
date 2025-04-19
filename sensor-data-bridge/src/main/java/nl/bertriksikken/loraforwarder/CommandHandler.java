@@ -51,13 +51,10 @@ public final class CommandHandler {
         ByteBuffer bb = ByteBuffer.wrap(uplink.getRawPayload()).order(ByteOrder.BIG_ENDIAN);
 
         int cmd = bb.get() & 0xFF;
-        switch (cmd) {
-            case 0:
-                executor.execute(new CatchingRunnable(LOG, () -> handleWifiLocalisation(bb, uplink.getDevId())));
-                break;
-            default:
-                LOG.warn("Unhandled command {}", cmd);
-                break;
+        if (cmd == 0) {
+            executor.execute(new CatchingRunnable(LOG, () -> handleWifiLocalisation(bb, uplink.getDevId())));
+        } else {
+            LOG.warn("Unhandled command {}", cmd);
         }
     }
 

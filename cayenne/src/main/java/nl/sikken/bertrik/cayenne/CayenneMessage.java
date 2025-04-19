@@ -24,14 +24,11 @@ public final class CayenneMessage {
      *               are supported.
      */
     public CayenneMessage(ECayennePayloadFormat format) {
-        switch (format) {
-            case DYNAMIC_SENSOR_PAYLOAD:
-            case PACKED_SENSOR_PAYLOAD:
-                break;
-            default:
-                throw new IllegalArgumentException("Payload format not supported: " + format);
-        }
-        this.format = format;
+        this.format = switch (format) {
+            case DYNAMIC_SENSOR_PAYLOAD -> format;
+            case PACKED_SENSOR_PAYLOAD -> format;
+            default -> throw new IllegalArgumentException("Payload format not supported: " + format);
+        };
     }
 
     /**
@@ -40,11 +37,12 @@ public final class CayenneMessage {
      * @param data the raw data
      * @throws CayenneException in case of a parsing problem
      */
+    @SuppressWarnings("StatementSwitchToExpressionSwitch")
     public void parse(byte[] data) throws CayenneException {
+        CayenneItem item;
         ByteBuffer bb = ByteBuffer.wrap(data);
         int channel = 0;
         while (bb.hasRemaining()) {
-            CayenneItem item;
             switch (format) {
                 case DYNAMIC_SENSOR_PAYLOAD:
                     item = CayenneItem.parse(bb);

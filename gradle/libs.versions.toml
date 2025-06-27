@@ -1,8 +1,8 @@
 [versions]
-errorprone = "2.38.0"
+errorprone = "2.39.0"
 jackson = "2.19.1"
 jersey = "3.1.10"
-junit = "5.13.1"
+junit = "5.13.2"
 mockito = "5.18.0"
 retrofit = "3.0.0"
 slf4j = "2.0.17"
@@ -43,8 +43,8 @@ retrofit = ["retrofit", "retrofit-converter-jackson", "retrofit-converter-scalar
 jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject", "jersey-jackson"]
 
 [plugins]
-errorprone = "net.ltgt.errorprone:4.2.0"
+errorprone = "net.ltgt.errorprone:4.3.0"
 versions = "com.github.ben-manes.versions:0.52.0"
 dependencycheck = "org.owasp.dependencycheck:8.4.3"
-git-version = "com.palantir.git-version:3.3.0"
+git-version = "com.palantir.git-version:3.4.0"
 

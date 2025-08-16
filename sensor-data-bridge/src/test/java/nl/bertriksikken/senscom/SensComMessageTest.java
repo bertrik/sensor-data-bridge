@@ -3,8 +3,9 @@ package nl.bertriksikken.senscom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.bertriksikken.senscom.SensComMessage.SensComItem;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class SensComMessageTest {
 
@@ -15,7 +16,7 @@ public final class SensComMessageTest {
         Double d = 0.1 * 174;
         SensComItem item = new SensComItem("name", d);
         String json = MAPPER.writeValueAsString(item);
-        Assertions.assertEquals("{\"value_type\":\"name\",\"value\":\"17.4\"}", json);
+        assertEquals("{\"value_type\":\"name\",\"value\":\"17.4\"}", json);
     }
 
     @Test
@@ -24,7 +25,7 @@ public final class SensComMessageTest {
         message.addItem("string", "svalue");
         message.addItem("double", "dvalue");
         String json = MAPPER.writeValueAsString(message);
-        Assertions.assertEquals("{\"software_version\":\"version\",\"sensordatavalues\":[" +
+        assertEquals("{\"software_version\":\"version\",\"sensordatavalues\":[" +
                 "{\"value_type\":\"string\",\"value\":\"svalue\"},{\"value_type\":\"double\",\"value\":\"dvalue\"}]}", json);
     }
 

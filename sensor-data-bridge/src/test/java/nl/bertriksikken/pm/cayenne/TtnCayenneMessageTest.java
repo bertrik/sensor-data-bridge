@@ -1,8 +1,9 @@
 package nl.bertriksikken.pm.cayenne;
 
 import nl.bertriksikken.pm.PayloadParseException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class TtnCayenneMessageTest {
 
@@ -12,11 +13,11 @@ public final class TtnCayenneMessageTest {
                 0x04, 0x68, 0x77, 0x05, 115, 0x27, (byte) 0x88};
         TtnCayenneMessage msg = TtnCayenneMessage.parse(raw);
 
-        Assertions.assertEquals(1.0, msg.getPm10(), 0.01);
-        Assertions.assertEquals(0.25, msg.getPm2_5(), 0.01);
-        Assertions.assertEquals(-1.6, msg.getTempC(), 0.01);
-        Assertions.assertEquals(59.5, msg.getRhPerc(), 0.01);
-        Assertions.assertEquals(1012.0, msg.getPressureMillibar(), 0.1);
+        assertEquals(1.0, msg.getPm10(), 0.01);
+        assertEquals(0.25, msg.getPm2_5(), 0.01);
+        assertEquals(-1.6, msg.getTempC(), 0.01);
+        assertEquals(59.5, msg.getRhPerc(), 0.01);
+        assertEquals(1012.0, msg.getPressureMillibar(), 0.1);
     }
 
 }

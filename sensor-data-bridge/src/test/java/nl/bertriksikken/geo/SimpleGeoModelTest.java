@@ -1,7 +1,8 @@
 package nl.bertriksikken.geo;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class SimpleGeoModelTest {
 
@@ -12,7 +13,7 @@ public final class SimpleGeoModelTest {
         SimpleGeoModel model = new SimpleGeoModel();
         double d = model.distance(gouda, groningen);
 
-        Assertions.assertEquals(183557, d, 1);
+        assertEquals(183557, d, 1);
     }
 
 }

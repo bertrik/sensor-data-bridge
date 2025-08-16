@@ -1,9 +1,10 @@
 package nl.sikken.bertrik.cayenne.formatter;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class GpsFormatterTest {
 
@@ -19,9 +20,9 @@ public final class GpsFormatterTest {
         // decode
         bb.flip();
         Double[] parsed = formatter.parse(bb);
-        Assertions.assertEquals(coords[0], parsed[0], 0.01);
-        Assertions.assertEquals(coords[1], parsed[1], 0.01);
-        Assertions.assertEquals(coords[2], parsed[2], 0.01);
+        assertEquals(coords[0], parsed[0], 0.01);
+        assertEquals(coords[1], parsed[1], 0.01);
+        assertEquals(coords[2], parsed[2], 0.01);
     }
 
 }

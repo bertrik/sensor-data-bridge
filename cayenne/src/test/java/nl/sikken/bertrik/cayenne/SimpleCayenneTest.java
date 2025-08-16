@@ -1,9 +1,12 @@
 package nl.sikken.bertrik.cayenne;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for SimpleCayenne.
@@ -37,18 +40,18 @@ public final class SimpleCayenneTest {
 
         // encode it
         byte[] data = cayenne.encode(500);
-        Assertions.assertNotNull(data);
+        assertNotNull(data);
 
         // decode it
         CayenneMessage message = new CayenneMessage();
         message.parse(data);
-        Assertions.assertEquals(12, message.getItems().size());
-        Assertions.assertEquals(3.82, message.ofType(ECayenneItem.ANALOG_INPUT).getValue().doubleValue(), 0.01);
-        Assertions.assertEquals(55, message.ofType(ECayenneItem.DIGITAL_INPUT).getValue().intValue());
-        Assertions.assertEquals(66, message.ofType(ECayenneItem.DIGITAL_OUTPUT).getValue().intValue());
-        Assertions.assertEquals(52.0, message.ofType(ECayenneItem.GPS_LOCATION).getValues()[0].doubleValue(), 0.1);
-        Assertions.assertEquals(42, message.ofType(ECayenneItem.PRESENCE).getValue().intValue(), 42);
-        Assertions.assertEquals(19.0, message.ofType(ECayenneItem.TEMPERATURE).getValue().doubleValue(), 0.1);
+        assertEquals(12, message.getItems().size());
+        assertEquals(3.82, message.ofType(ECayenneItem.ANALOG_INPUT).getValue().doubleValue(), 0.01);
+        assertEquals(55, message.ofType(ECayenneItem.DIGITAL_INPUT).getValue().intValue());
+        assertEquals(66, message.ofType(ECayenneItem.DIGITAL_OUTPUT).getValue().intValue());
+        assertEquals(52.0, message.ofType(ECayenneItem.GPS_LOCATION).getValues()[0].doubleValue(), 0.1);
+        assertEquals(42, message.ofType(ECayenneItem.PRESENCE).getValue().intValue(), 42);
+        assertEquals(19.0, message.ofType(ECayenneItem.TEMPERATURE).getValue().doubleValue(), 0.1);
     }
 
     /**
@@ -60,7 +63,7 @@ public final class SimpleCayenneTest {
     public void testNonUniqueChannel() throws CayenneException {
         SimpleCayenne cayenne = new SimpleCayenne();
         cayenne.addTemperature(1, 19.0);
-        Assertions.assertThrows(CayenneException.class, () ->
+        assertThrows(CayenneException.class, () ->
                 cayenne.addAnalogInput(1, 3.90));
     }
 

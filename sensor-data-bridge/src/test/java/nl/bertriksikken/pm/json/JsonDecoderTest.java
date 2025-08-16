@@ -6,11 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.POJONode;
 import nl.bertriksikken.pm.ESensorItem;
 import nl.bertriksikken.pm.SensorData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class JsonDecoderTest {
 
@@ -29,7 +32,7 @@ public final class JsonDecoderTest {
         JsonNode configNode = new POJONode(config);
         decoder.parse(configNode, json, sensorData);
 
-        Assertions.assertEquals(35.5, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
+        assertEquals(35.5, sensorData.getValue(ESensorItem.NOISE_LA_EQ), 0.1);
     }
 
     @Test
@@ -45,8 +48,8 @@ public final class JsonDecoderTest {
         SensorData sensorData = new SensorData();
         decoder.parse(configNode, json, sensorData);
 
-        Assertions.assertEquals(99700, sensorData.getValue(ESensorItem.PRESSURE), 0.1);
-        Assertions.assertEquals(10.1, sensorData.getValue(ESensorItem.TEMPERATURE), 0.1);
+        assertEquals(99700, sensorData.getValue(ESensorItem.PRESSURE), 0.1);
+        assertEquals(10.1, sensorData.getValue(ESensorItem.TEMPERATURE), 0.1);
     }
 
     @Test
@@ -60,8 +63,8 @@ public final class JsonDecoderTest {
         String json = "{\"rh\":-1}";
 
         decoder.parse(configNode, json, sensorData);
-        Assertions.assertTrue(sensorData.hasValue(ESensorItem.HUMIDITY));
-        Assertions.assertFalse(ESensorItem.HUMIDITY.inRange(sensorData.getValue(ESensorItem.HUMIDITY)));
+        assertTrue(sensorData.hasValue(ESensorItem.HUMIDITY));
+        assertFalse(ESensorItem.HUMIDITY.inRange(sensorData.getValue(ESensorItem.HUMIDITY)));
     }
 
 }

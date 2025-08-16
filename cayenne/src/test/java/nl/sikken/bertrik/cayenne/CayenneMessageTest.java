@@ -1,11 +1,17 @@
 package nl.sikken.bertrik.cayenne;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Base64;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for CayenneMessage.
@@ -28,8 +34,8 @@ public final class CayenneMessageTest {
         payload.parse(data);
         LOG.info("payload: {}", payload);
 
-        Assertions.assertArrayEquals(new String[]{"27.2"}, payload.ofChannel(3).format());
-        Assertions.assertArrayEquals(new String[]{"25.5"}, payload.ofChannel(5).format());
+        assertArrayEquals(new String[]{"27.2"}, payload.ofChannel(3).format());
+        assertArrayEquals(new String[]{"25.5"}, payload.ofChannel(5).format());
     }
 
     /**
@@ -44,8 +50,8 @@ public final class CayenneMessageTest {
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
-        Assertions.assertArrayEquals(new String[]{"-4.1"}, payload.ofChannel(1).format());
-        Assertions.assertArrayEquals(new String[]{"1.234", "-1.234", "0.000"}, payload.ofChannel(6).format());
+        assertArrayEquals(new String[]{"-4.1"}, payload.ofChannel(1).format());
+        assertArrayEquals(new String[]{"1.234", "-1.234", "0.000"}, payload.ofChannel(6).format());
     }
 
     /**
@@ -59,7 +65,7 @@ public final class CayenneMessageTest {
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
-        Assertions.assertArrayEquals(new String[]{"42.3519", "-87.9094", "10.00"}, payload.ofChannel(1).format());
+        assertArrayEquals(new String[]{"42.3519", "-87.9094", "10.00"}, payload.ofChannel(1).format());
     }
 
     /**
@@ -73,7 +79,7 @@ public final class CayenneMessageTest {
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
-        Assertions.assertArrayEquals(new String[]{"50.0"}, payload.ofChannel(1).format());
+        assertArrayEquals(new String[]{"50.0"}, payload.ofChannel(1).format());
     }
 
     /**
@@ -88,9 +94,9 @@ public final class CayenneMessageTest {
         CayenneMessage payload = new CayenneMessage();
         payload.parse(data);
 
-        Assertions.assertArrayEquals(new String[]{"52.0225", "4.6928", "-2.00"}, payload.ofChannel(1).format());
-        Assertions.assertArrayEquals(new String[]{"247.84"}, payload.ofChannel(2).format());
-        Assertions.assertArrayEquals(new String[]{"27.0"}, payload.ofChannel(3).format());
+        assertArrayEquals(new String[]{"52.0225", "4.6928", "-2.00"}, payload.ofChannel(1).format());
+        assertArrayEquals(new String[]{"247.84"}, payload.ofChannel(2).format());
+        assertArrayEquals(new String[]{"27.0"}, payload.ofChannel(3).format());
     }
 
     /**
@@ -107,22 +113,22 @@ public final class CayenneMessageTest {
         payload.parse(data);
 
         // verify we can get at the data by channel
-        Assertions.assertArrayEquals(new String[]{"52.0225", "4.6925", "-17.00"}, payload.ofChannel(1).format());
-        Assertions.assertArrayEquals(new String[]{"4.15"}, payload.ofChannel(2).format());
-        Assertions.assertArrayEquals(new String[]{"24.0"}, payload.ofChannel(3).format());
+        assertArrayEquals(new String[]{"52.0225", "4.6925", "-17.00"}, payload.ofChannel(1).format());
+        assertArrayEquals(new String[]{"4.15"}, payload.ofChannel(2).format());
+        assertArrayEquals(new String[]{"24.0"}, payload.ofChannel(3).format());
 
         // verify we can also get data by type
-        Assertions.assertArrayEquals(new String[]{"52.0225", "4.6925", "-17.00"},
+        assertArrayEquals(new String[]{"52.0225", "4.6925", "-17.00"},
                 payload.ofType(ECayenneItem.GPS_LOCATION).format());
-        Assertions.assertArrayEquals(new String[]{"4.15"}, payload.ofType(ECayenneItem.ANALOG_INPUT).format());
-        Assertions.assertArrayEquals(new String[]{"24.0"}, payload.ofType(ECayenneItem.TEMPERATURE).format());
+        assertArrayEquals(new String[]{"4.15"}, payload.ofType(ECayenneItem.ANALOG_INPUT).format());
+        assertArrayEquals(new String[]{"24.0"}, payload.ofType(ECayenneItem.TEMPERATURE).format());
 
         // verify non-existing channel and type
-        Assertions.assertNull(payload.ofChannel(0));
-        Assertions.assertNull(payload.ofType(ECayenneItem.BAROMETER));
+        assertNull(payload.ofChannel(0));
+        assertNull(payload.ofType(ECayenneItem.BAROMETER));
 
         // verify toString method
-        Assertions.assertNotNull(payload.toString());
+        assertNotNull(payload.toString());
     }
 
     /**
@@ -134,7 +140,7 @@ public final class CayenneMessageTest {
     public void testParseEmpty() throws CayenneException {
         CayenneMessage payload = new CayenneMessage();
         payload.parse(new byte[0]);
-        Assertions.assertTrue(payload.getItems().isEmpty());
+        assertTrue(payload.getItems().isEmpty());
     }
 
     /**
@@ -142,7 +148,7 @@ public final class CayenneMessageTest {
      */
     @Test
     public void testShortBuffer() {
-        Assertions.assertThrows(CayenneException.class, () -> new CayenneMessage().parse(new byte[]{0}));
+        assertThrows(CayenneException.class, () -> new CayenneMessage().parse(new byte[]{0}));
     }
 
     /**
@@ -150,7 +156,7 @@ public final class CayenneMessageTest {
      */
     @Test
     public void testInvalidType() {
-        Assertions.assertThrows(CayenneException.class, () -> new CayenneMessage().parse(new byte[]{0, 100}));
+        assertThrows(CayenneException.class, () -> new CayenneMessage().parse(new byte[]{0, 100}));
     }
 
     /**
@@ -158,7 +164,7 @@ public final class CayenneMessageTest {
      */
     @Test
     public void testShortData() {
-        Assertions.assertThrows(CayenneException.class, () ->
+        assertThrows(CayenneException.class, () ->
                 new CayenneMessage().parse(new byte[]{2, 1}));
     }
 
@@ -176,7 +182,7 @@ public final class CayenneMessageTest {
 
         CayenneMessage decoded = new CayenneMessage();
         decoded.parse(encoded);
-        Assertions.assertEquals(-12.34, decoded.getItems().get(0).getValues()[0].doubleValue(), 0.01);
+        assertEquals(-12.34, decoded.getItems().get(0).getValues()[0].doubleValue(), 0.01);
     }
 
     /**
@@ -194,9 +200,9 @@ public final class CayenneMessageTest {
         decoded.parse(encoded);
 
         CayenneItem item = decoded.getItems().get(0);
-        Assertions.assertEquals(ECayenneItem.HUMIDITY, item.getType());
-        Assertions.assertEquals(35.5, item.getValues()[0].doubleValue(), 0.1);
-        Assertions.assertEquals("35.5", item.format()[0]);
+        assertEquals(ECayenneItem.HUMIDITY, item.getType());
+        assertEquals(35.5, item.getValues()[0].doubleValue(), 0.1);
+        assertEquals("35.5", item.format()[0]);
     }
 
     /**
@@ -214,8 +220,8 @@ public final class CayenneMessageTest {
         decoded.parse(encoded);
 
         CayenneItem item = decoded.getItems().get(0);
-        Assertions.assertEquals(ECayenneItem.DIGITAL_INPUT, item.getType());
-        Assertions.assertEquals(1, item.getValues()[0].intValue());
+        assertEquals(ECayenneItem.DIGITAL_INPUT, item.getType());
+        assertEquals(1, item.getValues()[0].intValue());
     }
 
     /**
@@ -231,9 +237,9 @@ public final class CayenneMessageTest {
         decoded.parse(encoded);
 
         CayenneItem item = decoded.getItems().get(0);
-        Assertions.assertEquals(ECayenneItem.PRESENCE, item.getType());
-        Assertions.assertEquals(7, item.getValues()[0].intValue());
-        Assertions.assertEquals("7", item.format()[0]);
+        assertEquals(ECayenneItem.PRESENCE, item.getType());
+        assertEquals(7, item.getValues()[0].intValue());
+        assertEquals("7", item.format()[0]);
     }
 
     /**
@@ -245,8 +251,8 @@ public final class CayenneMessageTest {
         byte[] data = {0x67, 0x01, 0x10, 0x67, 0x00, (byte) 0xFF};
         message.parse(data);
 
-        Assertions.assertEquals(27.2, message.ofChannel(0).getValue().doubleValue(), 0.01);
-        Assertions.assertEquals(25.5, message.ofChannel(1).getValue().doubleValue(), 0.01);
+        assertEquals(27.2, message.ofChannel(0).getValue().doubleValue(), 0.01);
+        assertEquals(25.5, message.ofChannel(1).getValue().doubleValue(), 0.01);
     }
 
 }

@@ -36,6 +36,10 @@ subprojects {
         }
     }
 
+    tasks.withType(Tar).configureEach {
+        preserveFileTimestamps = true
+    }
+
     test {
         useJUnitPlatform()
     }

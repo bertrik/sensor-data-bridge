@@ -1,5 +1,6 @@
 package nl.bertriksikken.pm;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,6 +12,15 @@ public final class SensorData {
 
     // start with a simple map containing one Number value per item
     private final Map<ESensorItem, Number> items = new LinkedHashMap<>();
+    private final Instant timestamp;
+
+    public SensorData() {
+        this.timestamp = Instant.now();
+    }
+
+    public Instant getCreationTime() {
+        return timestamp;
+    }
 
     public void putValue(ESensorItem item, Number value) {
         if (value == null) {

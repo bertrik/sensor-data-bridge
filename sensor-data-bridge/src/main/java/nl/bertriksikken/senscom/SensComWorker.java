@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +42,10 @@ final class SensComWorker {
 
     // map from device id to sensor.community id
     private final Map<AppDeviceId, String> sensComIds = new HashMap<>();
+    // map with only *latest* measurement per AppDeviceId
+    private final Map<AppDeviceId, SensorData> measurements = new ConcurrentHashMap<>();
+    // map from senscom id -> last upload time
+    private final Map<String, Instant> lastUploadTimes = new HashMap<>();
 
     SensComWorker(ObjectMapper mapper, ISensComApi restClient, String softwareVersion, String appId) {
         this.mapper = Objects.requireNonNull(mapper);
@@ -76,17 +81,48 @@ final class SensComWorker {
 
     // schedules an upload to all pins
     void scheduleUpload(AppDeviceId appDeviceId, SensorData data) {
-        executor.execute(new CatchingRunnable(LOG, () -> performUpload(appDeviceId, data)));
+        // store measurement in cache of most-recent data and schedule upload
+        SensorData oldData = measurements.put(appDeviceId, data);
+        if (oldData != null) {
+            LOG.warn("Replaced old sensor data for '{}'", appDeviceId);
+        }
+        executor.execute(new CatchingRunnable(LOG, () -> performUpload(appDeviceId)));
     }
 
     // uploads to all pins, runs on our executor
-    private void performUpload(AppDeviceId appDeviceId, SensorData data) {
+    private void performUpload(AppDeviceId appDeviceId) {
+        // check if we still have data to upload, or it was already sent
+        SensorData data = measurements.remove(appDeviceId);
+        if (data == null) {
+            return;
+        }
+
         // look up custom sensor.community id
         String sensorId = sensComIds.getOrDefault(appDeviceId, "");
         if (sensorId.isEmpty()) {
-            // no sensor.community id found, so no upload
             return;
         }
+
+        // drop stale data
+        Duration age = Duration.between(data.getCreationTime(), Instant.now());
+        LOG.info("Sensor data age {} before upload for {}", age, appDeviceId);
+        if (age.toSeconds() > 3600) {
+            LOG.warn("Dropped stale data for {}: {}", appDeviceId, data);
+            return;
+        }
+
+        // rate limit on sensor.community id
+        Instant now = Instant.now();
+        Instant lastUpload = lastUploadTimes.get(sensorId);
+        if (lastUpload != null) {
+            Duration interval = Duration.between(lastUpload, now);
+            LOG.info("Upload interval for {}: {}", appDeviceId, interval);
+            if (interval.toSeconds() < 60) {
+                LOG.warn("Dropped by rate limit: {}", appDeviceId);
+                return;
+            }
+        }
+        lastUploadTimes.put(sensorId, now);
 
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)

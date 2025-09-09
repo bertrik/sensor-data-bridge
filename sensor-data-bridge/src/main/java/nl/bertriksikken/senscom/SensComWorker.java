@@ -105,7 +105,6 @@ final class SensComWorker {
 
         // drop stale data
         Duration age = Duration.between(data.getCreationTime(), Instant.now());
-        LOG.info("Sensor data age {} before upload for {}", age, appDeviceId);
         if (age.toSeconds() > 3600) {
             LOG.warn("Dropped stale data for {}: {}", appDeviceId, data);
             return;
@@ -122,7 +121,6 @@ final class SensComWorker {
                 return;
             }
         }
-        lastUploadTimes.put(sensorId, now);
 
         // pin 1 (dust sensors)
         if (data.hasValue(ESensorItem.PM10) || data.hasValue(ESensorItem.PM2_5) || data.hasValue(ESensorItem.PM1_0)
@@ -228,6 +226,7 @@ final class SensComWorker {
         try {
             LOG.info("Uploading for {} (id {}, pin {}): '{}'", appDeviceId, sensorId, pin, mapper.writeValueAsString(message));
             Instant startTime = Instant.now();
+            lastUploadTimes.put(sensorId, startTime);
             Response<String> response = restClient.pushSensorData(pin.getPin(), sensorId, message).execute();
             long millis = Duration.between(startTime, Instant.now()).toMillis();
             if (response.isSuccessful()) {

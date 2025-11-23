@@ -1,5 +1,5 @@
 [versions]
-errorprone = "2.43.0"
+errorprone = "2.44.0"
 jackson = "2.20.1"
 jersey = "3.1.11"
 junit = "6.0.1"
@@ -46,5 +46,5 @@ jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject",
 errorprone = "net.ltgt.errorprone:4.3.0"
 versions = "com.github.ben-manes.versions:0.53.0"
 dependencycheck = "org.owasp.dependencycheck:8.4.3"
-git-version = "com.palantir.git-version:4.1.0"
+git-version = "com.palantir.git-version:4.2.0"
 

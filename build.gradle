@@ -36,8 +36,14 @@ subprojects {
         }
     }
 
+    // keep current time stamps in tar
     tasks.withType(Tar).configureEach {
         preserveFileTimestamps = true
+    }
+
+    // fix or errorprone on java 21
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs += "-XDaddTypeAnnotationsToSymbol=true"
     }
 
     test {

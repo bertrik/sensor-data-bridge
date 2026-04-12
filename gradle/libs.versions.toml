@@ -1,9 +1,9 @@
 [versions]
-errorprone = "2.48.0"
-jackson = "2.21.1"
+errorprone = "2.49.0"
+jackson = "2.21.2"
 jersey = "4.0.2"
 junit = "6.0.3"
-mockito = "5.22.0"
+mockito = "5.23.0"
 retrofit = "3.0.0"
 slf4j = "2.0.17"
 

@@ -13,7 +13,7 @@ def isNonStable = { String version ->
 subprojects {
     apply plugin: "java"
     apply plugin: 'net.ltgt.errorprone'
-    apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'io.github.ben-manes.versions'
 
     java {
         targetCompatibility = JavaVersion.VERSION_21

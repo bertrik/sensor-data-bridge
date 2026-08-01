@@ -2,6 +2,7 @@
 errorprone = "2.50.0"
 jackson = "2.22.1"
 jersey = "4.0.2"
+jetty = "12.1.11"
 junit = "6.1.2"
 mockito = "5.23.0"
 retrofit = "3.0.0"
@@ -16,6 +17,7 @@ slf4j-reload4j = { module = "org.slf4j:slf4j-reload4j", version.ref = "slf4j" }
 
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jetty-bom  = { module = "org.eclipse.jetty:jetty-bom", version.ref = "jetty" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }

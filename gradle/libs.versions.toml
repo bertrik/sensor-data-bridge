@@ -45,7 +45,7 @@ retrofit = ["retrofit", "retrofit-converter-jackson", "retrofit-converter-scalar
 jersey = ["jakarta-ws-rs-api", "jersey-jetty", "jersey-server", "jersey-inject", "jersey-jackson"]
 
 [plugins]
-errorprone = "net.ltgt.errorprone:5.1.0"
-git-version = "com.palantir.git-version:5.0.0"
+errorprone = "net.ltgt.errorprone:5.1.1"
+git-version = "com.palantir.git-version:5.1.0"
 versions = "io.github.ben-manes.versions:0.61.0"
 
